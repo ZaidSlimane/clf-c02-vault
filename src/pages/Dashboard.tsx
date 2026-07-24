@@ -1,0 +1,96 @@
+import { Link } from 'react-router-dom'
+import HeroHeader from '../components/HeroHeader'
+import StudyTimeline from '../components/StudyTimeline'
+import DomainCard from '../components/DomainCard'
+import FocusToday from '../components/FocusToday'
+import RecentActivity from '../components/RecentActivity'
+import WeeklyConsistency from '../components/WeeklyConsistency'
+import PracticeExams from '../components/PracticeExams'
+import ExamQuiz from '../components/ExamQuiz'
+import { domains } from '../data/domains'
+
+export default function Dashboard() {
+  return (
+    <div>
+      <HeroHeader />
+
+      <section className="section">
+        <div className="section-header">
+          <span className="section-icon">🗺️</span>
+          <h2>Study Roadmap</h2>
+        </div>
+        <div className="card">
+          <StudyTimeline />
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <span className="section-icon">📊</span>
+          <h2>Domain Progress</h2>
+        </div>
+        <div className="domain-grid">
+          {domains.map((d) => (
+            <DomainCard key={d.id} domain={d} />
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <FocusToday />
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <span className="section-icon">📝</span>
+          <h2>Recent Study Activity</h2>
+        </div>
+        <div className="card">
+          <RecentActivity />
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <span className="section-icon">📈</span>
+          <h2>Weekly Consistency</h2>
+        </div>
+        <WeeklyConsistency />
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <span className="section-icon">🧪</span>
+          <h2>Practice Exams</h2>
+        </div>
+        <div className="card">
+          <PracticeExams />
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <span className="section-icon">📋</span>
+          <h2>Exam Simulation (CLF-C02)</h2>
+        </div>
+        <div className="card">
+          <ExamQuiz />
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-header">
+          <span className="section-icon">🔗</span>
+          <h2>Quick Links</h2>
+        </div>
+        <div className="quick-links">
+          <Link to="/" className="quick-link">📘 Dashboard</Link>
+          <Link to="/domain/1" className="quick-link">☁️ Cloud Concepts</Link>
+          <Link to="/domain/2" className="quick-link">🔒 Security &amp; Compliance</Link>
+          <Link to="/domain/3" className="quick-link">⚙️ Technology &amp; Services</Link>
+          <Link to="/domain/4" className="quick-link">💰 Billing, Pricing &amp; Support</Link>
+        </div>
+      </section>
+    </div>
+  )
+}
