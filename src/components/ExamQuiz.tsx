@@ -56,13 +56,15 @@ function isAnswerCorrect(selected: string[], correct: string[]): boolean {
   return selected.every(s => correct.includes(s))
 }
 
-export default function ExamQuiz() {
+export default function ExamQuiz({ initialFilter }: { initialFilter?: string | null }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [progress, setProgress] = useState<Progress>(loadProgress)
   const [showAnswer, setShowAnswer] = useState(false)
   const [noteText, setNoteText] = useState('')
   const [isNoteOpen, setIsNoteOpen] = useState(false)
-  const [filter, setFilter] = useState<'all' | 'unanswered' | 'flagged' | 'wrong'>('all')
+  const [filter, setFilter] = useState<'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong'>(
+    (initialFilter as 'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong') || 'all'
+  )
   const [pending, setPending] = useState<string[]>([])
 
   useEffect(() => {
@@ -106,6 +108,17 @@ export default function ExamQuiz() {
         return indices.filter(i => !(i in progress.answers))
       case 'flagged':
         return indices.filter(i => progress.flags[i])
+      case 'correct': {
+        return indices.filter(i => {
+          const sel = progress.answers[i]
+          if (!sel) return false
+          const qq = questions[i]
+          if (!qq) return false
+          const cnt = getRequiredChoices(qq.question)
+          const correctSet = getCorrectAnswers(qq, cnt)
+          return isAnswerCorrect(sel, correctSet)
+        })
+      }
       case 'wrong': {
         return indices.filter(i => {
           const sel = progress.answers[i]
@@ -493,6 +506,7 @@ export default function ExamQuiz() {
               Show:
               <select value={filter} onChange={e => setFilter(e.target.value as typeof filter)}>
                 <option value="all">All</option>
+                <option value="correct">Correct</option>
                 <option value="unanswered">Unanswered</option>
                 <option value="flagged">Flagged</option>
                 <option value="wrong">Wrong</option>

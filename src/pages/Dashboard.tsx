@@ -6,6 +6,7 @@ import FocusToday from '../components/FocusToday'
 import RecentActivity from '../components/RecentActivity'
 import WeeklyConsistency from '../components/WeeklyConsistency'
 import PracticeExams from '../components/PracticeExams'
+import QuizProgressCard from '../components/QuizProgressCard'
 import { domains } from '../data/domains'
 
 export default function Dashboard() {
@@ -65,6 +66,10 @@ export default function Dashboard() {
         <div className="card">
           <PracticeExams />
         </div>
+      </section>
+
+      <section className="section">
+        <QuizProgressCard />
       </section>
 
       <section className="section">

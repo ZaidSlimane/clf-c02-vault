@@ -865,3 +865,64 @@ td {
   height: 32px;
   font-size: 0.72rem;
 }
+
+/* ── Dashboard Quiz Progress ── */
+.quiz-progress-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 768px) {
+  .quiz-progress-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.quiz-progress-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.quiz-progress-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-dark);
+  text-decoration: none;
+}
+.quiz-progress-card-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+.quiz-progress-card-slash {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-left: 2px;
+}
+.quiz-progress-card-label {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+.quiz-progress-continue {
+  background: linear-gradient(135deg, var(--color-primary-light), #FFF8E7);
+  border-color: #FFE0B2;
+}
+.quiz-progress-continue .quiz-progress-card-value {
+  font-size: 1.1rem;
+  color: var(--color-primary-dark);
+}
+.quiz-progress-correct .quiz-progress-card-value { color: var(--color-success); }
+.quiz-progress-wrong .quiz-progress-card-value { color: var(--color-danger); }
+.quiz-progress-flagged .quiz-progress-card-value { color: var(--color-warning); }
