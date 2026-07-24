@@ -71,6 +71,8 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     (initialFilter as 'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong') || 'all'
   )
   const [pending, setPending] = useState<string[]>([])
+  const [aiLoading, setAiLoading] = useState(false)
+  const [aiResponse, setAiResponse] = useState('')
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
@@ -192,6 +194,35 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
       else delete tags[currentIndex]
       return { ...prev, notes, tags }
     })
+  }
+
+  const askAI = async () => {
+    setAiLoading(true)
+    setAiResponse('')
+    const prompt = `You are an AWS CLF-C02 exam tutor. Explain the following question and why the correct answer is right and the others are wrong.
+
+Question: ${q.question}
+
+Options:
+${optionLetters.map(l => `${l}. ${q.options[l]}`).join('\n')}
+
+Correct Answer(s): ${correctAnswers.join(', ')}
+
+Provide a clear, concise explanation suitable for someone studying for the AWS Cloud Practitioner exam. Be specific about AWS services and concepts.`
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      })
+      const data = await res.json()
+      setAiResponse(data.choices?.[0]?.message?.content || 'No response from AI')
+    } catch {
+      setAiResponse('Failed to get AI explanation. Make sure the API server is running.')
+    } finally {
+      setAiLoading(false)
+    }
   }
 
   const exportProgress = () => {
@@ -386,6 +417,21 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
                       </span>
                     )
                   })}
+                </div>
+                <div className="exam-ai-section">
+                  <button
+                    className="exam-btn exam-btn-sm"
+                    onClick={askAI}
+                    disabled={aiLoading}
+                  >
+                    {aiLoading ? '⏳ Thinking...' : '🤖 Explain with AI'}
+                  </button>
+                  {aiResponse && (
+                    <div className="exam-ai-response">
+                      <div className="exam-ai-response-text">{aiResponse}</div>
+                      <button className="exam-btn exam-btn-sm" onClick={() => setAiResponse('')}>Dismiss</button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
