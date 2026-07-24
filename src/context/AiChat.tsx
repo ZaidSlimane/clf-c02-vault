@@ -10,11 +10,13 @@ export interface Conversation {
 interface AiChatContextType {
   sidebarOpen: boolean
   conversations: Conversation[]
+  chatLoading: boolean
   toggleSidebar: () => void
   openSidebar: () => void
   closeSidebar: () => void
   addConversation: (q: string, a: string) => void
   clearConversations: () => void
+  askAI: (question: string) => Promise<void>
 }
 
 const AiChatContext = createContext<AiChatContextType | null>(null)
@@ -33,6 +35,7 @@ function loadConversations(): Conversation[] {
 export function AiChatProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [conversations, setConversations] = useState<Conversation[]>(loadConversations)
+  const [chatLoading, setChatLoading] = useState(false)
 
   const persist = useCallback((convs: Conversation[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(convs))
@@ -61,7 +64,7 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
           timestamp: new Date(c.created_at).getTime(),
         }))
         const merged = [...new Map([...local, ...server].map(c => [c.id, c])).values()]
-          .sort((a, b) => b.timestamp - a.timestamp)
+          .sort((a, b) => a.timestamp - b.timestamp)
         localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
         setConversations(merged)
       })
@@ -69,18 +72,10 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const addConversation = useCallback((questionText: string, answer: string) => {
-    const token = authToken()
-    if (token) {
-      fetch('/api/conversations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ question_text: questionText, answer }),
-      }).catch(() => {})
-    }
     setConversations(prev => {
       const next: Conversation[] = [
-        { id: 'local-' + Date.now().toString(), questionText, answer, timestamp: Date.now() },
         ...prev,
+        { id: 'local-' + Date.now().toString(), questionText, answer, timestamp: Date.now() },
       ]
       persist(next)
       return next
@@ -97,11 +92,51 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(STORAGE_KEY)
   }, [])
 
+  const askAI = useCallback(async (questionText: string) => {
+    let key = localStorage.getItem('dahl_api_key')
+    if (!key) {
+      const entered = window.prompt('Enter your Dahl API key to use AI explanations:')
+      if (!entered) return
+      key = entered
+      localStorage.setItem('dahl_api_key', key)
+    }
+
+    setChatLoading(true)
+    const prompt = `You are an AWS CLF-C02 exam tutor. Answer the following question clearly and concisely, with specific AWS services and concepts.
+
+${questionText}`
+
+    try {
+      const res = await fetch('https://inference.dahl.global/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'moonshotai/Kimi-K2.6',
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        addConversation(questionText, `API Error (${res.status}): ${data.error?.message || JSON.stringify(data).slice(0, 300)}`)
+      } else {
+        const answer = data.choices?.[0]?.message?.content || 'No response from AI'
+        addConversation(questionText, answer)
+      }
+    } catch (err) {
+      addConversation(questionText, `Network error: ${err instanceof Error ? err.message : 'Unknown'}`)
+    } finally {
+      setChatLoading(false)
+    }
+  }, [addConversation])
+
   return (
     <AiChatContext.Provider value={{
-      sidebarOpen, conversations,
+      sidebarOpen, conversations, chatLoading,
       toggleSidebar, openSidebar, closeSidebar,
-      addConversation, clearConversations,
+      addConversation, clearConversations, askAI,
     }}>
       {children}
     </AiChatContext.Provider>

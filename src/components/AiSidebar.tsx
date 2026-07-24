@@ -1,7 +1,32 @@
+import { useState, useRef, useEffect } from 'react'
 import { useAiChat } from '../context/AiChat'
 
 export default function AiSidebar() {
-  const { sidebarOpen, conversations, toggleSidebar, closeSidebar, clearConversations } = useAiChat()
+  const { sidebarOpen, conversations, chatLoading, toggleSidebar, closeSidebar, clearConversations, askAI } = useAiChat()
+  const [input, setInput] = useState('')
+  const bodyRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (bodyRef.current) {
+      bodyRef.current.scrollTop = bodyRef.current.scrollHeight
+    }
+  }, [conversations.length])
+
+  const handleSend = () => {
+    const text = input.trim()
+    if (!text || chatLoading) return
+    setInput('')
+    askAI(text)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  const hasKey = !!localStorage.getItem('dahl_api_key')
 
   return (
     <>
@@ -25,12 +50,11 @@ export default function AiSidebar() {
           </div>
         </div>
 
-        <div className="ais-body">
+        <div className="ais-body" ref={bodyRef}>
           {conversations.length === 0 ? (
             <div className="ais-empty">
               <div className="ais-empty-icon">💬</div>
-              <p className="ais-empty-text">Ask the AI to explain a question and the answer will appear here.</p>
-              <p className="ais-empty-hint">Click <strong>"Explain with AI"</strong> on any question.</p>
+              <p className="ais-empty-text">Ask a question or click <strong>"Explain with AI"</strong> on any exam question.</p>
             </div>
           ) : (
             conversations.map(c => (
@@ -45,6 +69,38 @@ export default function AiSidebar() {
                 </div>
               </div>
             ))
+          )}
+          {chatLoading && (
+            <div className="ais-message">
+              <div className="ais-message-answer">
+                <span className="ais-message-label">A</span>
+                <div className="ais-message-content ais-thinking">Thinking...</div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="ais-footer">
+          <div className="ais-chat-input-row">
+            <input
+              className="ais-chat-input"
+              type="text"
+              placeholder={hasKey ? 'Ask anything about AWS...' : 'Set API key first...'}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={chatLoading}
+            />
+            <button
+              className="ais-chat-send"
+              onClick={handleSend}
+              disabled={!input.trim() || chatLoading}
+            >
+              Send
+            </button>
+          </div>
+          {!hasKey && (
+            <p className="ais-chat-hint">No API key set — click "Explain with AI" on any question to set one.</p>
           )}
         </div>
       </aside>
