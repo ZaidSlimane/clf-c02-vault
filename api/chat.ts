@@ -46,10 +46,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     })
 
     const data = await response.json()
+    if (!response.ok) {
+      res.writeHead(response.status, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: data.error?.message || JSON.stringify(data) }))
+      return
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(JSON.stringify(data))
-  } catch {
+  } catch (err) {
     res.writeHead(500, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ error: 'Failed to reach LLM API' }))
+    res.end(JSON.stringify({ error: err instanceof Error ? err.message : 'Failed to reach LLM API' }))
   }
 }

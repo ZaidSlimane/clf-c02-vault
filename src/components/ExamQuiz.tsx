@@ -217,9 +217,13 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
         body: JSON.stringify({ prompt }),
       })
       const data = await res.json()
-      setAiResponse(data.choices?.[0]?.message?.content || 'No response from AI')
-    } catch {
-      setAiResponse('Failed to get AI explanation. Make sure the API server is running.')
+      if (!res.ok) {
+        setAiResponse(`API Error (${res.status}): ${data.error || JSON.stringify(data)}`)
+      } else {
+        setAiResponse(data.choices?.[0]?.message?.content || `Unexpected response format: ${JSON.stringify(data).slice(0, 500)}`)
+      }
+    } catch (err) {
+      setAiResponse(`Network error: ${err instanceof Error ? err.message : 'Unknown'}`)
     } finally {
       setAiLoading(false)
     }
