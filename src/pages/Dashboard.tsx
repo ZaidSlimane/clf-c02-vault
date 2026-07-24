@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import HeroHeader from '../components/HeroHeader'
-import StudyTimeline from '../components/StudyTimeline'
+import StudyNotes from '../components/StudyNotes'
 import DomainCard from '../components/DomainCard'
 import FocusToday from '../components/FocusToday'
 import RecentActivity from '../components/RecentActivity'
@@ -15,13 +15,7 @@ export default function Dashboard() {
       <HeroHeader />
 
       <section className="section">
-        <div className="section-header">
-          <span className="section-icon">🗺️</span>
-          <h2>Study Roadmap</h2>
-        </div>
-        <div className="card">
-          <StudyTimeline />
-        </div>
+        <StudyNotes />
       </section>
 
       <section className="section">
