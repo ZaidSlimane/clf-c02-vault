@@ -24,12 +24,15 @@ export default async function handler(req, res) {
       const url = new URL('https://inference.dahl.global/v1/chat/completions')
       const opts = {
         hostname: url.hostname,
-        path: url.pathname,
+        path: url.pathname + url.search,
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(body),
+          'User-Agent': 'Mozilla/5.0 (compatible; VercelBot; +https://clf-c02-vault.vercel.app)',
+          'Accept': 'application/json, text/plain, */*',
+          'Origin': 'https://clf-c02-vault.vercel.app',
         },
       }
       const request = https.request(opts, (response) => {
