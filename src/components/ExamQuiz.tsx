@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import questionsData from '../../CLF-C02 questions.json'
 import { sections, domains as domainsData } from '../data/sections'
+import { useAiChat } from '../context/AiChat'
 
 interface Question {
   url: string
@@ -61,6 +62,7 @@ function isAnswerCorrect(selected: string[], correct: string[]): boolean {
 }
 
 export default function ExamQuiz({ initialFilter }: { initialFilter?: string | null }) {
+  const { addConversation, openSidebar } = useAiChat()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [progress, setProgress] = useState<Progress>(loadProgress)
   const [showAnswer, setShowAnswer] = useState(false)
@@ -72,7 +74,6 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   )
   const [pending, setPending] = useState<string[]>([])
   const [aiLoading, setAiLoading] = useState(false)
-  const [aiResponse, setAiResponse] = useState('')
   const [aiKey, setAiKey] = useState(() => localStorage.getItem('dahl_api_key') || '')
 
   useEffect(() => {
@@ -207,7 +208,6 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
       localStorage.setItem('dahl_api_key', key)
     }
     setAiLoading(true)
-    setAiResponse('')
     const prompt = `You are an AWS CLF-C02 exam tutor. Explain the following question and why the correct answer is right and the others are wrong.
 
 Question: ${q.question}
@@ -233,12 +233,15 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
       })
       const data = await res.json()
       if (!res.ok) {
-        setAiResponse(`API Error (${res.status}): ${data.error?.message || JSON.stringify(data).slice(0, 300)}`)
+        addConversation(q.question, `API Error (${res.status}): ${data.error?.message || JSON.stringify(data).slice(0, 300)}`)
       } else {
-        setAiResponse(data.choices?.[0]?.message?.content || 'No response from AI')
+        const answer = data.choices?.[0]?.message?.content || 'No response from AI'
+        addConversation(q.question, answer)
       }
+      openSidebar()
     } catch (err) {
-      setAiResponse(`Network error: ${err instanceof Error ? err.message : 'Unknown'}`)
+      addConversation(q.question, `Network error: ${err instanceof Error ? err.message : 'Unknown'}`)
+      openSidebar()
     } finally {
       setAiLoading(false)
     }
@@ -451,18 +454,11 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
                       onClick={() => {
                         localStorage.removeItem('dahl_api_key')
                         setAiKey('')
-                        setAiResponse('')
                       }}
                       style={{ marginLeft: 4 }}
                     >
                       Change Key
                     </button>
-                  )}
-                  {aiResponse && (
-                    <div className="exam-ai-response">
-                      <div className="exam-ai-response-text">{aiResponse}</div>
-                      <button className="exam-btn exam-btn-sm" onClick={() => setAiResponse('')}>Dismiss</button>
-                    </div>
                   )}
                 </div>
               </div>
