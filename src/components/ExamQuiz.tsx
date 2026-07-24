@@ -200,8 +200,9 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   const askAI = async () => {
     let key = aiKey
     if (!key) {
-      key = window.prompt('Enter your Dahl API key to use AI explanations:')
-      if (!key) return
+      const entered = window.prompt('Enter your Dahl API key to use AI explanations:')
+      if (!entered) return
+      key = entered
       setAiKey(key)
       localStorage.setItem('dahl_api_key', key)
     }
