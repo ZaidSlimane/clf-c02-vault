@@ -782,3 +782,86 @@ td {
   color: var(--color-text-secondary);
   font-weight: 500;
 }
+
+/* ── 2-Panel Layout ── */
+.exam-panels {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .exam-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+.exam-panel-main {
+  min-width: 0;
+}
+
+.exam-panel-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 80px;
+}
+
+/* Side stats row */
+.exam-side-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.exam-side-stat {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+.exam-side-stat-value {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+.exam-side-stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.exam-side-stat-correct .exam-side-stat-value { color: var(--color-success); }
+.exam-side-stat-wrong .exam-side-stat-value { color: var(--color-danger); }
+.exam-side-stat-flagged .exam-side-stat-value { color: var(--color-warning); }
+
+/* Side filter & actions */
+.exam-side-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.exam-side-actions .exam-filter-label {
+  width: 100%;
+}
+.exam-side-actions .exam-filter-label select {
+  width: 100%;
+}
+.exam-side-actions .exam-btn {
+  width: 100%;
+  text-align: center;
+}
+
+/* Override grid section padding in sidebar */
+.exam-panel-side .exam-grid-section {
+  padding: 14px;
+}
+.exam-panel-side .exam-grid-item {
+  width: 32px;
+  height: 32px;
+  font-size: 0.72rem;
+}

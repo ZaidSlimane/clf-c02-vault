@@ -6,7 +6,6 @@ import FocusToday from '../components/FocusToday'
 import RecentActivity from '../components/RecentActivity'
 import WeeklyConsistency from '../components/WeeklyConsistency'
 import PracticeExams from '../components/PracticeExams'
-import ExamQuiz from '../components/ExamQuiz'
 import { domains } from '../data/domains'
 
 export default function Dashboard() {
@@ -70,21 +69,12 @@ export default function Dashboard() {
 
       <section className="section">
         <div className="section-header">
-          <span className="section-icon">📋</span>
-          <h2>Exam Simulation (CLF-C02)</h2>
-        </div>
-        <div className="card">
-          <ExamQuiz />
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="section-header">
           <span className="section-icon">🔗</span>
           <h2>Quick Links</h2>
         </div>
         <div className="quick-links">
           <Link to="/" className="quick-link">📘 Dashboard</Link>
+          <Link to="/exam" className="quick-link">📋 Exam Simulation (719 Qs)</Link>
           <Link to="/domain/1" className="quick-link">☁️ Cloud Concepts</Link>
           <Link to="/domain/2" className="quick-link">🔒 Security &amp; Compliance</Link>
           <Link to="/domain/3" className="quick-link">⚙️ Technology &amp; Services</Link>

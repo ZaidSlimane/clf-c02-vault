@@ -267,232 +267,251 @@ export default function ExamQuiz() {
         />
       </div>
 
-      {/* Toolbar */}
-      <div className="exam-toolbar">
-        <div className="exam-toolbar-left">
-          <label className="exam-filter-label">
-            Filter:
-            <select value={filter} onChange={e => setFilter(e.target.value as typeof filter)}>
-              <option value="all">All ({TOTAL})</option>
-              <option value="unanswered">Unanswered ({TOTAL - stats.answered})</option>
-              <option value="flagged">Flagged ({stats.flagged})</option>
-              <option value="wrong">Wrong ({stats.wrong})</option>
-            </select>
-          </label>
-        </div>
-        <div className="exam-toolbar-right">
-          <button className="exam-btn exam-btn-sm" onClick={navigateToNextUnanswered}>
-            Next Unanswered
-          </button>
-          <button className="exam-btn exam-btn-sm" onClick={exportProgress}>
-            Export Progress
-          </button>
-          <label className="exam-btn exam-btn-sm exam-btn-file">
-            Import Progress
-            <input type="file" accept=".json" onChange={importProgress} hidden />
-          </label>
-          <button className="exam-btn exam-btn-sm exam-btn-danger" onClick={resetProgress}>
-            Reset
-          </button>
-        </div>
-      </div>
-
-      {/* Question card */}
-      <div className="exam-question-card card">
-        <div className="exam-question-topbar">
-          <span className="exam-question-number">
-            Question {currentIndex + 1} of {TOTAL}
-            {isMulti && <span className="exam-multi-badge"> (Choose {choiceCount})</span>}
-          </span>
-          <div className="exam-question-topbar-right">
-            {isFlagged && <span className="exam-flag-badge">⚑ Flagged</span>}
-            <button
-              className={`exam-btn exam-btn-sm ${isFlagged ? 'exam-btn-active' : ''}`}
-              onClick={toggleFlag}
-            >
-              {isFlagged ? '⚑ Unflag' : '⚐ Flag'}
-            </button>
-          </div>
-        </div>
-
-        <p className="exam-question-text">{q.question}</p>
-
-        <div className="exam-options">
-          {optionLetters.map(letter => {
-            const isSelected = showAnswer
-              ? selected.includes(letter)
-              : pending.includes(letter)
-            const isCorrectAns = correctAnswers.includes(letter)
-            const votes = getVoteSummary(letter)
-
-            let optionClass = 'exam-option'
-            if (showAnswer && isCorrectAns) optionClass += ' exam-option-correct'
-            if (showAnswer && isSelected && !isCorrectAns) optionClass += ' exam-option-wrong'
-            if (!showAnswer && isSelected) optionClass += ' exam-option-selected'
-
-            return (
-              <button
-                key={letter}
-                className={optionClass}
-                onClick={() => handleToggle(letter)}
-                disabled={showAnswer}
-              >
-                <span className="exam-option-letter">{letter}.</span>
-                <span className="exam-option-text">{q.options[letter]}</span>
-                {showAnswer && isCorrectAns && (
-                  <span className="exam-option-votes">✓ {votes} votes</span>
-                )}
-                {showAnswer && isSelected && !isCorrectAns && (
-                  <span className="exam-option-votes">✗ {votes} votes</span>
-                )}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Multi-select submit button */}
-        {isMulti && !showAnswer && (
-          <div className="exam-multi-actions">
-            <span className="exam-multi-hint">
-              Select {choiceCount} option{choiceCount > 1 ? 's' : ''}
-              {pending.length > 0 && ` (${pending.length}/${choiceCount} selected)`}
-            </span>
-            <button
-              className="exam-btn exam-btn-primary"
-              disabled={!selectionComplete}
-              onClick={submitMulti}
-            >
-              Submit Answer
-            </button>
-          </div>
-        )}
-
-        {/* Answer reveal */}
-        {showAnswer && correctAnswers.length > 0 && (
-          <div className="exam-answer-reveal">
-            <div className="exam-answer-header">
-              <strong>
-                {isMulti ? 'Correct Answers' : 'Community Answer'}: {correctAnswers.join(', ')}.
-              </strong>
-              {!isMulti && <span className="exam-answer-text">{q.community_answer}</span>}
+      <div className="exam-panels">
+        <div className="exam-panel-main">
+          {/* Question card */}
+          <div className="exam-question-card card">
+            <div className="exam-question-topbar">
+              <span className="exam-question-number">
+                Question {currentIndex + 1} of {TOTAL}
+                {isMulti && <span className="exam-multi-badge"> (Choose {choiceCount})</span>}
+              </span>
+              <div className="exam-question-topbar-right">
+                {isFlagged && <span className="exam-flag-badge">⚑ Flagged</span>}
+                <button
+                  className={`exam-btn exam-btn-sm ${isFlagged ? 'exam-btn-active' : ''}`}
+                  onClick={toggleFlag}
+                >
+                  {isFlagged ? '⚑ Unflag' : '⚐ Flag'}
+                </button>
+              </div>
             </div>
-            {isMulti && (
-              <div className="exam-answer-text" style={{ marginTop: 6 }}>
-                {correctAnswers.map(l => q.options[l]).join('; ')}
+
+            <p className="exam-question-text">{q.question}</p>
+
+            <div className="exam-options">
+              {optionLetters.map(letter => {
+                const isSelected = showAnswer
+                  ? selected.includes(letter)
+                  : pending.includes(letter)
+                const isCorrectAns = correctAnswers.includes(letter)
+                const votes = getVoteSummary(letter)
+
+                let optionClass = 'exam-option'
+                if (showAnswer && isCorrectAns) optionClass += ' exam-option-correct'
+                if (showAnswer && isSelected && !isCorrectAns) optionClass += ' exam-option-wrong'
+                if (!showAnswer && isSelected) optionClass += ' exam-option-selected'
+
+                return (
+                  <button
+                    key={letter}
+                    className={optionClass}
+                    onClick={() => handleToggle(letter)}
+                    disabled={showAnswer}
+                  >
+                    <span className="exam-option-letter">{letter}.</span>
+                    <span className="exam-option-text">{q.options[letter]}</span>
+                    {showAnswer && isCorrectAns && (
+                      <span className="exam-option-votes">✓ {votes} votes</span>
+                    )}
+                    {showAnswer && isSelected && !isCorrectAns && (
+                      <span className="exam-option-votes">✗ {votes} votes</span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Multi-select submit button */}
+            {isMulti && !showAnswer && (
+              <div className="exam-multi-actions">
+                <span className="exam-multi-hint">
+                  Select {choiceCount} option{choiceCount > 1 ? 's' : ''}
+                  {pending.length > 0 && ` (${pending.length}/${choiceCount} selected)`}
+                </span>
+                <button
+                  className="exam-btn exam-btn-primary"
+                  disabled={!selectionComplete}
+                  onClick={submitMulti}
+                >
+                  Submit Answer
+                </button>
               </div>
             )}
-            <div className="exam-vote-breakdown">
-              {optionLetters.map(l => {
-                const v = getVoteSummary(l)
-                if (v === 0) return null
+
+            {/* Answer reveal */}
+            {showAnswer && correctAnswers.length > 0 && (
+              <div className="exam-answer-reveal">
+                <div className="exam-answer-header">
+                  <strong>
+                    {isMulti ? 'Correct Answers' : 'Community Answer'}: {correctAnswers.join(', ')}.
+                  </strong>
+                  {!isMulti && <span className="exam-answer-text">{q.community_answer}</span>}
+                </div>
+                {isMulti && (
+                  <div className="exam-answer-text" style={{ marginTop: 6 }}>
+                    {correctAnswers.map(l => q.options[l]).join('; ')}
+                  </div>
+                )}
+                <div className="exam-vote-breakdown">
+                  {optionLetters.map(l => {
+                    const v = getVoteSummary(l)
+                    if (v === 0) return null
+                    return (
+                      <span key={l} className={`exam-vote-chip ${correctAnswers.includes(l) ? 'exam-vote-chip-correct' : ''}`}>
+                        {l}: {v} vote{v !== 1 ? 's' : ''}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Notes */}
+            <div className="exam-notes-section">
+              <button
+                className="exam-btn exam-btn-sm"
+                onClick={() => {
+                  setIsNoteOpen(!isNoteOpen)
+                  if (isNoteOpen) saveNote()
+                }}
+              >
+                📝 {isNoteOpen ? 'Save & Close' : 'Add Note'}
+              </button>
+              {isNoteOpen && (
+                <div className="exam-notes-area">
+                  <textarea
+                    value={noteText}
+                    onChange={e => setNoteText(e.target.value)}
+                    placeholder="Write your note for this question..."
+                    rows={3}
+                  />
+                  <button className="exam-btn exam-btn-sm" onClick={saveNote}>
+                    Save Note
+                  </button>
+                </div>
+              )}
+              {!isNoteOpen && progress.notes[currentIndex] && (
+                <div className="exam-note-preview">
+                  📝 {progress.notes[currentIndex]}
+                </div>
+              )}
+            </div>
+
+            {/* Navigation buttons */}
+            <div className="exam-nav-buttons">
+              <button
+                className="exam-btn"
+                disabled={currentIndex === 0}
+                onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+              >
+                ← Prev
+              </button>
+              <button
+                className="exam-btn exam-btn-primary"
+                onClick={() => setShowAnswer(prev => !prev)}
+              >
+                {showAnswer ? 'Hide Answer' : 'Show Answer'}
+              </button>
+              <button
+                className="exam-btn"
+                disabled={currentIndex === TOTAL - 1}
+                onClick={() => setCurrentIndex(prev => Math.min(TOTAL - 1, prev + 1))}
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="exam-panel-side">
+          {/* Side stats */}
+          <div className="exam-side-stats">
+            <div className="exam-side-stat">
+              <span className="exam-side-stat-value">{stats.answered}/{TOTAL}</span>
+              <span className="exam-side-stat-label">Answered</span>
+            </div>
+            <div className="exam-side-stat exam-side-stat-correct">
+              <span className="exam-side-stat-value">{stats.correct}</span>
+              <span className="exam-side-stat-label">Correct</span>
+            </div>
+            <div className="exam-side-stat exam-side-stat-wrong">
+              <span className="exam-side-stat-value">{stats.wrong}</span>
+              <span className="exam-side-stat-label">Wrong</span>
+            </div>
+            <div className="exam-side-stat exam-side-stat-flagged">
+              <span className="exam-side-stat-value">{stats.flagged}</span>
+              <span className="exam-side-stat-label">Flagged</span>
+            </div>
+          </div>
+
+          {/* Question grid */}
+          <div className="exam-grid-section">
+            <div className="exam-grid-header">
+              <span className="exam-grid-title">Navigator</span>
+              <div className="exam-grid-legend">
+                <span className="exam-legend-item">
+                  <span className="exam-legend-swatch exam-legend-correct" /> 
+                </span>
+                <span className="exam-legend-item">
+                  <span className="exam-legend-swatch exam-legend-wrong" /> 
+                </span>
+                <span className="exam-legend-item">
+                  <span className="exam-legend-swatch exam-legend-flagged" /> 
+                </span>
+              </div>
+            </div>
+            <div className="exam-grid">
+              {visibleIndices.map(idx => {
+                const status = getStatus(idx)
+                const isCurrent = idx === currentIndex
+                const flagged = progress.flags[idx]
+
+                let cls = 'exam-grid-item'
+                if (isCurrent) cls += ' exam-grid-current'
+                if (status === 'correct') cls += ' exam-grid-correct'
+                if (status === 'wrong') cls += ' exam-grid-wrong'
+                if (flagged) cls += ' exam-grid-flagged'
+
                 return (
-                  <span key={l} className={`exam-vote-chip ${correctAnswers.includes(l) ? 'exam-vote-chip-correct' : ''}`}>
-                    {l}: {v} vote{v !== 1 ? 's' : ''}
-                  </span>
+                  <button
+                    key={idx}
+                    className={cls}
+                    onClick={() => setCurrentIndex(idx)}
+                    title={`Q${idx + 1}${flagged ? ' (Flagged)' : ''}${status !== 'unanswered' ? ` (${status})` : ''}`}
+                  >
+                    {idx + 1}
+                  </button>
                 )
               })}
             </div>
           </div>
-        )}
 
-        {/* Notes */}
-        <div className="exam-notes-section">
-          <button
-            className="exam-btn exam-btn-sm"
-            onClick={() => {
-              setIsNoteOpen(!isNoteOpen)
-              if (isNoteOpen) saveNote()
-            }}
-          >
-            📝 {isNoteOpen ? 'Save & Close' : 'Add Note'}
-          </button>
-          {isNoteOpen && (
-            <div className="exam-notes-area">
-              <textarea
-                value={noteText}
-                onChange={e => setNoteText(e.target.value)}
-                placeholder="Write your note for this question..."
-                rows={3}
-              />
-              <button className="exam-btn exam-btn-sm" onClick={saveNote}>
-                Save Note
-              </button>
-            </div>
-          )}
-          {!isNoteOpen && progress.notes[currentIndex] && (
-            <div className="exam-note-preview">
-              📝 {progress.notes[currentIndex]}
-            </div>
-          )}
-        </div>
-
-        {/* Navigation buttons */}
-        <div className="exam-nav-buttons">
-          <button
-            className="exam-btn"
-            disabled={currentIndex === 0}
-            onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-          >
-            ← Prev
-          </button>
-          <button
-            className="exam-btn exam-btn-primary"
-            onClick={() => setShowAnswer(prev => !prev)}
-          >
-            {showAnswer ? 'Hide Answer' : 'Show Answer'}
-          </button>
-          <button
-            className="exam-btn"
-            disabled={currentIndex === TOTAL - 1}
-            onClick={() => setCurrentIndex(prev => Math.min(TOTAL - 1, prev + 1))}
-          >
-            Next →
-          </button>
-        </div>
-      </div>
-
-      {/* Question grid */}
-      <div className="exam-grid-section">
-        <div className="exam-grid-header">
-          <span className="exam-grid-title">Question Navigator</span>
-          <div className="exam-grid-legend">
-            <span className="exam-legend-item">
-              <span className="exam-legend-swatch exam-legend-correct" /> Correct
-            </span>
-            <span className="exam-legend-item">
-              <span className="exam-legend-swatch exam-legend-wrong" /> Wrong
-            </span>
-            <span className="exam-legend-item">
-              <span className="exam-legend-swatch exam-legend-flagged" /> Flagged
-            </span>
-            <span className="exam-legend-item">
-              <span className="exam-legend-swatch exam-legend-unanswered" /> Unanswered
-            </span>
+          {/* Filter & actions */}
+          <div className="exam-side-actions">
+            <label className="exam-filter-label">
+              Show:
+              <select value={filter} onChange={e => setFilter(e.target.value as typeof filter)}>
+                <option value="all">All</option>
+                <option value="unanswered">Unanswered</option>
+                <option value="flagged">Flagged</option>
+                <option value="wrong">Wrong</option>
+              </select>
+            </label>
+            <button className="exam-btn exam-btn-sm" onClick={navigateToNextUnanswered}>
+              Next Unans.
+            </button>
+            <button className="exam-btn exam-btn-sm" onClick={exportProgress}>
+              Export
+            </button>
+            <label className="exam-btn exam-btn-sm exam-btn-file">
+              Import
+              <input type="file" accept=".json" onChange={importProgress} hidden />
+            </label>
+            <button className="exam-btn exam-btn-sm exam-btn-danger" onClick={resetProgress}>
+              Reset
+            </button>
           </div>
-        </div>
-        <div className="exam-grid">
-          {visibleIndices.map(idx => {
-            const status = getStatus(idx)
-            const isCurrent = idx === currentIndex
-            const flagged = progress.flags[idx]
-
-            let cls = 'exam-grid-item'
-            if (isCurrent) cls += ' exam-grid-current'
-            if (status === 'correct') cls += ' exam-grid-correct'
-            if (status === 'wrong') cls += ' exam-grid-wrong'
-            if (flagged) cls += ' exam-grid-flagged'
-
-            return (
-              <button
-                key={idx}
-                className={cls}
-                onClick={() => setCurrentIndex(idx)}
-                title={`Q${idx + 1}${flagged ? ' (Flagged)' : ''}${status !== 'unanswered' ? ` (${status})` : ''}`}
-              >
-                {idx + 1}
-              </button>
-            )
-          })}
         </div>
       </div>
     </div>
