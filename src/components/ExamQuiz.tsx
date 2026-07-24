@@ -73,6 +73,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   const [pending, setPending] = useState<string[]>([])
   const [aiLoading, setAiLoading] = useState(false)
   const [aiResponse, setAiResponse] = useState('')
+  const [aiKey, setAiKey] = useState(() => localStorage.getItem('dahl_api_key') || '')
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
@@ -197,6 +198,13 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   }
 
   const askAI = async () => {
+    let key = aiKey
+    if (!key) {
+      key = window.prompt('Enter your Dahl API key to use AI explanations:')
+      if (!key) return
+      setAiKey(key)
+      localStorage.setItem('dahl_api_key', key)
+    }
     setAiLoading(true)
     setAiResponse('')
     const prompt = `You are an AWS CLF-C02 exam tutor. Explain the following question and why the correct answer is right and the others are wrong.
@@ -211,16 +219,22 @@ Correct Answer(s): ${correctAnswers.join(', ')}
 Provide a clear, concise explanation suitable for someone studying for the AWS Cloud Practitioner exam. Be specific about AWS services and concepts.`
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch('https://inference.dahl.global/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+        headers: {
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'moonshotai/Kimi-K2.6',
+          messages: [{ role: 'user', content: prompt }],
+        }),
       })
       const data = await res.json()
       if (!res.ok) {
-        setAiResponse(`API Error (${res.status}): ${data.error || JSON.stringify(data)}`)
+        setAiResponse(`API Error (${res.status}): ${data.error?.message || JSON.stringify(data).slice(0, 300)}`)
       } else {
-        setAiResponse(data.choices?.[0]?.message?.content || `Unexpected response format: ${JSON.stringify(data).slice(0, 500)}`)
+        setAiResponse(data.choices?.[0]?.message?.content || 'No response from AI')
       }
     } catch (err) {
       setAiResponse(`Network error: ${err instanceof Error ? err.message : 'Unknown'}`)
@@ -430,6 +444,19 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
                   >
                     {aiLoading ? '⏳ Thinking...' : '🤖 Explain with AI'}
                   </button>
+                  {aiKey && (
+                    <button
+                      className="exam-btn exam-btn-sm"
+                      onClick={() => {
+                        localStorage.removeItem('dahl_api_key')
+                        setAiKey('')
+                        setAiResponse('')
+                      }}
+                      style={{ marginLeft: 4 }}
+                    >
+                      Change Key
+                    </button>
+                  )}
                   {aiResponse && (
                     <div className="exam-ai-response">
                       <div className="exam-ai-response-text">{aiResponse}</div>
