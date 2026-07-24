@@ -667,6 +667,33 @@ td {
   font-size: 0.85rem;
   color: #92400E;
   line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.exam-note-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.exam-note-tag-row {
+  margin-bottom: 6px;
+}
+.exam-note-tag-select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+.exam-note-tag-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 /* Nav buttons */

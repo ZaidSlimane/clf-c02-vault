@@ -33,23 +33,26 @@ interface Progress {
   answers: Record<number, string[]>
   flags: Record<number, boolean>
   notes: Record<number, string>
+  tags: Record<number, string>
 }
 
 function loadProgress(): Progress {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    if (!saved) return { answers: {}, flags: {}, notes: {} }
+    if (!saved) return { answers: {}, flags: {}, notes: {}, tags: {} }
     const parsed = JSON.parse(saved)
+    const progress: Progress = { answers: {}, flags: {}, notes: {}, tags: {} }
     if (typeof parsed.answers === 'object' && !Array.isArray(parsed.answers)) {
-      const migrated: Record<number, string[]> = {}
       for (const [k, v] of Object.entries(parsed.answers)) {
-        migrated[Number(k)] = typeof v === 'string' ? [v] : (v as string[])
+        progress.answers[Number(k)] = typeof v === 'string' ? [v] : (v as string[])
       }
-      return { ...parsed, answers: migrated }
     }
-    return { answers: {}, flags: {}, notes: {} }
+    if (parsed.flags) progress.flags = parsed.flags
+    if (parsed.notes) progress.notes = parsed.notes
+    if (parsed.tags) progress.tags = parsed.tags
+    return progress
   } catch {
-    return { answers: {}, flags: {}, notes: {} }
+    return { answers: {}, flags: {}, notes: {}, tags: {} }
   }
 }
 

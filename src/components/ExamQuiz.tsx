@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import questionsData from '../../CLF-C02 questions.json'
+import { sections, domains as domainsData } from '../data/sections'
 
 interface Question {
   url: string
@@ -16,6 +17,7 @@ interface Progress {
   answers: Record<number, string[]>
   flags: Record<number, boolean>
   notes: Record<number, string>
+  tags: Record<number, string>
 }
 
 const STORAGE_KEY = 'clf-c02-exam-progress'
@@ -25,18 +27,20 @@ const TOTAL = questions.length
 function loadProgress(): Progress {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    if (!saved) return { answers: {}, flags: {}, notes: {} }
+    if (!saved) return { answers: {}, flags: {}, notes: {}, tags: {} }
     const parsed = JSON.parse(saved)
+    const progress: Progress = { answers: {}, flags: {}, notes: {}, tags: {} }
     if (typeof parsed.answers === 'object' && !Array.isArray(parsed.answers)) {
-      const migrated: Record<number, string[]> = {}
       for (const [k, v] of Object.entries(parsed.answers)) {
-        migrated[Number(k)] = typeof v === 'string' ? [v] : (v as string[])
+        progress.answers[Number(k)] = typeof v === 'string' ? [v] : (v as string[])
       }
-      return { ...parsed, answers: migrated }
     }
-    return { answers: {}, flags: {}, notes: {} }
+    if (parsed.flags) progress.flags = parsed.flags
+    if (parsed.notes) progress.notes = parsed.notes
+    if (parsed.tags) progress.tags = parsed.tags
+    return progress
   } catch {
-    return { answers: {}, flags: {}, notes: {} }
+    return { answers: {}, flags: {}, notes: {}, tags: {} }
   }
 }
 
@@ -62,6 +66,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   const [showAnswer, setShowAnswer] = useState(false)
   const [noteText, setNoteText] = useState('')
   const [isNoteOpen, setIsNoteOpen] = useState(false)
+  const [noteTag, setNoteTag] = useState('')
   const [filter, setFilter] = useState<'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong'>(
     (initialFilter as 'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong') || 'all'
   )
@@ -80,6 +85,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     setPending(saved ? [...saved] : [])
     setShowAnswer(!!saved)
     setNoteText(progress.notes[currentIndex] || '')
+    setNoteTag(progress.tags[currentIndex] || '')
   }, [currentIndex])
 
   const correctAnswers = q ? getCorrectAnswers(q, choiceCount) : []
@@ -179,14 +185,18 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     const trimmed = noteText.trim()
     setProgress(prev => {
       const notes = { ...prev.notes }
+      const tags = { ...prev.tags }
       if (trimmed) notes[currentIndex] = trimmed
       else delete notes[currentIndex]
-      return { ...prev, notes }
+      if (noteTag) tags[currentIndex] = noteTag
+      else delete tags[currentIndex]
+      return { ...prev, notes, tags }
     })
   }
 
   const exportProgress = () => {
-    const blob = new Blob([JSON.stringify(progress, null, 2)], { type: 'application/json' })
+    const data = { answers: progress.answers, flags: progress.flags, notes: progress.notes, tags: progress.tags }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -207,7 +217,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
           for (const [k, v] of Object.entries(data.answers)) {
             migrated[Number(k)] = typeof v === 'string' ? [v] : v as string[]
           }
-          setProgress({ ...data, answers: migrated })
+          setProgress({ answers: migrated, flags: data.flags, notes: data.notes, tags: data.tags || {} })
         }
       } catch { }
     }
@@ -217,7 +227,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
 
   const resetProgress = () => {
     if (window.confirm('Reset all quiz progress?')) {
-      setProgress({ answers: {}, flags: {}, notes: {} })
+      setProgress({ answers: {}, flags: {}, notes: {}, tags: {} })
       setCurrentIndex(0)
     }
   }
@@ -393,6 +403,24 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
               </button>
               {isNoteOpen && (
                 <div className="exam-notes-area">
+                  <div className="exam-note-tag-row">
+                    <select
+                      value={noteTag}
+                      onChange={e => setNoteTag(e.target.value)}
+                      className="exam-note-tag-select"
+                    >
+                      <option value="">— No section tag —</option>
+                      {domainsData.map(d => (
+                        <optgroup key={d.id} label={`${d.title}${d.weight ? ` (${d.weight}%)` : ''}`}>
+                          {sections.filter(s => s.domainId === d.id).map(s => (
+                            <option key={s.id} value={s.id}>
+                              {s.title}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+                  </div>
                   <textarea
                     value={noteText}
                     onChange={e => setNoteText(e.target.value)}
@@ -404,9 +432,16 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
                   </button>
                 </div>
               )}
-              {!isNoteOpen && progress.notes[currentIndex] && (
+              {!isNoteOpen && (progress.notes[currentIndex] || progress.tags[currentIndex]) && (
                 <div className="exam-note-preview">
-                  📝 {progress.notes[currentIndex]}
+                  {progress.tags[currentIndex] && (
+                    <span className="exam-note-tag">
+                      {sections.find(s => s.id === progress.tags[currentIndex])?.domainTitle}
+                      {' › '}
+                      {sections.find(s => s.id === progress.tags[currentIndex])?.title}
+                    </span>
+                  )}
+                  {progress.notes[currentIndex] && <span>{progress.notes[currentIndex]}</span>}
                 </div>
               )}
             </div>
