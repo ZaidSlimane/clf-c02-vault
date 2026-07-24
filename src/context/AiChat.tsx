@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
 
 export interface Conversation {
   id: string
@@ -42,10 +42,44 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   const openSidebar = useCallback(() => setSidebarOpen(true), [])
   const closeSidebar = useCallback(() => setSidebarOpen(false), [])
 
+  const authToken = () => localStorage.getItem('clf-c02-auth-token')
+
+  useEffect(() => {
+    const token = authToken()
+    if (!token) return
+    fetch('/api/conversations', {
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(serverConvs => {
+        if (!serverConvs || !Array.isArray(serverConvs)) return
+        const local = loadConversations()
+        const server = serverConvs.map((c: { id: number; question_text: string; answer: string; created_at: string }) => ({
+          id: c.id.toString(),
+          questionText: c.question_text,
+          answer: c.answer,
+          timestamp: new Date(c.created_at).getTime(),
+        }))
+        const merged = [...new Map([...local, ...server].map(c => [c.id, c])).values()]
+          .sort((a, b) => b.timestamp - a.timestamp)
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+        setConversations(merged)
+      })
+      .catch(() => {})
+  }, [])
+
   const addConversation = useCallback((questionText: string, answer: string) => {
+    const token = authToken()
+    if (token) {
+      fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ question_text: questionText, answer }),
+      }).catch(() => {})
+    }
     setConversations(prev => {
       const next: Conversation[] = [
-        { id: Date.now().toString(), questionText, answer, timestamp: Date.now() },
+        { id: 'local-' + Date.now().toString(), questionText, answer, timestamp: Date.now() },
         ...prev,
       ]
       persist(next)
@@ -54,6 +88,11 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   }, [persist])
 
   const clearConversations = useCallback(() => {
+    const token = authToken()
+    if (token) {
+      fetch('/api/conversations', { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
+        .catch(() => {})
+    }
     setConversations([])
     localStorage.removeItem(STORAGE_KEY)
   }, [])

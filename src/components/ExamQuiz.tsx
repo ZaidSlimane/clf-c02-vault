@@ -1,7 +1,9 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import questionsData from '../../CLF-C02 questions.json'
 import { sections, domains as domainsData } from '../data/sections'
 import { useAiChat } from '../context/AiChat'
+import { useAuth } from '../context/AuthContext'
+import { fetchProgress, saveFullProgress } from '../services/api'
 
 interface Question {
   url: string
@@ -63,6 +65,7 @@ function isAnswerCorrect(selected: string[], correct: string[]): boolean {
 
 export default function ExamQuiz({ initialFilter }: { initialFilter?: string | null }) {
   const { addConversation, openSidebar } = useAiChat()
+  const { token } = useAuth()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [progress, setProgress] = useState<Progress>(loadProgress)
   const [showAnswer, setShowAnswer] = useState(false)
@@ -75,10 +78,49 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   const [pending, setPending] = useState<string[]>([])
   const [aiLoading, setAiLoading] = useState(false)
   const [aiKey, setAiKey] = useState(() => localStorage.getItem('dahl_api_key') || '')
+  const syncRef = useRef<ReturnType<typeof setTimeout>>()
+  const initRef = useRef(false)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
-  }, [progress])
+    if (token && initRef.current) {
+      clearTimeout(syncRef.current)
+      syncRef.current = setTimeout(() => {
+        saveFullProgress({
+          answers: Object.fromEntries(
+            Object.entries(progress.answers).map(([k, v]) => [k, v])
+          ),
+          flags: progress.flags,
+          notes: progress.notes,
+          tags: progress.tags,
+        }).catch(() => {})
+      }, 2000)
+    }
+    return () => clearTimeout(syncRef.current)
+  }, [progress, token])
+
+  useEffect(() => {
+    if (token) {
+      fetchProgress()
+        .then(serverProgress => {
+          const local = loadProgress()
+          const merged: Progress = {
+            answers: { ...local.answers, ...Object.fromEntries(
+              Object.entries(serverProgress.answers || {}).map(([k, v]) => [Number(k), v])
+            )},
+            flags: { ...local.flags, ...serverProgress.flags },
+            notes: { ...local.notes, ...serverProgress.notes },
+            tags: { ...local.tags, ...serverProgress.tags },
+          }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+          setProgress(merged)
+          initRef.current = true
+        })
+        .catch(() => { initRef.current = true })
+    } else {
+      initRef.current = true
+    }
+  }, [token])
 
   const q = questions[currentIndex]
   const choiceCount = q ? getRequiredChoices(q.question) : 1
