@@ -13,7 +13,7 @@ interface Question {
 }
 
 interface Progress {
-  answers: Record<number, string>
+  answers: Record<number, string[]>
   flags: Record<number, boolean>
   notes: Record<number, string>
 }
@@ -25,10 +25,35 @@ const TOTAL = questions.length
 function loadProgress(): Progress {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : { answers: {}, flags: {}, notes: {} }
+    if (!saved) return { answers: {}, flags: {}, notes: {} }
+    const parsed = JSON.parse(saved)
+    if (typeof parsed.answers === 'object' && !Array.isArray(parsed.answers)) {
+      const migrated: Record<number, string[]> = {}
+      for (const [k, v] of Object.entries(parsed.answers)) {
+        migrated[Number(k)] = typeof v === 'string' ? [v] : (v as string[])
+      }
+      return { ...parsed, answers: migrated }
+    }
+    return { answers: {}, flags: {}, notes: {} }
   } catch {
     return { answers: {}, flags: {}, notes: {} }
   }
+}
+
+function getRequiredChoices(question: string): number {
+  const t = question.toLowerCase()
+  if (/\b(choose|select)\s+(two|2)\b/.test(t) || /\bwhich\s+two\b/.test(t)) return 2
+  return 1
+}
+
+function getCorrectAnswers(q: Question, count: number): string[] {
+  const entries = Object.entries(q.vote_counts || {}).sort((a, b) => b[1] - a[1])
+  return entries.slice(0, count).map(([letter]) => letter)
+}
+
+function isAnswerCorrect(selected: string[], correct: string[]): boolean {
+  if (selected.length !== correct.length) return false
+  return selected.every(s => correct.includes(s))
 }
 
 export default function ExamQuiz() {
@@ -38,22 +63,33 @@ export default function ExamQuiz() {
   const [noteText, setNoteText] = useState('')
   const [isNoteOpen, setIsNoteOpen] = useState(false)
   const [filter, setFilter] = useState<'all' | 'unanswered' | 'flagged' | 'wrong'>('all')
+  const [pending, setPending] = useState<string[]>([])
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
   }, [progress])
 
+  const q = questions[currentIndex]
+  const choiceCount = q ? getRequiredChoices(q.question) : 1
+  const isMulti = choiceCount > 1
+
   useEffect(() => {
+    const saved = progress.answers[currentIndex]
+    setPending(saved ? [...saved] : [])
+    setShowAnswer(!!saved)
     setNoteText(progress.notes[currentIndex] || '')
-    setShowAnswer(!!progress.answers[currentIndex])
   }, [currentIndex])
 
-  const q = questions[currentIndex]
+  const correctAnswers = q ? getCorrectAnswers(q, choiceCount) : []
 
   const stats = useMemo(() => {
     let correct = 0
-    for (const [idx, ans] of Object.entries(progress.answers)) {
-      if (questions[Number(idx)]?.most_voted === ans) correct++
+    for (const [idx, selected] of Object.entries(progress.answers)) {
+      const qq = questions[Number(idx)]
+      if (!qq) continue
+      const cnt = getRequiredChoices(qq.question)
+      const correctSet = getCorrectAnswers(qq, cnt)
+      if (isAnswerCorrect(selected, correctSet)) correct++
     }
     return {
       answered: Object.keys(progress.answers).length,
@@ -70,8 +106,17 @@ export default function ExamQuiz() {
         return indices.filter(i => !(i in progress.answers))
       case 'flagged':
         return indices.filter(i => progress.flags[i])
-      case 'wrong':
-        return indices.filter(i => i in progress.answers && progress.answers[i] !== questions[i]?.most_voted)
+      case 'wrong': {
+        return indices.filter(i => {
+          const sel = progress.answers[i]
+          if (!sel) return false
+          const qq = questions[i]
+          if (!qq) return false
+          const cnt = getRequiredChoices(qq.question)
+          const correctSet = getCorrectAnswers(qq, cnt)
+          return !isAnswerCorrect(sel, correctSet)
+        })
+      }
       default:
         return indices
     }
@@ -80,14 +125,30 @@ export default function ExamQuiz() {
   if (!q) return null
 
   const optionLetters = Object.keys(q.options)
-  const selected = progress.answers[currentIndex]
   const isFlagged = progress.flags[currentIndex] || false
-  const correctAnswer = q.most_voted
+  const selected = progress.answers[currentIndex] || []
 
-  const handleSelect = (letter: string) => {
+  const handleToggle = (letter: string) => {
+    if (showAnswer) return
+    if (isMulti) {
+      setPending(prev => {
+        if (prev.includes(letter)) return prev.filter(l => l !== letter)
+        if (prev.length >= choiceCount) return prev
+        return [...prev, letter]
+      })
+    } else {
+      setProgress(prev => ({
+        ...prev,
+        answers: { ...prev.answers, [currentIndex]: [letter] },
+      }))
+      setShowAnswer(true)
+    }
+  }
+
+  const submitMulti = () => {
     setProgress(prev => ({
       ...prev,
-      answers: { ...prev.answers, [currentIndex]: letter },
+      answers: { ...prev.answers, [currentIndex]: [...pending] },
     }))
     setShowAnswer(true)
   }
@@ -129,7 +190,11 @@ export default function ExamQuiz() {
       try {
         const data = JSON.parse(reader.result as string)
         if (data.answers && data.flags !== undefined && data.notes !== undefined) {
-          setProgress(data)
+          const migrated: Record<number, string[]> = {}
+          for (const [k, v] of Object.entries(data.answers)) {
+            migrated[Number(k)] = typeof v === 'string' ? [v] : v as string[]
+          }
+          setProgress({ ...data, answers: migrated })
         }
       } catch { }
     }
@@ -154,15 +219,21 @@ export default function ExamQuiz() {
   }
 
   const getStatus = (idx: number) => {
-    const ans = progress.answers[idx]
-    if (!ans) return 'unanswered'
-    return ans === questions[idx]?.most_voted ? 'correct' : 'wrong'
+    const sel = progress.answers[idx]
+    if (!sel) return 'unanswered'
+    const qq = questions[idx]
+    if (!qq) return 'unanswered'
+    const cnt = getRequiredChoices(qq.question)
+    const correctSet = getCorrectAnswers(qq, cnt)
+    return isAnswerCorrect(sel, correctSet) ? 'correct' : 'wrong'
   }
 
   const getVoteSummary = (letter: string) => {
     const counts = q.vote_counts || {}
     return counts[letter] || 0
   }
+
+  const selectionComplete = isMulti ? pending.length === choiceCount : true
 
   return (
     <div className="exam-quiz">
@@ -231,6 +302,7 @@ export default function ExamQuiz() {
         <div className="exam-question-topbar">
           <span className="exam-question-number">
             Question {currentIndex + 1} of {TOTAL}
+            {isMulti && <span className="exam-multi-badge"> (Choose {choiceCount})</span>}
           </span>
           <div className="exam-question-topbar-right">
             {isFlagged && <span className="exam-flag-badge">⚑ Flagged</span>}
@@ -247,19 +319,22 @@ export default function ExamQuiz() {
 
         <div className="exam-options">
           {optionLetters.map(letter => {
-            const isSelected = selected === letter
-            const isCorrectAns = correctAnswer === letter
+            const isSelected = showAnswer
+              ? selected.includes(letter)
+              : pending.includes(letter)
+            const isCorrectAns = correctAnswers.includes(letter)
             const votes = getVoteSummary(letter)
 
             let optionClass = 'exam-option'
             if (showAnswer && isCorrectAns) optionClass += ' exam-option-correct'
             if (showAnswer && isSelected && !isCorrectAns) optionClass += ' exam-option-wrong'
+            if (!showAnswer && isSelected) optionClass += ' exam-option-selected'
 
             return (
               <button
                 key={letter}
                 className={optionClass}
-                onClick={() => handleSelect(letter)}
+                onClick={() => handleToggle(letter)}
                 disabled={showAnswer}
               >
                 <span className="exam-option-letter">{letter}.</span>
@@ -275,19 +350,43 @@ export default function ExamQuiz() {
           })}
         </div>
 
+        {/* Multi-select submit button */}
+        {isMulti && !showAnswer && (
+          <div className="exam-multi-actions">
+            <span className="exam-multi-hint">
+              Select {choiceCount} option{choiceCount > 1 ? 's' : ''}
+              {pending.length > 0 && ` (${pending.length}/${choiceCount} selected)`}
+            </span>
+            <button
+              className="exam-btn exam-btn-primary"
+              disabled={!selectionComplete}
+              onClick={submitMulti}
+            >
+              Submit Answer
+            </button>
+          </div>
+        )}
+
         {/* Answer reveal */}
-        {showAnswer && correctAnswer && (
+        {showAnswer && correctAnswers.length > 0 && (
           <div className="exam-answer-reveal">
             <div className="exam-answer-header">
-              <strong>Community Answer: {correctAnswer}.</strong>
-              <span className="exam-answer-text">{q.community_answer}</span>
+              <strong>
+                {isMulti ? 'Correct Answers' : 'Community Answer'}: {correctAnswers.join(', ')}.
+              </strong>
+              {!isMulti && <span className="exam-answer-text">{q.community_answer}</span>}
             </div>
+            {isMulti && (
+              <div className="exam-answer-text" style={{ marginTop: 6 }}>
+                {correctAnswers.map(l => q.options[l]).join('; ')}
+              </div>
+            )}
             <div className="exam-vote-breakdown">
               {optionLetters.map(l => {
                 const v = getVoteSummary(l)
                 if (v === 0) return null
                 return (
-                  <span key={l} className={`exam-vote-chip ${correctAnswer === l ? 'exam-vote-chip-correct' : ''}`}>
+                  <span key={l} className={`exam-vote-chip ${correctAnswers.includes(l) ? 'exam-vote-chip-correct' : ''}`}>
                     {l}: {v} vote{v !== 1 ? 's' : ''}
                   </span>
                 )
