@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom'
 import HeroHeader from '../components/HeroHeader'
-import StudyNotes from '../components/StudyNotes'
-import DomainCard from '../components/DomainCard'
+import NotesTimeline from '../components/NotesTimeline'
 import FocusToday from '../components/FocusToday'
-import RecentActivity from '../components/RecentActivity'
 import WeeklyConsistency from '../components/WeeklyConsistency'
 import PracticeExams from '../components/PracticeExams'
 import QuizProgressCard from '../components/QuizProgressCard'
@@ -15,7 +13,7 @@ export default function Dashboard() {
       <HeroHeader />
 
       <section className="section">
-        <StudyNotes />
+        <NotesTimeline />
       </section>
 
       <section className="section">
@@ -32,16 +30,6 @@ export default function Dashboard() {
 
       <section className="section">
         <FocusToday />
-      </section>
-
-      <section className="section">
-        <div className="section-header">
-          <span className="section-icon">📝</span>
-          <h2>Recent Study Activity</h2>
-        </div>
-        <div className="card">
-          <RecentActivity />
-        </div>
       </section>
 
       <section className="section">

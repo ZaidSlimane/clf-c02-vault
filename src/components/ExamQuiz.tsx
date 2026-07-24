@@ -21,6 +21,7 @@ interface Progress {
   flags: Record<number, boolean>
   notes: Record<number, string>
   tags: Record<number, string>
+  noteTimestamps: Record<number, number>
 }
 
 const STORAGE_KEY = 'clf-c02-exam-progress'
@@ -30,9 +31,9 @@ const TOTAL = questions.length
 function loadProgress(): Progress {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    if (!saved) return { answers: {}, flags: {}, notes: {}, tags: {} }
+    if (!saved) return { answers: {}, flags: {}, notes: {}, tags: {}, noteTimestamps: {} }
     const parsed = JSON.parse(saved)
-    const progress: Progress = { answers: {}, flags: {}, notes: {}, tags: {} }
+    const progress: Progress = { answers: {}, flags: {}, notes: {}, tags: {}, noteTimestamps: {} }
     if (typeof parsed.answers === 'object' && !Array.isArray(parsed.answers)) {
       for (const [k, v] of Object.entries(parsed.answers)) {
         progress.answers[Number(k)] = typeof v === 'string' ? [v] : (v as string[])
@@ -41,9 +42,10 @@ function loadProgress(): Progress {
     if (parsed.flags) progress.flags = parsed.flags
     if (parsed.notes) progress.notes = parsed.notes
     if (parsed.tags) progress.tags = parsed.tags
+    if (parsed.noteTimestamps) progress.noteTimestamps = parsed.noteTimestamps
     return progress
   } catch {
-    return { answers: {}, flags: {}, notes: {}, tags: {} }
+    return { answers: {}, flags: {}, notes: {}, tags: {}, noteTimestamps: {} }
   }
 }
 
@@ -93,6 +95,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
           flags: progress.flags,
           notes: progress.notes,
           tags: progress.tags,
+          noteTimestamps: progress.noteTimestamps,
         }).catch(() => {})
       }, 2000)
     }
@@ -111,6 +114,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
             flags: { ...local.flags, ...serverProgress.flags },
             notes: { ...local.notes, ...serverProgress.notes },
             tags: { ...local.tags, ...serverProgress.tags },
+            noteTimestamps: { ...local.noteTimestamps, ...serverProgress.noteTimestamps },
           }
           localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
           setProgress(merged)
@@ -232,11 +236,17 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     setProgress(prev => {
       const notes = { ...prev.notes }
       const tags = { ...prev.tags }
-      if (trimmed) notes[currentIndex] = trimmed
-      else delete notes[currentIndex]
+      const noteTimestamps = { ...prev.noteTimestamps }
+      if (trimmed) {
+        notes[currentIndex] = trimmed
+        noteTimestamps[currentIndex] = Date.now()
+      } else {
+        delete notes[currentIndex]
+        delete noteTimestamps[currentIndex]
+      }
       if (noteTag) tags[currentIndex] = noteTag
       else delete tags[currentIndex]
-      return { ...prev, notes, tags }
+      return { ...prev, notes, tags, noteTimestamps }
     })
   }
 
@@ -290,7 +300,7 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
   }
 
   const exportProgress = () => {
-    const data = { answers: progress.answers, flags: progress.flags, notes: progress.notes, tags: progress.tags }
+    const data = { answers: progress.answers, flags: progress.flags, notes: progress.notes, tags: progress.tags, noteTimestamps: progress.noteTimestamps }
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -312,7 +322,7 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
           for (const [k, v] of Object.entries(data.answers)) {
             migrated[Number(k)] = typeof v === 'string' ? [v] : v as string[]
           }
-          setProgress({ answers: migrated, flags: data.flags, notes: data.notes, tags: data.tags || {} })
+          setProgress({ answers: migrated, flags: data.flags, notes: data.notes, tags: data.tags || {}, noteTimestamps: data.noteTimestamps || {} })
         }
       } catch { }
     }

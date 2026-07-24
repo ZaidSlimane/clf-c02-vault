@@ -12,6 +12,7 @@ export interface FullProgress {
   flags: Record<string, boolean>
   notes: Record<string, string>
   tags: Record<string, string>
+  noteTimestamps: Record<string, number>
 }
 
 export interface Conversation {
