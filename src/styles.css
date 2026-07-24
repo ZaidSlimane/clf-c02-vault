@@ -859,6 +859,15 @@ td {
 /* Override grid section padding in sidebar */
 .exam-panel-side .exam-grid-section {
   padding: 14px;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+}
+.exam-panel-side .exam-grid-section::-webkit-scrollbar {
+  width: 4px;
+}
+.exam-panel-side .exam-grid-section::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
 }
 .exam-panel-side .exam-grid-item {
   width: 32px;
