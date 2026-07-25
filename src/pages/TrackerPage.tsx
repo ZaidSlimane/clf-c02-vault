@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { courseDomains, getTotalLectures } from '../data/courseData'
 
@@ -15,12 +15,26 @@ function loadLocal(): LectureProgress {
   }
 }
 
+function highlight(text: string, query: string): JSX.Element {
+  if (!query.trim()) return <>{text}</>
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
+  const parts = text.split(regex)
+  return <>{parts.map((p, i) => regex.test(p) ? <mark key={i} className="tr-match">{p}</mark> : p)}</>
+}
+
+function matchesQuery(text: string, query: string): boolean {
+  if (!query.trim()) return true
+  return text.toLowerCase().includes(query.toLowerCase())
+}
+
 export default function TrackerPage() {
   const { token } = useAuth()
   const [lectures, setLectures] = useState<LectureProgress>(loadLocal)
   const [openDomains, setOpenDomains] = useState<Record<string, boolean>>({})
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
   const [syncing, setSyncing] = useState(false)
+  const [search, setSearch] = useState('')
+  const searchRef = useRef<HTMLInputElement>(null)
 
   const total = useMemo(() => getTotalLectures(), [])
   const completed = useMemo(() => Object.values(lectures).filter(Boolean).length, [lectures])
@@ -57,6 +71,42 @@ export default function TrackerPage() {
       })
       .catch(() => {})
   }, [token])
+
+  useEffect(() => {
+    if (search.trim()) {
+      const toOpenDomains: Record<string, boolean> = {}
+      const toOpenSections: Record<string, boolean> = {}
+      for (const d of courseDomains) {
+        for (const s of d.sections) {
+          const sectionMatch = matchesQuery(s.title, search)
+          for (const l of s.lectures) {
+            if (sectionMatch || matchesQuery(l.title, search) || matchesQuery(l.id, search)) {
+              toOpenDomains[d.id] = true
+              toOpenSections[s.id] = true
+            }
+          }
+        }
+      }
+      setOpenDomains(toOpenDomains)
+      setOpenSections(toOpenSections)
+    }
+  }, [search])
+
+  const searchMatches = useMemo(() => {
+    if (!search.trim()) return null
+    const matchIds = new Set<string>()
+    for (const d of courseDomains) {
+      for (const s of d.sections) {
+        const sectionMatch = matchesQuery(s.title, search)
+        for (const l of s.lectures) {
+          if (sectionMatch || matchesQuery(l.title, search) || matchesQuery(l.id, search)) {
+            matchIds.add(l.id)
+          }
+        }
+      }
+    }
+    return matchIds
+  }, [search])
 
   const toggle = useCallback((id: string) => {
     setLectures(prev => ({ ...prev, [id]: !prev[id] }))
@@ -143,8 +193,28 @@ export default function TrackerPage() {
         </div>
       </div>
 
-      <div className="tracker-domains">
-        {courseDomains.map(domain => {
+      <div className="tracker-search">
+        <input
+          ref={searchRef}
+          type="text"
+          className="tracker-search-input"
+          placeholder="Search lectures, sections, or IDs..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        {search && (
+          <span className="tracker-search-count">
+            {searchMatches ? searchMatches.size : 0} match{searchMatches?.size !== 1 ? 'es' : ''}
+          </span>
+        )}
+        {search && (
+          <button className="tracker-search-clear" onClick={() => { setSearch(''); setOpenDomains({}); setOpenSections({}) }}>
+            ✕
+          </button>
+        )}
+      </div>
+
+      <div className="tracker-domains">{courseDomains.map(domain => {
           const dc = domainCompleted(domain.id)
           const dt = domainTotal(domain.id)
           const dp = dt > 0 ? Math.round((dc / dt) * 100) : 0
@@ -189,22 +259,24 @@ export default function TrackerPage() {
                           </div>
                         </button>
 
-                        {secOpen && (
-                          <div className="tracker-lectures">
-                            {section.lectures.map(l => (
-                              <label key={l.id} className="tracker-lecture">
-                                <input
-                                  type="checkbox"
-                                  className="tracker-lecture-checkbox"
-                                  checked={!!lectures[l.id]}
-                                  onChange={() => toggle(l.id)}
-                                />
-                                <span className="tracker-lecture-id">{l.id}</span>
-                                <span className="tracker-lecture-title">{l.title}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
+              {secOpen && (
+                  <div className="tracker-lectures">
+                    {section.lectures
+                      .filter(l => !searchMatches || searchMatches.has(l.id))
+                      .map(l => (
+                      <label key={l.id} className="tracker-lecture">
+                        <input
+                          type="checkbox"
+                          className="tracker-lecture-checkbox"
+                          checked={!!lectures[l.id]}
+                          onChange={() => toggle(l.id)}
+                        />
+                        <span className="tracker-lecture-id">{highlight(l.id, search)}</span>
+                        <span className="tracker-lecture-title">{highlight(l.title, search)}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
                       </div>
                     )
                   })}
