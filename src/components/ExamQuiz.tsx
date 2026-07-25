@@ -24,6 +24,8 @@ interface Progress {
   notes: Record<number, string>
   tags: Record<number, string>
   noteTimestamps: Record<number, number>
+  currentIndex?: number
+  filter?: string
 }
 
 const STORAGE_KEY = 'clf-c02-exam-progress'
@@ -45,6 +47,8 @@ function loadProgress(): Progress {
     if (parsed.notes) progress.notes = parsed.notes
     if (parsed.tags) progress.tags = parsed.tags
     if (parsed.noteTimestamps) progress.noteTimestamps = parsed.noteTimestamps
+    if (typeof parsed.currentIndex === 'number') progress.currentIndex = parsed.currentIndex
+    if (typeof parsed.filter === 'string') progress.filter = parsed.filter
     return progress
   } catch {
     return { answers: {}, flags: {}, notes: {}, tags: {}, noteTimestamps: {} }
@@ -70,13 +74,15 @@ function isAnswerCorrect(selected: string[], correct: string[]): boolean {
 export default function ExamQuiz({ initialFilter }: { initialFilter?: string | null }) {
   const { addConversation, openSidebar } = useAiChat()
   const { token } = useAuth()
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [progress, setProgress] = useState<Progress>(loadProgress)
+  const initialProgress = useMemo(() => loadProgress(), [])
+  const [currentIndex, setCurrentIndex] = useState(initialProgress.currentIndex ?? 0)
+  const [progress, setProgress] = useState<Progress>(initialProgress)
   const [showAnswer, setShowAnswer] = useState(false)
   const [noteText, setNoteText] = useState('')
   const [isNoteOpen, setIsNoteOpen] = useState(false)
   const [noteTag, setNoteTag] = useState('')
   const [filter, setFilter] = useState<'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong'>(
+    (initialProgress.filter as 'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong') ||
     (initialFilter as 'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong') || 'all'
   )
   const [pending, setPending] = useState<string[]>([])
@@ -103,6 +109,10 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     }
     return () => clearTimeout(syncRef.current)
   }, [progress, token])
+
+  useEffect(() => {
+    setProgress(prev => ({ ...prev, currentIndex, filter }))
+  }, [currentIndex, filter])
 
   useEffect(() => {
     if (token) {
