@@ -72,10 +72,34 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const addConversation = useCallback((questionText: string, answer: string) => {
+    const token = authToken()
+    const localId = 'local-' + Date.now().toString()
+
+    if (token) {
+      fetch('/api/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ question_text: questionText, answer }),
+      })
+        .then(r => r.ok ? r.json() : null)
+        .then(serverConv => {
+          if (serverConv?.id) {
+            setConversations(prev => {
+              const updated = prev.map(c =>
+                c.id === localId ? { ...c, id: serverConv.id.toString() } : c
+              )
+              persist(updated)
+              return updated
+            })
+          }
+        })
+        .catch(() => {})
+    }
+
     setConversations(prev => {
       const next: Conversation[] = [
         ...prev,
-        { id: 'local-' + Date.now().toString(), questionText, answer, timestamp: Date.now() },
+        { id: localId, questionText, answer, timestamp: Date.now() },
       ]
       persist(next)
       return next
