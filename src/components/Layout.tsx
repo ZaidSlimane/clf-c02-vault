@@ -4,6 +4,15 @@ import { useAiChat } from '../context/AiChat'
 import { useAuth } from '../context/AuthContext'
 import AiSidebar from './AiSidebar'
 
+function useTheme() {
+  const [theme, setTheme] = useState(() => localStorage.getItem('clf-c02-theme') || 'light')
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('clf-c02-theme', theme)
+  }, [theme])
+  return [theme, () => setTheme(t => t === 'dark' ? 'light' : 'dark')] as const
+}
+
 export default function Layout() {
   const location = useLocation()
   const { sidebarOpen } = useAiChat()
@@ -11,6 +20,7 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const isActive = (path: string) => location.pathname === path ? 'active' : ''
+  const [theme, toggleTheme] = useTheme()
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -36,6 +46,9 @@ export default function Layout() {
               <Link to="/" className={isActive('/')}>Dashboard</Link>
               <Link to="/tracker" className={isActive('/tracker')}>Tracker</Link>
               <Link to="/exam" className={isActive('/exam')}>Exam</Link>
+              <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+                {theme === 'dark' ? '☀️' : '🌙'}
+              </button>
               {user && (
                 <div className="user-menu" ref={menuRef}>
                   <button className="user-menu-trigger" onClick={() => setMenuOpen(!menuOpen)}>
