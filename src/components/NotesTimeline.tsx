@@ -104,7 +104,6 @@ export default function NotesTimeline() {
         tag: tags[Number(idx)] || '',
         ts: noteTimestamps[Number(idx)] || 0,
       }))
-      .filter(e => e.ts > 0)
       .sort((a, b) => b.ts - a.ts)
 
     setTotalNotes(entries.length)
