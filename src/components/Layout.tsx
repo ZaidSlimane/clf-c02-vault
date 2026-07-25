@@ -21,6 +21,7 @@ export default function Layout() {
             </Link>
             <nav className="header-nav">
               <Link to="/" className={isActive('/')}>Dashboard</Link>
+              <Link to="/tracker" className={isActive('/tracker')}>Tracker</Link>
               <Link to="/exam" className={isActive('/exam')}>Exam</Link>
               {user && (
                 <span className="header-user">

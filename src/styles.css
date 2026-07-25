@@ -1374,6 +1374,322 @@ td {
   margin-left: auto;
 }
 
+/* ── Course Tracker ── */
+.tracker-page {
+  padding-top: 24px;
+}
+
+.tracker-hero {
+  text-align: center;
+  padding: 32px 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+}
+.tracker-hero h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.tracker-hero-sub {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+}
+.tracker-hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+.tracker-hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tracker-hero-pct {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  line-height: 1.1;
+}
+.tracker-hero-count {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.1;
+}
+.tracker-hero-total {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.tracker-hero-label {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.tracker-hero-bar {
+  height: 12px;
+  background: var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.tracker-hero-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+  transition: width 0.5s ease;
+}
+.tracker-hero-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.tracker-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+}
+.tracker-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.tracker-legend-label {
+  font-weight: 500;
+}
+.tracker-legend-pct {
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.tracker-domains {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tracker-domain {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-text-muted);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.tracker-domain-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  gap: 12px;
+  transition: background 0.1s;
+}
+.tracker-domain-header:hover {
+  background: var(--color-bg);
+}
+.tracker-domain-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.tracker-domain-expand {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+.tracker-domain-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.tracker-domain-weight {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 8px;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+.tracker-domain-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.tracker-domain-nums {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  min-width: 48px;
+  text-align: right;
+}
+.tracker-domain-bar {
+  width: 100px;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.tracker-domain-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.tracker-sections {
+  border-top: 1px solid var(--color-border);
+  padding: 8px 16px 8px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tracker-section {
+  border-radius: var(--radius-sm);
+}
+.tracker-section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  gap: 10px;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.tracker-section-header:hover {
+  background: var(--color-bg);
+}
+.tracker-section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.tracker-section-expand {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 12px;
+  text-align: center;
+}
+.tracker-section-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.tracker-section-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.tracker-section-nums {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  min-width: 40px;
+  text-align: right;
+}
+.tracker-section-bar {
+  width: 80px;
+  height: 5px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.tracker-section-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.tracker-lectures {
+  padding: 4px 0 6px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tracker-lecture {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.1s;
+}
+.tracker-lecture:hover {
+  background: var(--color-bg);
+}
+.tracker-lecture-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+.tracker-lecture-id {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+  width: 56px;
+}
+.tracker-lecture-title {
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.tracker-footer {
+  text-align: center;
+  padding: 32px 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.tracker-syncing {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  animation: tracker-pulse 1.2s ease-in-out infinite;
+}
+@keyframes tracker-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
 /* ── Auth ── */
 .auth-page {
   min-height: 100vh;

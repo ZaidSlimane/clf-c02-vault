@@ -1,0 +1,224 @@
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { courseDomains, getTotalLectures } from '../data/courseData'
+
+type LectureProgress = Record<string, boolean>
+
+const STORAGE_KEY = 'clf-c02-tracker-progress'
+
+function loadLocal(): LectureProgress {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    return saved ? JSON.parse(saved) : {}
+  } catch {
+    return {}
+  }
+}
+
+export default function TrackerPage() {
+  const { token } = useAuth()
+  const [lectures, setLectures] = useState<LectureProgress>(loadLocal)
+  const [openDomains, setOpenDomains] = useState<Record<string, boolean>>({})
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
+  const [syncing, setSyncing] = useState(false)
+
+  const total = useMemo(() => getTotalLectures(), [])
+  const completed = useMemo(() => Object.values(lectures).filter(Boolean).length, [lectures])
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lectures))
+    if (token) {
+      clearTimeout((window as any).__trackerSync)
+      ;(window as any).__trackerSync = setTimeout(async () => {
+        setSyncing(true)
+        try {
+          await fetch('/api/tracker', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify(lectures),
+          })
+        } catch {}
+        setSyncing(false)
+      }, 2000)
+    }
+  }, [lectures, token])
+
+  useEffect(() => {
+    if (!token) return
+    fetch('/api/tracker', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data) {
+          const merged = { ...loadLocal(), ...data }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+          setLectures(merged)
+        }
+      })
+      .catch(() => {})
+  }, [token])
+
+  const toggle = useCallback((id: string) => {
+    setLectures(prev => ({ ...prev, [id]: !prev[id] }))
+  }, [])
+
+  const toggleDomain = (id: string) => setOpenDomains(prev => ({ ...prev, [id]: !prev[id] }))
+  const toggleSection = (id: string) => setOpenSections(prev => ({ ...prev, [id]: !prev[id] }))
+
+  function domainCompleted(domainId: string): number {
+    const d = courseDomains.find(d => d.id === domainId)
+    if (!d) return 0
+    let count = 0
+    for (const s of d.sections) {
+      for (const l of s.lectures) {
+        if (lectures[l.id]) count++
+      }
+    }
+    return count
+  }
+
+  function domainTotal(domainId: string): number {
+    const d = courseDomains.find(d => d.id === domainId)
+    if (!d) return 0
+    return d.sections.reduce((sum, s) => sum + s.lectures.length, 0)
+  }
+
+  function sectionCompleted(sectionId: string): number {
+    let count = 0
+    for (const d of courseDomains) {
+      for (const s of d.sections) {
+        if (s.id === sectionId) {
+          for (const l of s.lectures) {
+            if (lectures[l.id]) count++
+          }
+        }
+      }
+    }
+    return count
+  }
+
+  function sectionTotal(sectionId: string): number {
+    for (const d of courseDomains) {
+      for (const s of d.sections) {
+        if (s.id === sectionId) return s.lectures.length
+      }
+    }
+    return 0
+  }
+
+  return (
+    <div className="tracker-page">
+      <div className="tracker-hero">
+        <h1><span>📊</span> Course Progress Tracker</h1>
+        <p className="tracker-hero-sub">AWS Certified Cloud Practitioner CLF-C02</p>
+
+        <div className="tracker-hero-stats">
+          <div className="tracker-hero-stat">
+            <span className="tracker-hero-pct">{pct}%</span>
+            <span className="tracker-hero-label">Complete</span>
+          </div>
+          <div className="tracker-hero-stat">
+            <span className="tracker-hero-count">{completed}<span className="tracker-hero-total">/{total}</span></span>
+            <span className="tracker-hero-label">Lectures</span>
+          </div>
+        </div>
+
+        <div className="tracker-hero-bar">
+          <div className="tracker-hero-bar-fill" style={{ width: `${pct}%` }} />
+        </div>
+
+        <div className="tracker-hero-legend">
+          {courseDomains.map(d => {
+            const dc = domainCompleted(d.id)
+            const dt = domainTotal(d.id)
+            const dp = dt > 0 ? Math.round((dc / dt) * 100) : 0
+            return (
+              <div key={d.id} className="tracker-legend-item">
+                <span className="tracker-legend-dot" style={{ background: d.color }} />
+                <span className="tracker-legend-label">{d.title}</span>
+                <span className="tracker-legend-pct">{dp}%</span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="tracker-domains">
+        {courseDomains.map(domain => {
+          const dc = domainCompleted(domain.id)
+          const dt = domainTotal(domain.id)
+          const dp = dt > 0 ? Math.round((dc / dt) * 100) : 0
+          const isOpen = openDomains[domain.id] ?? false
+
+          return (
+            <div key={domain.id} className="tracker-domain" style={{ borderLeftColor: domain.color }}>
+              <button className="tracker-domain-header" onClick={() => toggleDomain(domain.id)}>
+                <div className="tracker-domain-title-row">
+                  <span className="tracker-domain-expand">{isOpen ? '▾' : '▸'}</span>
+                  <span className="tracker-domain-title">{domain.title}</span>
+                  {domain.weight > 0 && <span className="tracker-domain-weight">{domain.weight}%</span>}
+                </div>
+                <div className="tracker-domain-meta">
+                  <span className="tracker-domain-nums">{dc}/{dt}</span>
+                  <div className="tracker-domain-bar">
+                    <div className="tracker-domain-bar-fill" style={{ width: `${dp}%`, background: domain.color }} />
+                  </div>
+                </div>
+              </button>
+
+              {isOpen && (
+                <div className="tracker-sections">
+                  {domain.sections.map(section => {
+                    const sc = sectionCompleted(section.id)
+                    const st = sectionTotal(section.id)
+                    const sp = st > 0 ? Math.round((sc / st) * 100) : 0
+                    const secOpen = openSections[section.id] ?? false
+
+                    return (
+                      <div key={section.id} className="tracker-section">
+                        <button className="tracker-section-header" onClick={() => toggleSection(section.id)}>
+                          <div className="tracker-section-title-row">
+                            <span className="tracker-section-expand">{secOpen ? '▾' : '▸'}</span>
+                            <span className="tracker-section-title">{section.title}</span>
+                          </div>
+                          <div className="tracker-section-meta">
+                            <span className="tracker-section-nums">{sc}/{st}</span>
+                            <div className="tracker-section-bar">
+                              <div className="tracker-section-bar-fill" style={{ width: `${sp}%`, background: domain.color }} />
+                            </div>
+                          </div>
+                        </button>
+
+                        {secOpen && (
+                          <div className="tracker-lectures">
+                            {section.lectures.map(l => (
+                              <label key={l.id} className="tracker-lecture">
+                                <input
+                                  type="checkbox"
+                                  className="tracker-lecture-checkbox"
+                                  checked={!!lectures[l.id]}
+                                  onChange={() => toggle(l.id)}
+                                />
+                                <span className="tracker-lecture-id">{l.id}</span>
+                                <span className="tracker-lecture-title">{l.title}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="tracker-footer">
+        <span>{completed} / {total} lectures completed ({pct}%)</span>
+        {syncing && <span className="tracker-syncing">Syncing...</span>}
+      </div>
+    </div>
+  )
+}

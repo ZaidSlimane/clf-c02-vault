@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import DomainPage from './pages/DomainPage'
 import ExamPage from './pages/ExamPage'
 import SignInPage from './pages/SignInPage'
+import TrackerPage from './pages/TrackerPage'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/exam" element={<ProtectedRoute><ExamPage /></ProtectedRoute>} />
         <Route path="/domain/:domainId" element={<ProtectedRoute><DomainPage /></ProtectedRoute>} />
         <Route path="/domain/:domainId/:subNoteId" element={<ProtectedRoute><DomainPage /></ProtectedRoute>} />
+        <Route path="/tracker" element={<ProtectedRoute><TrackerPage /></ProtectedRoute>} />
       </Route>
     </Routes>
   )
