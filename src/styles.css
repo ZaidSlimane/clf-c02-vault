@@ -1742,6 +1742,73 @@ td {
   color: var(--color-primary-dark);
   animation: tracker-pulse 1.2s ease-in-out infinite;
 }
+
+/* ── Tracker Activity Log (Terminal Style) ── */
+.tracker-log {
+  margin: 24px 0;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.8rem;
+  overflow: hidden;
+}
+.tracker-log-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  color: #8b949e;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tracker-log-title { color: #e6edf3; font-weight: 600; }
+.tracker-log-count { margin-left: auto; color: #484f58; }
+.tracker-log-clear {
+  background: none;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  color: #8b949e;
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.tracker-log-clear:hover {
+  background: #21262d;
+  color: #e6edf3;
+}
+.tracker-log-body {
+  padding: 8px 12px;
+  max-height: 220px;
+  overflow-y: auto;
+  color: #7ee787;
+  line-height: 1.6;
+}
+.tracker-log-empty {
+  color: #484f58;
+  font-style: italic;
+}
+.tracker-log-line {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.tracker-log-time {
+  color: #484f58;
+  flex-shrink: 0;
+  user-select: none;
+}
+.tracker-log-check .tracker-log-text { color: #7ee787; }
+.tracker-log-uncheck .tracker-log-text { color: #ffa657; }
+.tracker-log-body::-webkit-scrollbar { width: 6px; }
+.tracker-log-body::-webkit-scrollbar-track { background: transparent; }
+.tracker-log-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+
 @keyframes tracker-pulse {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }

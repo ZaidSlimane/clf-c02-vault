@@ -27,6 +27,10 @@ function matchesQuery(text: string, query: string): boolean {
   return text.toLowerCase().includes(query.toLowerCase())
 }
 
+type LogEntry = { id: number; time: string; text: string; kind: 'check' | 'uncheck' }
+
+let logSeq = 0
+
 export default function TrackerPage() {
   const { token } = useAuth()
   const [lectures, setLectures] = useState<LectureProgress>(loadLocal)
@@ -35,6 +39,18 @@ export default function TrackerPage() {
   const [syncing, setSyncing] = useState(false)
   const [search, setSearch] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
+  const [log, setLog] = useState<LogEntry[]>([])
+  const logEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    logEndRef.current?.scrollIntoView()
+  }, [log.length])
+
+  function pushLog(text: string, kind: 'check' | 'uncheck') {
+    const now = new Date()
+    const time = now.toLocaleTimeString('en-US', { hour12: false })
+    setLog(prev => [...prev.slice(-49), { id: ++logSeq, time, text, kind }])
+  }
 
   const total = useMemo(() => getTotalLectures(), [])
   const completed = useMemo(() => Object.values(lectures).filter(Boolean).length, [lectures])
@@ -108,8 +124,12 @@ export default function TrackerPage() {
     return matchIds
   }, [search])
 
-  const toggle = useCallback((id: string) => {
-    setLectures(prev => ({ ...prev, [id]: !prev[id] }))
+  const toggle = useCallback((id: string, title: string) => {
+    setLectures(prev => {
+      const next = !prev[id]
+      pushLog(`${next ? '✓' : '✗'} ${id} — ${title}`, next ? 'check' : 'uncheck')
+      return { ...prev, [id]: next }
+    })
   }, [])
 
   const toggleDomain = (id: string) => setOpenDomains(prev => ({ ...prev, [id]: !prev[id] }))
@@ -269,7 +289,7 @@ export default function TrackerPage() {
                           type="checkbox"
                           className="tracker-lecture-checkbox"
                           checked={!!lectures[l.id]}
-                          onChange={() => toggle(l.id)}
+                          onChange={() => toggle(l.id, l.title)}
                         />
                         <span className="tracker-lecture-id">{highlight(l.id, search)}</span>
                         <span className="tracker-lecture-title">{highlight(l.title, search)}</span>
@@ -285,6 +305,29 @@ export default function TrackerPage() {
             </div>
           )
         })}
+      </div>
+
+      <div className="tracker-log">
+        <div className="tracker-log-header">
+          <span className="tracker-log-title">Activity Log</span>
+          <span className="tracker-log-count">{log.length} entries</span>
+          {log.length > 0 && (
+            <button className="tracker-log-clear" onClick={() => setLog([])}>Clear</button>
+          )}
+        </div>
+        <div className="tracker-log-body">
+          {log.length === 0 ? (
+            <div className="tracker-log-empty">No activity yet — check a lecture to begin.</div>
+          ) : (
+            log.map(e => (
+              <div key={e.id} className={`tracker-log-line tracker-log-${e.kind}`}>
+                <span className="tracker-log-time">[{e.time}]</span>
+                <span className="tracker-log-text">{e.text}</span>
+              </div>
+            ))
+          )}
+          <div ref={logEndRef} />
+        </div>
       </div>
 
       <div className="tracker-footer">
