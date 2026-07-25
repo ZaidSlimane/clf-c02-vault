@@ -1,26 +1,29 @@
 import { useState } from 'react'
+import { getAiConfig, setAiConfig, clearAiConfig } from '../services/aiConfig'
 
 export default function SettingsPage() {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('dahl_api_key') || '')
+  const existing = getAiConfig()
+  const [baseUrl, setBaseUrl] = useState(existing.baseUrl)
+  const [model, setModel] = useState(existing.model)
+  const [apiKey, setApiKey] = useState(existing.apiKey)
   const [saved, setSaved] = useState(false)
 
   const handleSave = () => {
-    const trimmed = apiKey.trim()
-    if (trimmed) {
-      localStorage.setItem('dahl_api_key', trimmed)
-    } else {
-      localStorage.removeItem('dahl_api_key')
-    }
+    setAiConfig({ baseUrl: baseUrl.trim(), model: model.trim(), apiKey: apiKey.trim() })
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
 
   const handleClear = () => {
-    localStorage.removeItem('dahl_api_key')
+    clearAiConfig()
     setApiKey('')
+    setBaseUrl('https://inference.dahl.global/v1')
+    setModel('moonshotai/Kimi-K2.6')
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
+
+  const hasKey = apiKey.trim().length > 0
 
   return (
     <div className="settings-page">
@@ -29,42 +32,63 @@ export default function SettingsPage() {
       <section className="settings-section">
         <h2 className="settings-section-title">AI Integration</h2>
         <p className="settings-desc">
-          The AI assistant uses the Dahl API (Kimi-K2.6) to answer questions and explain concepts.
-          Your key is stored locally in your browser and never sent to our server.
+          Configure your preferred AI provider. Any OpenAI-compatible API works — set the base URL, model name, and your API key.
         </p>
 
         <div className="settings-field">
-          <label className="settings-label" htmlFor="api-key">Dahl API Key</label>
-          <div className="settings-input-row">
-            <input
-              id="api-key"
-              type="password"
-              className="settings-input"
-              value={apiKey}
-              onChange={e => { setApiKey(e.target.value); setSaved(false) }}
-              placeholder="sk-..."
-            />
-          </div>
-          <p className="settings-hint">
-            Get your key at <a href="https://dahl.global" target="_blank" rel="noopener noreferrer">dahl.global</a>
-          </p>
+          <label className="settings-label" htmlFor="ai-base-url">Base URL</label>
+          <input
+            id="ai-base-url"
+            type="text"
+            className="settings-input"
+            value={baseUrl}
+            onChange={e => { setBaseUrl(e.target.value); setSaved(false) }}
+            placeholder="https://inference.dahl.global/v1"
+          />
+          <p className="settings-hint">The API endpoint root, e.g. <code>https://api.openai.com/v1</code></p>
+        </div>
+
+        <div className="settings-field">
+          <label className="settings-label" htmlFor="ai-model">Model</label>
+          <input
+            id="ai-model"
+            type="text"
+            className="settings-input"
+            value={model}
+            onChange={e => { setModel(e.target.value); setSaved(false) }}
+            placeholder="moonshotai/Kimi-K2.6"
+          />
+          <p className="settings-hint">Model identifier, e.g. <code>gpt-4o</code> or <code>moonshotai/Kimi-K2.6</code></p>
+        </div>
+
+        <div className="settings-field">
+          <label className="settings-label" htmlFor="ai-api-key">API Key</label>
+          <input
+            id="ai-api-key"
+            type="password"
+            className="settings-input"
+            value={apiKey}
+            onChange={e => { setApiKey(e.target.value); setSaved(false) }}
+            placeholder="sk-..."
+          />
+          <p className="settings-hint">Stored locally in your browser, never sent to our server</p>
         </div>
 
         <div className="settings-actions">
           <button className="settings-btn settings-btn-primary" onClick={handleSave}>
-            {saved ? '✓ Saved' : 'Save Key'}
+            {saved ? '✓ Saved' : 'Save Settings'}
           </button>
-          {apiKey && (
+          {hasKey && (
             <button className="settings-btn settings-btn-danger" onClick={handleClear}>
-              Remove Key
+              Reset to Defaults
             </button>
           )}
         </div>
 
-        {apiKey && (
+        {hasKey && (
           <div className="settings-status settings-status-active">
             <span className="settings-status-dot" />
-            AI assistant is configured and ready
+            AI assistant configured — using {model} at {baseUrl}
           </div>
         )}
       </section>

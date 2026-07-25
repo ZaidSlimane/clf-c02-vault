@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
+import { callAiAPI } from '../services/aiConfig'
 
 export interface Conversation {
   id: string
@@ -117,43 +118,13 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const askAI = useCallback(async (questionText: string) => {
-    let key = localStorage.getItem('dahl_api_key')
-    if (!key) {
-      const entered = window.prompt('Enter your Dahl API key to use AI explanations:')
-      if (!entered) return
-      key = entered
-      localStorage.setItem('dahl_api_key', key)
-    }
-
     setChatLoading(true)
     const prompt = `You are an AWS CLF-C02 exam tutor. Answer the following question clearly and concisely, with specific AWS services and concepts.
 
 ${questionText}`
-
-    try {
-      const res = await fetch('https://inference.dahl.global/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${key}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'moonshotai/Kimi-K2.6',
-          messages: [{ role: 'user', content: prompt }],
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        addConversation(questionText, `API Error (${res.status}): ${data.error?.message || JSON.stringify(data).slice(0, 300)}`)
-      } else {
-        const answer = data.choices?.[0]?.message?.content || 'No response from AI'
-        addConversation(questionText, answer)
-      }
-    } catch (err) {
-      addConversation(questionText, `Network error: ${err instanceof Error ? err.message : 'Unknown'}`)
-    } finally {
-      setChatLoading(false)
-    }
+    const answer = await callAiAPI(prompt)
+    if (answer) addConversation(questionText, answer)
+    setChatLoading(false)
   }, [addConversation])
 
   return (

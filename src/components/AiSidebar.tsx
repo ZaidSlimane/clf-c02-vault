@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAiChat } from '../context/AiChat'
+import { getAiConfig } from '../services/aiConfig'
 
 export default function AiSidebar() {
   const { sidebarOpen, conversations, chatLoading, toggleSidebar, closeSidebar, clearConversations, askAI } = useAiChat()
@@ -26,7 +27,7 @@ export default function AiSidebar() {
     }
   }
 
-  const hasKey = !!localStorage.getItem('dahl_api_key')
+  const hasKey = !!getAiConfig().apiKey
 
   return (
     <>

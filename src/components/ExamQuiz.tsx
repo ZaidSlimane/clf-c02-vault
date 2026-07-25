@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import questionsData from '../../CLF-C02 questions.json'
 import { sections, domains as domainsData } from '../data/sections'
 import { useAiChat } from '../context/AiChat'
 import { useAuth } from '../context/AuthContext'
 import { fetchProgress, saveFullProgress } from '../services/api'
+import { callAiAPI, getAiConfig } from '../services/aiConfig'
 
 interface Question {
   url: string
@@ -78,8 +80,8 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     (initialFilter as 'all' | 'correct' | 'unanswered' | 'flagged' | 'wrong') || 'all'
   )
   const [pending, setPending] = useState<string[]>([])
+  const navigate = useNavigate()
   const [aiLoading, setAiLoading] = useState(false)
-  const [aiKey, setAiKey] = useState(() => localStorage.getItem('dahl_api_key') || '')
   const syncRef = useRef<ReturnType<typeof setTimeout>>()
   const initRef = useRef(false)
 
@@ -251,14 +253,6 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   }
 
   const askAI = async () => {
-    let key = aiKey
-    if (!key) {
-      const entered = window.prompt('Enter your Dahl API key to use AI explanations:')
-      if (!entered) return
-      key = entered
-      setAiKey(key)
-      localStorage.setItem('dahl_api_key', key)
-    }
     setAiLoading(true)
     const prompt = `You are an AWS CLF-C02 exam tutor. Explain the following question and why the correct answer is right and the others are wrong.
 
@@ -271,32 +265,12 @@ Correct Answer(s): ${correctAnswers.join(', ')}
 
 Provide a clear, concise explanation suitable for someone studying for the AWS Cloud Practitioner exam. Be specific about AWS services and concepts.`
 
-    try {
-      const res = await fetch('https://inference.dahl.global/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${key}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'moonshotai/Kimi-K2.6',
-          messages: [{ role: 'user', content: prompt }],
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        addConversation(q.question, `API Error (${res.status}): ${data.error?.message || JSON.stringify(data).slice(0, 300)}`)
-      } else {
-        const answer = data.choices?.[0]?.message?.content || 'No response from AI'
-        addConversation(q.question, answer)
-      }
+    const answer = await callAiAPI(prompt, msg => addConversation(q.question, msg))
+    if (answer) {
+      addConversation(q.question, answer)
       openSidebar()
-    } catch (err) {
-      addConversation(q.question, `Network error: ${err instanceof Error ? err.message : 'Unknown'}`)
-      openSidebar()
-    } finally {
-      setAiLoading(false)
     }
+    setAiLoading(false)
   }
 
   const exportProgress = () => {
@@ -500,18 +474,13 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
                   >
                     {aiLoading ? '⏳ Thinking...' : '🤖 Explain with AI'}
                   </button>
-                  {aiKey && (
-                    <button
-                      className="exam-btn exam-btn-sm"
-                      onClick={() => {
-                        localStorage.removeItem('dahl_api_key')
-                        setAiKey('')
-                      }}
-                      style={{ marginLeft: 4 }}
-                    >
-                      Change Key
-                    </button>
-                  )}
+                  <button
+                    className="exam-btn exam-btn-sm"
+                    onClick={() => navigate('/settings')}
+                    style={{ marginLeft: 4 }}
+                  >
+                    Configure AI
+                  </button>
                 </div>
               </div>
             )}
