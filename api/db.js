@@ -37,6 +37,13 @@ export async function initDb() {
       updated_at TIMESTAMPTZ DEFAULT NOW()
     )
   `
+  await sql`
+    CREATE TABLE IF NOT EXISTS tracker_logs (
+      user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      data JSONB NOT NULL DEFAULT '[]'::jsonb,
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `
 }
 
 export default sql

@@ -5,6 +5,7 @@ import { courseDomains, getTotalLectures } from '../data/courseData'
 type LectureProgress = Record<string, boolean>
 
 const STORAGE_KEY = 'clf-c02-tracker-progress'
+const LOG_STORAGE_KEY = 'clf-c02-tracker-logs'
 
 function loadLocal(): LectureProgress {
   try {
@@ -29,7 +30,14 @@ function matchesQuery(text: string, query: string): boolean {
 
 type LogEntry = { id: number; time: string; text: string; kind: 'check' | 'uncheck' }
 
-let logSeq = 0
+function loadLogs(): LogEntry[] {
+  try {
+    const saved = localStorage.getItem(LOG_STORAGE_KEY)
+    return saved ? JSON.parse(saved) : []
+  } catch { return [] }
+}
+
+let logSeq = loadLogs().reduce((max, e) => Math.max(max, e.id), 0)
 
 export default function TrackerPage() {
   const { token } = useAuth()
@@ -39,12 +47,54 @@ export default function TrackerPage() {
   const [syncing, setSyncing] = useState(false)
   const [search, setSearch] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
-  const [log, setLog] = useState<LogEntry[]>([])
+  const [log, setLog] = useState<LogEntry[]>(loadLogs)
   const logEndRef = useRef<HTMLDivElement>(null)
+  const [logSyncing, setLogSyncing] = useState(false)
 
   useEffect(() => {
     logEndRef.current?.scrollIntoView()
   }, [log.length])
+
+  useEffect(() => {
+    localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(log))
+    if (token) {
+      clearTimeout((window as any).__logSync)
+      ;(window as any).__logSync = setTimeout(async () => {
+        setLogSyncing(true)
+        try {
+          await fetch('/api/tracker-logs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify(log),
+          })
+        } catch {}
+        setLogSyncing(false)
+      }, 3000)
+    }
+  }, [log, token])
+
+  useEffect(() => {
+    if (!token) return
+    fetch('/api/tracker-logs', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          setLog(prev => {
+            const localIds = new Set(prev.map(e => e.id))
+            const merged = [...prev]
+            for (const entry of data) {
+              if (!localIds.has(entry.id)) {
+                merged.push(entry)
+                if (entry.id > logSeq) logSeq = entry.id
+              }
+            }
+            merged.sort((a, b) => a.id - b.id)
+            return merged.slice(-50)
+          })
+        }
+      })
+      .catch(() => {})
+  }, [token])
 
   function pushLog(text: string, kind: 'check' | 'uncheck') {
     const now = new Date()
@@ -310,7 +360,7 @@ export default function TrackerPage() {
       <div className="tracker-log">
         <div className="tracker-log-header">
           <span className="tracker-log-title">Activity Log</span>
-          <span className="tracker-log-count">{log.length} entries</span>
+          <span className="tracker-log-count">{log.length} entries{logSyncing ? ' • syncing…' : ''}</span>
           {log.length > 0 && (
             <button className="tracker-log-clear" onClick={() => setLog([])}>Clear</button>
           )}
