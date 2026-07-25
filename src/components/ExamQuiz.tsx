@@ -332,7 +332,7 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
 
   const resetProgress = () => {
     if (window.confirm('Reset all quiz progress?')) {
-      setProgress({ answers: {}, flags: {}, notes: {}, tags: {} })
+      setProgress({ answers: {}, flags: {}, notes: {}, tags: {}, noteTimestamps: {} })
       setCurrentIndex(0)
     }
   }

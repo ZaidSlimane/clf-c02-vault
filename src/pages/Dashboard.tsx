@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import HeroHeader from '../components/HeroHeader'
 import NotesTimeline from '../components/NotesTimeline'
+import DomainCard from '../components/DomainCard'
 import FocusToday from '../components/FocusToday'
 import WeeklyConsistency from '../components/WeeklyConsistency'
 import PracticeExams from '../components/PracticeExams'
