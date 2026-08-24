@@ -352,8 +352,8 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
       {/* Header */}
       <div className="exam-header">
         <div className="exam-header-left">
-          <h3>AWS CLF-C02 Exam Simulation</h3>
-          <span className="exam-badge">{TOTAL} questions</span>
+          <div><span className="vault-eyebrow">PRACTICE MODE · EXAM-STYLE DECISIONS</span><h3>AWS CLF-C02 Exam Simulation</h3></div>
+          <span className="exam-badge">{TOTAL} QUESTIONS</span>
         </div>
         <div className="exam-header-right">
           <span className="exam-stat">
@@ -385,6 +385,7 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
           <div className="exam-question-card card">
             <div className="exam-question-topbar">
               <span className="exam-question-number">
+                <span className="vault-eyebrow">QUESTION {String(currentIndex + 1).padStart(3, '0')} · PRACTICE RUN</span>
                 Question {currentIndex + 1} of {TOTAL}
                 {isMulti && <span className="exam-multi-badge"> (Choose {choiceCount})</span>}
               </span>
@@ -601,7 +602,7 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
           {/* Question grid */}
           <div className="exam-grid-section">
             <div className="exam-grid-header">
-              <span className="exam-grid-title">Navigator</span>
+              <div><span className="vault-eyebrow">RUN NAVIGATION</span><span className="exam-grid-title">Question navigator</span></div>
               <div className="exam-grid-legend">
                 <span className="exam-legend-item">
                   <span className="exam-legend-swatch exam-legend-correct" /> 

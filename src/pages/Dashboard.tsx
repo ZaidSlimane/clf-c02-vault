@@ -10,65 +10,36 @@ import { domains } from '../data/domains'
 
 export default function Dashboard() {
   return (
-    <div>
+    <div className="vault-overview">
       <HeroHeader />
-
-      <section className="section">
-        <NotesTimeline />
-      </section>
-
-      <section className="section">
-        <div className="section-header">
-          <span className="section-icon">📊</span>
-          <h2>Domain Progress</h2>
-        </div>
-        <div className="domain-grid">
-          {domains.map((d) => (
-            <DomainCard key={d.id} domain={d} />
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <FocusToday />
-      </section>
-
-      <section className="section">
-        <div className="section-header">
-          <span className="section-icon">📈</span>
-          <h2>Weekly Consistency</h2>
-        </div>
-        <WeeklyConsistency />
-      </section>
-
-      <section className="section">
-        <div className="section-header">
-          <span className="section-icon">🧪</span>
-          <h2>Practice Exams</h2>
-        </div>
-        <div className="card">
-          <PracticeExams />
-        </div>
-      </section>
-
-      <section className="section">
+      <section className="vault-overview__progress">
         <QuizProgressCard />
       </section>
-
-      <section className="section">
-        <div className="section-header">
-          <span className="section-icon">🔗</span>
-          <h2>Quick Links</h2>
+      <div className="vault-overview__layout">
+        <div className="vault-overview__primary">
+          <section className="vault-section vault-section--domains">
+            <div className="vault-section__heading"><span className="vault-eyebrow">DOMAIN SIGNAL</span><h2>Read the map, then choose your route.</h2></div>
+            <div className="domain-grid">
+              {domains.map((d) => <DomainCard key={d.id} domain={d} />)}
+            </div>
+          </section>
+          <section className="vault-section vault-section--focus"><FocusToday /></section>
+          <section className="vault-section vault-section--practice">
+            <div className="vault-section__heading"><span className="vault-eyebrow">PRACTICE LOG</span><h2>Turn completed runs into the next right review.</h2></div>
+            <div className="card"><PracticeExams /></div>
+          </section>
         </div>
-        <div className="quick-links">
-          <Link to="/" className="quick-link">📘 Dashboard</Link>
-          <Link to="/exam" className="quick-link">📋 Exam Simulation (719 Qs)</Link>
-          <Link to="/domain/1" className="quick-link">☁️ Cloud Concepts</Link>
-          <Link to="/domain/2" className="quick-link">🔒 Security &amp; Compliance</Link>
-          <Link to="/domain/3" className="quick-link">⚙️ Technology &amp; Services</Link>
-          <Link to="/domain/4" className="quick-link">💰 Billing, Pricing &amp; Support</Link>
-        </div>
-      </section>
+        <aside className="vault-overview__side">
+          <section className="vault-section vault-section--notes"><NotesTimeline /></section>
+          <section className="vault-section vault-section--consistency"><span className="vault-eyebrow">CADENCE</span><WeeklyConsistency /></section>
+          <section className="vault-quick-route">
+            <span className="vault-eyebrow">QUICK ROUTE</span>
+            <Link to="/domain/1">Study Cloud Concepts <span>→</span></Link>
+            <Link to="/domain/2">Review security notes <span>→</span></Link>
+            <Link to="/exam">Open practice mode <span>→</span></Link>
+          </section>
+        </aside>
+      </div>
     </div>
   )
 }

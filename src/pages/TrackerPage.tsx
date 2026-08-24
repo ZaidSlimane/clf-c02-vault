@@ -229,22 +229,21 @@ export default function TrackerPage() {
   return (
     <div className="tracker-page">
       <div className="tracker-hero">
-        <h1><span>📊</span> Course Progress Tracker</h1>
-        <p className="tracker-hero-sub">AWS Certified Cloud Practitioner CLF-C02</p>
-
-        <div className="tracker-hero-stats">
-          <div className="tracker-hero-stat">
-            <span className="tracker-hero-pct">{pct}%</span>
-            <span className="tracker-hero-label">Complete</span>
+        <div className="tracker-hero__copy">
+          <span className="vault-eyebrow">COURSE TRACKER · ACTIVE ROUTE</span>
+          <h1>Keep the course<br /><em>moving forward.</em></h1>
+          <p className="tracker-hero-sub">Mark complete, keep context, and use each checked lecture as a visible step toward exam readiness.</p>
+          <div className="tracker-hero-stats">
+            <div className="tracker-hero-stat"><span className="tracker-hero-pct">{pct}%</span><span className="tracker-hero-label">Complete</span></div>
+            <div className="tracker-hero-stat"><span className="tracker-hero-count">{completed}<span className="tracker-hero-total">/{total}</span></span><span className="tracker-hero-label">Lectures</span></div>
           </div>
-          <div className="tracker-hero-stat">
-            <span className="tracker-hero-count">{completed}<span className="tracker-hero-total">/{total}</span></span>
-            <span className="tracker-hero-label">Lectures</span>
-          </div>
+          <div className="tracker-hero-bar"><div className="tracker-hero-bar-fill" style={{ width: `${pct}%` }} /></div>
         </div>
-
-        <div className="tracker-hero-bar">
-          <div className="tracker-hero-bar-fill" style={{ width: `${pct}%` }} />
+        <div className="tracker-hero__waypoint">
+          <span className="vault-eyebrow">ROUTE STATUS</span>
+          <strong>{completed === total ? 'COURSE COMPLETE' : 'IN PROGRESS'}</strong>
+          <p>{total - completed} lecture{total - completed !== 1 ? 's' : ''} remain on this route.</p>
+          <div className="tracker-route-dots"><i /><i /><i /><i /><i /></div>
         </div>
 
         <div className="tracker-hero-legend">

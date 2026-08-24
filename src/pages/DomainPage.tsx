@@ -23,58 +23,40 @@ export default function DomainPage() {
     domain.status === 'complete' ? 'badge-complete' : 'badge-not-started'
 
   return (
-    <div>
-      <Link to="/" className="back-link">&larr; Back to Dashboard</Link>
-
-      <div className="domain-detail-header">
-        <h1>Domain {domain.id} — {domain.title}</h1>
-        <div className="domain-detail-meta">
-          <span className="domain-detail-meta-item">
-            📊 Weight: <strong>{domain.weight}%</strong>
-          </span>
-          <span className="domain-detail-meta-item">
-            <span className={`badge ${statusClass}`}>{statusLabel}</span>
-          </span>
-          <span className="domain-detail-meta-item">
-            🎯 Mastery: <strong>{domain.mastery}%</strong>
-          </span>
+    <div className="vault-study-page">
+      <Link to="/" className="back-link">← Return to overview</Link>
+      <section className="vault-study-hero">
+        <div>
+          <span className="vault-eyebrow">STUDY NOTES · DOMAIN {String(domain.id).padStart(2, '0')}</span>
+          <h1>{domain.title}</h1>
+          <p>Use the cards below to deepen recall, then move into practice when the concept feels precise.</p>
+          <div className="vault-study-meta"><span>EXAM WEIGHT <strong>{domain.weight}%</strong></span><span className={`badge ${statusClass}`}>{statusLabel}</span></div>
         </div>
-        <div className="progress-bar" style={{ marginTop: 12, maxWidth: 400 }}>
-          <div className="progress-bar-fill" style={{ width: `${domain.mastery}%`, background: domain.color }} />
-        </div>
-      </div>
-
-      <div className="domain-detail-meta" style={{ marginBottom: 24 }}>
-        <span className="domain-detail-meta-item">Next topic: <strong>{domain.nextTopic}</strong></span>
-      </div>
-
-      <div className="service-tags" style={{ marginBottom: 32 }}>
-        {domain.keyServices.map((s) => (
-          <span key={s} className="service-tag">{s}</span>
-        ))}
-      </div>
-
-      {domain.subNotes.map((note) => (
-        <div key={note.id} className="card subnote-card">
-          <h3>
-            {note.title}
-            <span className={`badge ${note.status === 'in-progress' ? 'badge-in-progress' : note.status === 'complete' ? 'badge-complete' : 'badge-not-started'}`}>
-              {note.status === 'in-progress' ? 'In Progress' : note.status === 'complete' ? 'Complete' : 'Not Started'}
-            </span>
-          </h3>
-
-          {note.content.map((section, i) => (
-            <div key={i} className="content-section">
-              <h4>{section.section}</h4>
-              <ul>
-                {section.items.map((item, j) => (
-                  <li key={j}>{item}</li>
-                ))}
-              </ul>
-            </div>
+        <aside className="vault-study-hero__signal">
+          <span className="vault-eyebrow">MASTERY SIGNAL</span>
+          <strong>{domain.mastery}<em>%</em></strong>
+          <div className="progress-bar"><div className="progress-bar-fill" style={{ width: `${domain.mastery}%`, background: domain.color }} /></div>
+          <p>Next: <b>{domain.nextTopic}</b></p>
+        </aside>
+      </section>
+      <div className="vault-study-layout">
+        <aside className="vault-study-sidecar">
+          <span className="vault-eyebrow">KEY SERVICES</span>
+          <div className="service-tags">{domain.keyServices.map((s) => <span key={s} className="service-tag">{s}</span>)}</div>
+          <Link to="/exam" className="vault-button vault-button--primary">Practice this domain <span>→</span></Link>
+        </aside>
+        <div className="vault-study-cards">
+          {domain.subNotes.map((note, index) => (
+            <article key={note.id} className="card subnote-card">
+              <div className="subnote-card__topline"><span className="vault-eyebrow">NOTE {String(index + 1).padStart(2, '0')}</span><span className={`badge ${note.status === 'in-progress' ? 'badge-in-progress' : note.status === 'complete' ? 'badge-complete' : 'badge-not-started'}`}>{note.status === 'in-progress' ? 'In Progress' : note.status === 'complete' ? 'Complete' : 'Not Started'}</span></div>
+              <h3>{note.title}</h3>
+              {note.content.map((section, i) => (
+                <div key={i} className="content-section"><h4>{section.section}</h4><ul>{section.items.map((item, j) => <li key={j}>{item}</li>)}</ul></div>
+              ))}
+            </article>
           ))}
         </div>
-      ))}
+      </div>
     </div>
   )
 }
