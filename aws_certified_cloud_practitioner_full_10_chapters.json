@@ -1,0 +1,3069 @@
+{
+  "metadata": {
+    "title": "AWS Certified Cloud Practitioner - Review Questions",
+    "purpose": "Expandable questionnaire. User answers and book answers can be added later.",
+    "answer_fields": {
+      "user_answer": null,
+      "book_answer": null,
+      "result": null
+    },
+    "notes": [
+      "Complete 10-chapter set: Chapters 2, 3, 4, 5, 6, 7, 9, 10, 11, and 12.",
+      "Chapter 8 is intentionally excluded.",
+      "Questions are transcribed from the supplied review-question screenshots.",
+      "Questions/options whose book answer was not visible in the supplied answer-key screenshots keep book_answer as null rather than being guessed.",
+      "For multiple-choice questions, answers are stored as strings for single-answer questions and comma-separated strings for multiple-answer questions."
+    ],
+    "answer_key_status": "Updated with the supplied answer-key pages; Chapter 7 questions 12-20 remain null because their corresponding answer-key text was not visible in the supplied pages."
+  },
+  "chapters": [
+    {
+      "chapter_number": 2,
+      "title": "Understanding Your AWS Account",
+      "questions": [
+        {
+          "id": "ch2_q1",
+          "number": 1,
+          "question": "Which of the following EC2 services can be used without charge under the Free Tier?",
+          "choices": {
+            "A": "Any single EC2 instance type as long as it runs for less than one hour per day",
+            "B": "Any single EC2 instance type as long as it runs for less than 75 hours per month",
+            "C": "A single t2.micro EC2 instance type for 750 hours per month",
+            "D": "t2.micro EC2 instance instances for a total of 750 hours per month"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch2_q2",
+          "number": 2,
+          "question": "You want to experiment with deploying a web server on an EC2 instance. Which two of the following resources can you include to make that web server run while remaining within the Free Tier?",
+          "choices": {
+            "A": "A 5 GB bucket on S3",
+            "B": "A t2.micro instance type EC2 instance",
+            "C": "A 30 GB solid-state Elastic Block Store (EBS) drive",
+            "D": "Two 20 GB solid-state Elastic Block Store (EBS) drives"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "B,C",
+          "result": null
+        },
+        {
+          "id": "ch2_q3",
+          "number": 3,
+          "question": "Which of the following usage allowances will almost certainly cost-free after your account's Free Tier has expired? (Choose two.)",
+          "choices": {
+            "A": "One million API calls/month on Amazon API Gateway",
+            "B": "10 GB of data retrievals from Amazon Glacier per month",
+            "C": "500 MB/month of free storage on the Amazon Elastic Container Registry (ECR)",
+            "D": "10 custom monitoring metrics and 10 alarms on Amazon CloudWatch"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        },
+        {
+          "id": "ch2_q4",
+          "number": 4,
+          "question": "Which of the following tools are available to ensure you won't accidentally run past your Free Tier limit and incur unwanted costs? (Choose two.)",
+          "choices": {
+            "A": "Automated email alerts when activity approaches the Free Tier limits",
+            "B": "The Top Free Tier Services by Usage section on the Billing & Cost Management Dashboard",
+            "C": "Billing & Cost Management section on the Top Free Tier Services Dashboard",
+            "D": "The Billing Preferences Dashboard"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A,B",
+          "result": null
+        },
+        {
+          "id": "ch2_q5",
+          "number": 5,
+          "question": "Which of the following is likely to be an accurate source of AWS pricing information?",
+          "choices": {
+            "A": "Wikipedia pages relating to a particular service",
+            "B": "The AWS Command-Line Interface (AWS CLI)",
+            "C": "AWS online documentation relating to a particular service",
+            "D": "The AWS Pricing Calculator"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch2_q6",
+          "number": 6,
+          "question": "Which of the following will probably not affect the pricing for an AWS service?",
+          "choices": {
+            "A": "Requests for raising the available service limit",
+            "B": "AWS region",
+            "C": "The volume of data saved to an S3 bucket",
+            "D": "The volume of data egress from an Amazon S3 Glacier vault"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch2_q7",
+          "number": 7,
+          "question": "Which of the following AWS documentation URLs points to the page containing an up-to-date list of service limits?",
+          "choices": {
+            "A": "https://docs.aws.amazon.com/general/latest/gr/limits.html",
+            "B": "https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html",
+            "C": "https://aws.amazon.com/general/latest/gr/aws_service_limits.html",
+            "D": "https://docs.aws.amazon.com/latest/gr/aws_service_limits.html"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch2_q8",
+          "number": 8,
+          "question": "Which of the following best describes one possible reason for AWS service limits?",
+          "choices": {
+            "A": "To prevent individual customers from accidentally launching a crippling level of resource consumption",
+            "B": "To more equally distribute available resources between customers from different regions",
+            "C": "To allow customers to more gradually increase their deployments",
+            "D": "Because there are logical limits to the ability of AWS resources to scale up"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch2_q9",
+          "number": 9,
+          "question": "Is it always possible to request service limit increases from AWS?",
+          "choices": {
+            "A": "Yes. All service limits can be increased.",
+            "B": "No. A limit can never be increased.",
+            "C": "Service limits are defaults. They can be increased or decreased on demand.",
+            "D": "No. Some service limits are hard."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch2_q10",
+          "number": 10,
+          "question": "Which is the best place to get a quick summary of this month's spend for your account?",
+          "choices": {
+            "A": "Budgets",
+            "B": "Cost Explorer",
+            "C": "Cost and Usage reports",
+            "D": "Billing & Cost Management Dashboard"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch2_q11",
+          "number": 11,
+          "question": "What is the main goal for creating a Usage budget type (in AWS Budgets)?",
+          "choices": {
+            "A": "To correlate usage per unit cost to understand your account cost efficiency",
+            "B": "To track the status of any active reserved instances on your account",
+            "C": "To track particular categories of resource consumption",
+            "D": "To monitor costs being incurred against your account"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch2_q12",
+          "number": 12,
+          "question": "Which of the following is not a setting you can configure in a Cost budget?",
+          "choices": {
+            "A": "Period (monthly, quarterly, etc.)",
+            "B": "Instance type",
+            "C": "Start and stop dates",
+            "D": "Owner (username of resource owner)"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch2_q13",
+          "number": 13,
+          "question": "What is the main difference between the goals of Cost Explorer and of Cost and Usage reports?",
+          "choices": {
+            "A": "Cost Explorer displays visualizations of high-level historical and current account costs, whereas Cost and Usage reports generate granular usage reports in CSV format.",
+            "B": "Cost and Usage reports display visualizations of high-level historical and current account costs, whereas Cost Explorer generates granular usage reports in CSV format.",
+            "C": "Cost Explorer lets you set alerts that are triggered by billing events, whereas Cost and Usage reports help you visualize system events.",
+            "D": "Cost and Usage reports are meant to alert you to malicious intrusions, whereas Cost Explorer displays visualizations of high-level historical and current account costs."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch2_q14",
+          "number": 14,
+          "question": "What is the purpose of cost allocation tags?",
+          "choices": {
+            "A": "To associate spend limits to automatically trigger resource shutdowns when necessary",
+            "B": "To help you identify the purpose and owner of a particular running resource to better understand and control deployments",
+            "C": "To help you identify resources for the purpose of tracking your account spending",
+            "D": "To visually associate account events with billing periods"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch2_q15",
+          "number": 15,
+          "question": "Which of the following scenarios would be a good use case for AWS Organizations? (Choose two.)",
+          "choices": {
+            "A": "A single company with multiple AWS accounts that wants a single place to administer everything",
+            "B": "An organization that provides AWS access to large teams of its developers and admins",
+            "C": "A company that's integrated some operations with an upstream vendor",
+            "D": "A company with two distinct operational areas, each with its own accounting system and AWS account"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A,C",
+          "result": null
+        },
+        {
+          "id": "ch2_q16",
+          "number": 16,
+          "question": "Which of these tools lets you design graphs within the browser interface to track your account spending?",
+          "choices": {
+            "A": "Budgets",
+            "B": "Cost Explorer",
+            "C": "Reports",
+            "D": "Consolidating Billing"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 3,
+      "title": "Getting Support on AWS",
+      "questions": [
+        {
+          "id": "ch3_q1",
+          "number": 1,
+          "question": "Your company is planning a major deployment on AWS. While the design and testing stages are still in progress, which of the following plans will provide the best blend of support and cost savings?",
+          "choices": {
+            "A": "Basic",
+            "B": "Developer",
+            "C": "Business",
+            "D": "Enterprise"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch3_q2",
+          "number": 2,
+          "question": "Your web development team is actively gearing up for a deployment of an e-commerce site. During these early stages of the process, individual developers are running into frustrating conflicts and configuration problems that are highly specific to your situation. Which plan will provide the best blend of support and cost savings?",
+          "choices": {
+            "A": "Basic",
+            "B": "Developer",
+            "C": "Business",
+            "D": "Enterprise"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch3_q3",
+          "number": 3,
+          "question": "Your corporate website was offline last week for more than two hours—which caused serious consequences, including the early retirement of your CTO. Your engineers have been having a lot of trouble tracking down the source of the outage and admit that they need outside help. Which of the following will most likely meet that need?",
+          "choices": {
+            "A": "Basic",
+            "B": "Developer",
+            "C": "Business",
+            "D": "Enterprise"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch3_q4",
+          "number": 4,
+          "question": "For which of the following will AWS provide direct 24/7 support to all users—even those on the Basic Support plan?",
+          "choices": {
+            "A": "Help with infrastructure under a massive denial-of-service (DoS) attack",
+            "B": "Help with failed and unavailable infrastructure",
+            "C": "Help with making a bill payment to AWS",
+            "D": "Help with accessing your infrastructure via the AWS CLI"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch3_q5",
+          "number": 5,
+          "question": "The primary purpose of an AWS technical account manager is to:",
+          "choices": {
+            "A": "Provide 24/7 customer service for your AWS account.",
+            "B": "Provide deployment guidance and advocacy for Enterprise Support customers.",
+            "C": "Provide deployment guidance and advocacy for Business Support customers.",
+            "D": "Provide strategic cost estimates for Enterprise Support customers."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch3_q6",
+          "number": 6,
+          "question": "Your Linux-based EC2 instance requires a patch to a Linux kernel module. The problem is that patching the module will, for some reason, break the connection between your instance and data in an S3 bucket. Your team doesn't know if it's possible to work around this problem. Which is the most cost-effective AWS plan through which support professionals will try to help you?",
+          "choices": {
+            "A": "Developer",
+            "B": "Business",
+            "C": "Enterprise",
+            "D": "No plan covers this kind of support."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch3_q7",
+          "number": 7,
+          "question": "Your company enrolled in the Developer Support plan and, through the course of one month, consumed $4,000 USD of AWS services. How much will the support plan cost the company for the month?",
+          "choices": {
+            "A": "$120",
+            "B": "$29",
+            "C": "$100",
+            "D": "$480"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch3_q8",
+          "number": 8,
+          "question": "Your company enrolled in the Business Support plan and, through the course of three months, consumed $33,000 of AWS services (the consumption was equally divided across the months). How much will the support plan cost the company for the full three months?",
+          "choices": {
+            "A": "$4,000",
+            "B": "$100",
+            "C": "$1,100",
+            "D": "$3,310"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch3_q9",
+          "number": 9,
+          "question": "Which of the following AWS support services does not offer free documentation of some sort?",
+          "choices": {
+            "A": "AWS Professional Services",
+            "B": "The Basic Support plan",
+            "C": "AWS Partner Network",
+            "D": "The Knowledge Center"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch3_q10",
+          "number": 10,
+          "question": "What is the key difference between the roles of AWS Professional Services and a technical account manager (TAM)?",
+          "choices": {
+            "A": "The Professional Services product helps AWS Partner Network cloud professionals work alongside your own team to help you administer your cloud infrastructure. The TAM is a cloud professional employed by AWS to guide you through the planning and execution of your infrastructure.",
+            "B": "The TAM is a cloud professional employed by AWS to guide you through the planning and execution of your infrastructure. The Professional Services product provides cloud professionals to work alongside your own team to help you administer your cloud infrastructure.",
+            "C": "The TAM is a member of your team designated as the point person for all AWS projects. The Professional Services product provides consultants to work alongside your own team to help you administer your cloud infrastructure.",
+            "D": "The Professional Services product is a network appliance that AWS installs in your data center to test cloud-bound workloads for compliance with best practices. The TAM is a cloud professional employed by AWS to guide you through the planning and execution of your infrastructure."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch3_q11",
+          "number": 11,
+          "question": "Which of the following documentation sites are most likely to contain code snippets for you to cut and (after making sure you understand exactly what they'll do) paste into your AWS operations? (Choose two.)",
+          "choices": {
+            "A": "https://repost.aws/knowledge-center",
+            "B": "https://aws.amazon.com/premiumsupport/compare-plans",
+            "C": "https://docs.aws.amazon.com",
+            "D": "https://aws.amazon.com/professional-services"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C,D",
+          "result": null
+        },
+        {
+          "id": "ch3_q12",
+          "number": 12,
+          "question": "What is the primary function of the content linked from the Knowledge Center?",
+          "choices": {
+            "A": "To introduce new users to the functionality of the core AWS services",
+            "B": "To explain how AWS deployments can be more efficient and secure than on-premises",
+            "C": "To provide a public forum where AWS users can ask their technical questions",
+            "D": "To present solutions to commonly encountered technical problems using AWS infrastructure"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch3_q13",
+          "number": 13,
+          "question": "On which of the following sites are you most likely to find information about encrypting your AWS resources?",
+          "choices": {
+            "A": "https://aws.amazon.com/premiumsupport/knowledge-center",
+            "B": "https://aws.amazon.com/security/security-resources",
+            "C": "https://docs.aws.amazon.com",
+            "D": "https://aws.amazon.com/security/encryption"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch3_q14",
+          "number": 14,
+          "question": "When using AWS documentation pages, what's the best way to be sure the information you're reading is up-to-date?",
+          "choices": {
+            "A": "The page URL will include the word latest.",
+            "B": "The page URL will include the version number (i.e., 3.2).",
+            "C": "The page will have the word Current at the top right.",
+            "D": "There is no easy way to tell."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch3_q15",
+          "number": 15,
+          "question": "Which of the following is not a Trusted Advisor category?",
+          "choices": {
+            "A": "Performance",
+            "B": "Service Limits",
+            "C": "Replication",
+            "D": "Fault Tolerance"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch3_q16",
+          "number": 16,
+          "question": "\"Data volumes that aren't properly backed up\" is an example of which of these Trusted Advisor categories?",
+          "choices": {
+            "A": "Fault Tolerance",
+            "B": "Performance",
+            "C": "Security",
+            "D": "Cost Optimization"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch3_q17",
+          "number": 17,
+          "question": "Instances that are running (mostly) idle should be identified by which of these Trusted Advisor categories?",
+          "choices": {
+            "A": "Performance",
+            "B": "Cost Optimization",
+            "C": "Service Limits",
+            "D": "Replication"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch3_q18",
+          "number": 18,
+          "question": "Within the context of Trusted Advisor, what is a false positive?",
+          "choices": {
+            "A": "An alert for a service state that was actually intentional",
+            "B": "A green OK icon for a service state that failed or is failing",
+            "C": "A single status icon indicating that your account is completely compliant",
+            "D": "Textual indication of a failed state"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch3_q19",
+          "number": 19,
+          "question": "Which of the following Trusted Advisor alerts is available only for accounts on the Business or Enterprise Support plan? (Choose two.)",
+          "choices": {
+            "A": "MFA on Root Account",
+            "B": "Load Balancer Optimization",
+            "C": "Service Limits",
+            "D": "IAM Access Key Rotation"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 4,
+      "title": "Understanding the AWS Environment",
+      "questions": [
+        {
+          "id": "ch4_q1",
+          "number": 1,
+          "question": "Which of the following designations would refer to the AWS US West (Oregon) region?",
+          "choices": {
+            "A": "us-east-1",
+            "B": "us-west-2",
+            "C": "us-west-2a",
+            "D": "us-west-2b"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch4_q2",
+          "number": 2,
+          "question": "Which of the following is an AWS region for which customer access is restricted?",
+          "choices": {
+            "A": "AWS Admin",
+            "B": "US-DOD",
+            "C": "Asia Pacific (Tokyo)",
+            "D": "AWS GovCloud"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch4_q3",
+          "number": 3,
+          "question": "When you request a new virtual machine instance in EC2, your instance will automatically launch into the currently selected value of which of the following?",
+          "choices": {
+            "A": "Service",
+            "B": "Subnet",
+            "C": "Availability zone",
+            "D": "Region"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch4_q4",
+          "number": 4,
+          "question": "Which of the following are not globally based AWS services? (Choose two.)",
+          "choices": {
+            "A": "RDS",
+            "B": "Route 53",
+            "C": "EC2",
+            "D": "CloudFront"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        },
+        {
+          "id": "ch4_q5",
+          "number": 5,
+          "question": "Which of the following would be a valid endpoint your developers could use to access a particular Relational Database Service instance you're running in the Northern Virginia region?",
+          "choices": {
+            "A": "us-east-1.amazonaws.com.rds",
+            "B": "ecs.eu-west-3.amazonaws.com",
+            "C": "rds.us-east-1.amazonaws.com",
+            "D": "rds.amazonaws.com.us-east-1"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch4_q6",
+          "number": 6,
+          "question": "What are the most significant architectural benefits of the way AWS designed its regions? (Choose two.)",
+          "choices": {
+            "A": "It can make infrastructure more fault-tolerant.",
+            "B": "It can make applications available to end users with lower latency.",
+            "C": "It can make applications more compliant with local regulations.",
+            "D": "It can bring down the price of running."
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "B,C",
+          "result": null
+        },
+        {
+          "id": "ch4_q7",
+          "number": 7,
+          "question": "Why is it that most AWS resources are tied to a single region?",
+          "choices": {
+            "A": "Because those resources are run on a physical device, and that device must live somewhere",
+            "B": "Because security considerations are best served by restricting access to a single physical location",
+            "C": "Because access to any one digital resource must always occur through a single physical gateway",
+            "D": "Because spreading them too far afield would introduce latency issues"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch4_q8",
+          "number": 8,
+          "question": "You want to improve the resilience of your EC2 web server. Which of the following is the most effective and efficient approach?",
+          "choices": {
+            "A": "Launch parallel, load-balanced instances in multiple AWS regions.",
+            "B": "Launch parallel, load-balanced instances in multiple availability zones within a single AWS region.",
+            "C": "Launch parallel, autoscaled instances in multiple AWS regions.",
+            "D": "Launch parallel, autoscaled instances in multiple availability zones within a single AWS region."
+          },
+          "course_part": "07 - ELB & ASG - Elastic Load Balancing & Auto Scaling Groups",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch4_q9",
+          "number": 9,
+          "question": "Which of the following is the most accurate description of an AWS availability zone?",
+          "choices": {
+            "A": "One or more independently powered data centers running a wide range of hardware host types",
+            "B": "One or more independently powered data centers running a uniform hardware host type",
+            "C": "All the data centers located within a broad geographic area",
+            "D": "The infrastructure running within a single physical data center"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch4_q10",
+          "number": 10,
+          "question": "Which of the following most accurately describes a subnet within the AWS ecosystem?",
+          "choices": {
+            "A": "The virtual limits imposed on the network access permitted to a resource instance",
+            "B": "The block of IP addresses assigned for use within a single region",
+            "C": "The block of IP addresses assigned for use within a single availability zone",
+            "D": "The networking hardware used within a single availability zone"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch4_q11",
+          "number": 11,
+          "question": "What determines the order by which subnets/AZ options are displayed in EC2 configuration dialog boxes?",
+          "choices": {
+            "A": "Alphabetical order.",
+            "B": "They appear to be displayed in random order.",
+            "C": "Numerical order.",
+            "D": "By order of capacity, with largest capacity first."
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch4_q12",
+          "number": 12,
+          "question": "What is the primary goal of autoscaling?",
+          "choices": {
+            "A": "To ensure the long-term reliability of a particular physical resource",
+            "B": "To ensure the long-term reliability of a particular virtual resource",
+            "C": "To orchestrate the use of multiple parallel resources to direct incoming user requests",
+            "D": "To ensure that a predefined service level is maintained regardless of external demand or instance failures"
+          },
+          "course_part": "07 - ELB & ASG - Elastic Load Balancing & Auto Scaling Groups",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch4_q13",
+          "number": 13,
+          "question": "Which of the following design strategies is most effective for maintaining the reliability of a cloud application?",
+          "choices": {
+            "A": "Resource isolation",
+            "B": "Resource automation",
+            "C": "Resource redundancy",
+            "D": "Resource geolocation"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch4_q14",
+          "number": 14,
+          "question": "Which of the following AWS services are not likely to benefit from Amazon edge locations? (Choose two.)",
+          "choices": {
+            "A": "RDS",
+            "B": "EC2 load balancers",
+            "C": "Elastic Block Store (EBS)",
+            "D": "CloudFront"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "A,C",
+          "result": null
+        },
+        {
+          "id": "ch4_q15",
+          "number": 15,
+          "question": "Which of the following is the primary benefit of using CloudFront distributions?",
+          "choices": {
+            "A": "Automated protection from mass email campaigns",
+            "B": "Greater availability through redundancy",
+            "C": "Greater security through data encryption",
+            "D": "Reduced latency access to your content no matter where your end users live"
+          },
+          "course_part": "12 - Leveraging the AWS Global Infrastructure at Scale",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch4_q16",
+          "number": 16,
+          "question": "What is the main purpose of Amazon Route 53?",
+          "choices": {
+            "A": "Countering the threat of distributed denial-of-service (DDoS) attacks",
+            "B": "Managing domain name registration and traffic routing",
+            "C": "Protecting web applications from web-based threats",
+            "D": "Using the serverless power of Lambda to customize CloudFront behavior"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch4_q17",
+          "number": 17,
+          "question": "According to the AWS Shared Responsibility Model, which of the following are responsibilities of AWS? (Choose two.)",
+          "choices": {
+            "A": "The security of the cloud",
+            "B": "Patching underlying virtualization software running in AWS data centers",
+            "C": "Security of what's in the cloud",
+            "D": "Patching OSs running on EC2 instances"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch4_q18",
+          "number": 18,
+          "question": "According to the AWS Shared Responsibility Model, what's the best way to define the status of the software driving an AWS managed service?",
+          "choices": {
+            "A": "Everything associated with an AWS managed service is the responsibility of AWS.",
+            "B": "Whatever is added by the customer (like application code) is the customer's responsibility.",
+            "C": "Whatever the customer can control (application code and/or configuration settings) is the customer's responsibility.",
+            "D": "Everything associated with an AWS managed service is the responsibility of the customer."
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch4_q19",
+          "number": 19,
+          "question": "Which of the following is one of the first places you should look when troubleshooting a failing application?",
+          "choices": {
+            "A": "AWS Acceptable Use Monitor",
+            "B": "Service Status Dashboard",
+            "C": "AWS Billing Dashboard",
+            "D": "Service Health Dashboard"
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 5,
+      "title": "Securing Your AWS Resources",
+      "questions": [
+        {
+          "id": "ch5_q1",
+          "number": 1,
+          "question": "What is the primary function of the AWS IAM service?",
+          "choices": {
+            "A": "Identity and access management",
+            "B": "Access key management",
+            "C": "SSH key pair management",
+            "D": "Federated access management"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch5_q2",
+          "number": 2,
+          "question": "Which of the following are requirements you can include in an IAM password policy? (Choose three.)",
+          "choices": {
+            "A": "Require at least one uppercase letter.",
+            "B": "Require at least one number.",
+            "C": "Require at least one space or null character.",
+            "D": "Require at least one nonalphanumeric character."
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "A,B,D",
+          "result": null
+        },
+        {
+          "id": "ch5_q3",
+          "number": 3,
+          "question": "Which of the following should you do to secure your AWS root user? (Choose two.)",
+          "choices": {
+            "A": "Assign the root user to the “admins” IAM group.",
+            "B": "Use the root user for day-to-day administration tasks.",
+            "C": "Enable MFA.",
+            "D": "Create a strong password."
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "C,D",
+          "result": null
+        },
+        {
+          "id": "ch5_q4",
+          "number": 4,
+          "question": "How does multifactor authentication work?",
+          "choices": {
+            "A": "Instead of an access password, users authenticate via a physical MFA device.",
+            "B": "In addition to an access password, users also authenticate via a physical MFA device.",
+            "C": "Users authenticate using tokens sent to at least two MFA devices.",
+            "D": "Users authenticate using a password and also either a physical or virtual MFA device."
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch5_q5",
+          "number": 5,
+          "question": "Which of the following SSH commands will successfully connect to an EC2 Amazon Linux instance with an IP address of 54.7.35.103 using a key named mykey.pem?",
+          "choices": {
+            "A": "echo \"mykey.pem ubuntu@54.7.35.103\" | ssh -i",
+            "B": "ssh -i mykey.pem ec2-user@54.7.35.103",
+            "C": "ssh -i mykey.pem@54.7.35.103",
+            "D": "ssh ec2-user@mykey.pem:54.7.35.103 -i"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch5_q6",
+          "number": 6,
+          "question": "What’s the most efficient method for managing permissions for multiple IAM users?",
+          "choices": {
+            "A": "Assign users requiring similar permissions to IAM roles.",
+            "B": "Assign users requiring similar permissions to IAM groups.",
+            "C": "Assign IAM users permissions common to others with similar administration responsibilities.",
+            "D": "Create roles based on IAM policies and assign them to IAM users."
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch5_q7",
+          "number": 7,
+          "question": "What is an IAM role?",
+          "choices": {
+            "A": "A set of permissions allowing access to specified AWS resources",
+            "B": "A set of IAM users given permission to access specified AWS resources",
+            "C": "Permissions granted a trusted entity over specified AWS resources",
+            "D": "Permissions granted an IAM user over specified AWS resources"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch5_q8",
+          "number": 8,
+          "question": "How can federated identities be incorporated into AWS workflows? (Choose two.)",
+          "choices": {
+            "A": "You can provide users authenticated through a third-party identity provider access to backend resources used by your mobile app.",
+            "B": "You can use identities to guide your infrastructure design decisions.",
+            "C": "You can use authenticated identities to import external data (like email records from Gmail) into AWS databases.",
+            "D": "You can provide admins authenticated through AWS Microsoft AD with access to a Microsoft SharePoint farm running on AWS."
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "A,D",
+          "result": null
+        },
+        {
+          "id": "ch5_q9",
+          "number": 9,
+          "question": "Which of the following are valid third-party federated identity standards? (Choose two.)",
+          "choices": {
+            "A": "Secure Shell",
+            "B": "SSO",
+            "C": "SAML 2.0",
+            "D": "Active Directory"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "B,C",
+          "result": null
+        },
+        {
+          "id": "ch5_q10",
+          "number": 10,
+          "question": "What information does the IAM credential report provide?",
+          "choices": {
+            "A": "A record of API requests against your account resources",
+            "B": "A record of failed password account login attempts",
+            "C": "The current state of your account security settings",
+            "D": "The current state of security of your IAM users’ access credentials"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch5_q11",
+          "number": 11,
+          "question": "What text format does the credential report use?",
+          "choices": {
+            "A": "JSON",
+            "B": "CSV",
+            "C": "ASCII",
+            "D": "XML"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch5_q12",
+          "number": 12,
+          "question": "Which of the following IAM policies is the best choice for the admin user you create in order to replace the root user for day-to-day administration tasks?",
+          "choices": {
+            "A": "AdministratorAccess",
+            "B": "AmazonS3FullAccess",
+            "C": "AmazonEC2FullAccess",
+            "D": "AdminAccess"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch5_q13",
+          "number": 13,
+          "question": "What will you need to provide for a new IAM user you’re creating who will use “programmatic access” to AWS resources?",
+          "choices": {
+            "A": "A password",
+            "B": "A password and MFA",
+            "C": "An access key ID",
+            "D": "An access key ID and secret access key"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch5_q14",
+          "number": 14,
+          "question": "What will IAM users with AWS Management Console access need to successfully log in?",
+          "choices": {
+            "A": "Their username, account number, and a password",
+            "B": "Their username and password",
+            "C": "Their account number and secret access key",
+            "D": "Their username, password, and secret access key"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch5_q15",
+          "number": 15,
+          "question": "Which of the following will encrypt your data while in transit between your office and Amazon S3?",
+          "choices": {
+            "A": "DynamoDB",
+            "B": "SSE-S3",
+            "C": "A client-side master key",
+            "D": "SSE-KMS"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch5_q16",
+          "number": 16,
+          "question": "Which of the following AWS resources cannot be encrypted using KMS?",
+          "choices": {
+            "A": "Existing AWS Elastic Block Store volumes",
+            "B": "RDS databases",
+            "C": "S3 buckets",
+            "D": "DynamoDB databases"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch5_q17",
+          "number": 17,
+          "question": "What does KMS use to encrypt objects stored on your AWS account?",
+          "choices": {
+            "A": "SSH master key",
+            "B": "KMS master key",
+            "C": "Client-side master key",
+            "D": "Customer master key"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch5_q18",
+          "number": 18,
+          "question": "Which of the following standards governs AWS-based applications processing credit card transactions?",
+          "choices": {
+            "A": "SSE-KMS",
+            "B": "FedRAMP",
+            "C": "PCI DSS",
+            "D": "ARPA"
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch5_q19",
+          "number": 19,
+          "question": "What is the purpose of the Service Organization Controls (SOC) reports found on AWS Artifact?",
+          "choices": {
+            "A": "They can be used to help you design secure and reliable credit card transaction applications.",
+            "B": "They attest to AWS infrastructure compliance with data accountability standards like Sarbanes–Oxley.",
+            "C": "They guarantee that all AWS-based applications are, by default, compliant with Sarbanes–Oxley standards.",
+            "D": "They’re an official, ongoing risk-assessment profiler for AWS-based deployments."
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch5_q20",
+          "number": 20,
+          "question": "What role can the documents provided by AWS Artifact play in your application planning? (Choose two.)",
+          "choices": {
+            "A": "They can help you confirm that your deployment infrastructure is compliant with regulatory standards.",
+            "B": "They can provide insight into various regulatory and industry standards that represent best practices.",
+            "C": "They can provide insight into the networking and storage design patterns your AWS applications use.",
+            "D": "They represent AWS infrastructure design policy."
+          },
+          "course_part": "16 - Security & Compliance",
+          "user_answer": null,
+          "book_answer": "A,B",
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 6,
+      "title": "Working with Your AWS Resources",
+      "questions": [
+        {
+          "id": "ch6_q1",
+          "number": 1,
+          "question": "Which of the following credentials can you use to log into the AWS Management Console?",
+          "choices": {
+            "A": "Access key ID",
+            "B": "Account alias",
+            "C": "Account ID",
+            "D": "Identity and Access Management (IAM) username"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch6_q2",
+          "number": 2,
+          "question": "How long will your session with the AWS Management Console remain active?",
+          "choices": {
+            "A": "6 hours",
+            "B": "12 hours",
+            "C": "8 hours",
+            "D": "24 hours",
+            "E": "15 minutes"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch6_q3",
+          "number": 3,
+          "question": "When looking at the EC2 service console in the AWS Management Console while logged in as the root user, you notice all of your instances are missing. What could be the reason?",
+          "choices": {
+            "A": "You’ve selected the wrong region in the navigation bar.",
+            "B": "You don’t have view access.",
+            "C": "You’ve selected the wrong availability zone in the navigation bar.",
+            "D": "You don’t have an access key."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch6_q4",
+          "number": 4,
+          "question": "Which of the following is true regarding a resource tag?",
+          "choices": {
+            "A": "It must be unique within an account.",
+            "B": "It’s case insensitive.",
+            "C": "It must have a key.",
+            "D": "It must have a value."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch6_q5",
+          "number": 5,
+          "question": "Which of the following is required to use the AWS Command-Line Interface (CLI)?",
+          "choices": {
+            "A": "A secret key",
+            "B": "An IAM user",
+            "C": "Outbound network access to TCP port 80",
+            "D": "Linux"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch6_q6",
+          "number": 6,
+          "question": "Which of the following are options for installing the AWS CLI on Windows 10? (Choose two.)",
+          "choices": {
+            "A": "The MSI installer",
+            "B": "An AWS software development kit (SDK)",
+            "C": "The Yum or Aptitude package manager",
+            "D": "Using Python and pip"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A,D",
+          "result": null
+        },
+        {
+          "id": "ch6_q7",
+          "number": 7,
+          "question": "After installing the AWS Command-Line Interface, what should you do before using it to securely manage your AWS resources?",
+          "choices": {
+            "A": "Issue the aws --version command.",
+            "B": "Issue the aws configure command.",
+            "C": "Reboot.",
+            "D": "Generate a new access key ID and secret access key for the root user."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch6_q8",
+          "number": 8,
+          "question": "Which output format does the AWS CLI support?",
+          "choices": {
+            "A": "Tab-separated values (TSV)",
+            "B": "Comma-separated values (CSV)",
+            "C": "JavaScript Object Notation (JSON)",
+            "D": "None of these"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch6_q9",
+          "number": 9,
+          "question": "Which of the following programming languages are AWS software development kits available for? (Choose three.)",
+          "choices": {
+            "A": "Fortran",
+            "B": "JavaScript",
+            "C": "JSON",
+            "D": "Java",
+            "E": "PHP"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B,D,E",
+          "result": null
+        },
+        {
+          "id": "ch6_q10",
+          "number": 10,
+          "question": "Which of the following software development kits (SDKs) enable developers to write mobile applications that run on both Apple and Android devices? (Choose two.)",
+          "choices": {
+            "A": "AWS Mobile SDK for Unity",
+            "B": "AWS Mobile SDK for .NET and Xamarin",
+            "C": "AWS SDK for Go",
+            "D": "AWS Mobile SDK for iOS"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A,B",
+          "result": null
+        },
+        {
+          "id": "ch6_q11",
+          "number": 11,
+          "question": "Which of the following programming languages are AWS Internet of Things (IoT) device software development kits available for? (Choose two.)",
+          "choices": {
+            "A": "JavaScript",
+            "B": "C++",
+            "C": "Swift",
+            "D": "Ruby"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A,B",
+          "result": null
+        },
+        {
+          "id": "ch6_q12",
+          "number": 12,
+          "question": "What’s the difference between the AWS Command-Line Interface (CLI) and the AWS software development kits (SDKs)? (Choose two.)",
+          "choices": {
+            "A": "The AWS SDKs allow you to use popular programming languages to write applications that interact with AWS services.",
+            "B": "The AWS CLI allows you to interact with AWS services from a terminal.",
+            "C": "The AWS SDKs allow you to interact with AWS services from a terminal.",
+            "D": "The AWS CLI allows you to use popular programming languages to write applications that interact with AWS services."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A,B",
+          "result": null
+        },
+        {
+          "id": "ch6_q13",
+          "number": 13,
+          "question": "Which of the following CloudWatch features store performance data from AWS services?",
+          "choices": {
+            "A": "Logs",
+            "B": "Metrics",
+            "C": "Events",
+            "D": "Metric filters",
+            "E": "Alarms"
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch6_q14",
+          "number": 14,
+          "question": "For which of the following scenarios can you create a CloudWatch alarm to send a notification?",
+          "choices": {
+            "A": "A metric that doesn’t change for 24 hours",
+            "B": "Termination of an EC2 instance",
+            "C": "The presence of a specific IP address in a web server log",
+            "D": "A metric that exceeds a given threshold"
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch6_q15",
+          "number": 15,
+          "question": "Which of the following Simple Notification Service (SNS) protocols can you use to send a notification? (Choose two.)",
+          "choices": {
+            "A": "Short Message Service (SMS) text message",
+            "B": "CloudWatch Events",
+            "C": "Simple Queue Service (SQS)",
+            "D": "Mobile pull notification"
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "A,C",
+          "result": null
+        },
+        {
+          "id": "ch6_q16",
+          "number": 16,
+          "question": "Which of the following are true regarding CloudWatch Events? (Choose two.)",
+          "choices": {
+            "A": "It can reboot an EC2 instance when an error appears in a log file.",
+            "B": "It can send an SNS notification when an EC2 instance’s CPU utilization exceeds 90 percent.",
+            "C": "It can send an SNS notification when an IAM user logs in to the AWS Management Console.",
+            "D": "It can shut down an EC2 instance at a specific time."
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "C,D",
+          "result": null
+        },
+        {
+          "id": "ch6_q17",
+          "number": 17,
+          "question": "Which of the following trigger an API action? (Choose two.)",
+          "choices": {
+            "A": "Configuring the AWS Command-Line Interface (CLI)",
+            "B": "Viewing an S3 bucket from the AWS Management Console",
+            "C": "Logging in to the AWS Management Console",
+            "D": "Listing IAM users from the AWS CLI"
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        },
+        {
+          "id": "ch6_q18",
+          "number": 18,
+          "question": "What’s the most cost-effective way to view and search only the last 60 days of management API events on your AWS account?",
+          "choices": {
+            "A": "Use CloudTrail event history.",
+            "B": "Create a trail.",
+            "C": "Stream CloudTrail logs to CloudWatch.",
+            "D": "Use CloudWatch Events."
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch6_q19",
+          "number": 19,
+          "question": "You want to log every object downloaded from an S3 bucket in a specific region. You want to retain these logs indefinitely and search them easily. What’s the most cost-effective way to do this? (Choose two.)",
+          "choices": {
+            "A": "Stream CloudTrail logs to CloudWatch Logs.",
+            "B": "Use CloudTrail event history.",
+            "C": "Enable CloudTrail logging of global service events.",
+            "D": "Create a trail to log S3 data events."
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "A,D",
+          "result": null
+        },
+        {
+          "id": "ch6_q20",
+          "number": 20,
+          "question": "What is a benefit of using CloudTrail log file integrity validation?",
+          "choices": {
+            "A": "It lets you assert that no CloudTrail log files have been deleted from CloudWatch.",
+            "B": "It lets you assert that no CloudTrail log files have been deleted from S3.",
+            "C": "It prevents unauthorized users from deleting CloudTrail log files.",
+            "D": "It tells you how a CloudTrail log file has been tampered with."
+          },
+          "course_part": "14 - Cloud Monitoring",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch6_q21",
+          "number": 21,
+          "question": "Which of the following Cost Explorer report types can show you the monthly costs for your reserved EC2 instances?",
+          "choices": {
+            "A": "Reserved instance recommendations",
+            "B": "Reserved Instances (RI) Coverage reports",
+            "C": "Reserved Instances (RI) Utilization reports",
+            "D": "Costs and usage reports"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch6_q22",
+          "number": 22,
+          "question": "Which of the following services allow you to purchase reserved instances to save money?",
+          "choices": {
+            "A": "Amazon Relational Database Service (RDS)",
+            "B": "Lambda",
+            "C": "S3",
+            "D": "AWS Fargate"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch6_q23",
+          "number": 23,
+          "question": "Which Cost Explorer report shows the amount of money you’ve saved using reserved instances?",
+          "choices": {
+            "A": "Daily costs",
+            "B": "Reserved Instances Utilization",
+            "C": "Reservation Coverage",
+            "D": "Monthly EC2 running hours costs and usage"
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch6_q24",
+          "number": 24,
+          "question": "You’ve been running several Elasticsearch instances continuously for the past three months. You check the reserved instance recommendations in Cost Explorer but see no recommendations. What could be a reason for this?",
+          "choices": {
+            "A": "The recommendation parameters are based on the past seven days.",
+            "B": "You haven’t selected the Elastic Compute Cloud (EC2) service.",
+            "C": "Cost Explorer doesn’t make reservation recommendations for Elasticsearch.",
+            "D": "Your instances are already covered by reservations.",
+            "E": "You haven’t selected the ElastiCache service."
+          },
+          "course_part": "18 - Account Management, Billing & Support",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 7,
+      "title": "The Core Compute Services",
+      "questions": [
+        {
+          "id": "ch7_q1",
+          "number": 1,
+          "question": "What is the function of an EC2 AMI?",
+          "choices": {
+            "A": "To define the hardware profile used by an EC2 instance",
+            "B": "To serve as an instance storage volume for high-volume data processing operations",
+            "C": "To serve as a source image from which an instance’s primary storage volume is built",
+            "D": "To define the way data streams are managed by EC2 instances"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch7_q2",
+          "number": 2,
+          "question": "Where can you find a wide range of verified AMIs from both AWS and third-party vendors?",
+          "choices": {
+            "A": "AWS Marketplace",
+            "B": "Quick Start",
+            "C": "Community AMIs",
+            "D": "My AMIs"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch7_q3",
+          "number": 3,
+          "question": "Which of the following could be included in an EC2 AMI? (Choose two.)",
+          "choices": {
+            "A": "A networking configuration",
+            "B": "A software application stack",
+            "C": "An operating system",
+            "D": "An instance type definition"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "B,C",
+          "result": null
+        },
+        {
+          "id": "ch7_q4",
+          "number": 4,
+          "question": "Which of the following are EC2 instance type families? (Choose two.)",
+          "choices": {
+            "A": "c5d.18xlarge",
+            "B": "Compute optimized",
+            "C": "t2.micro",
+            "D": "Accelerated computing"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        },
+        {
+          "id": "ch7_q5",
+          "number": 5,
+          "question": "When describing EC2 instance types, what is the role played by the vCPU metric?",
+          "choices": {
+            "A": "vCPUs represent an instance’s potential resilience against external network demands.",
+            "B": "vCPUs represent an instance type’s system memory compared to the class of memory modules on a physical machine.",
+            "C": "vCPUs represent an AMI’s processing power compared to the number of processors on a physical machine.",
+            "D": "vCPUs represent an instance type’s compute power compared to the number of processors on a physical machine."
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch7_q6",
+          "number": 6,
+          "question": "Which of the following describes an EC2 dedicated instance?",
+          "choices": {
+            "A": "An EC2 instance running on a physical host reserved for the exclusive use of a single AWS account",
+            "B": "An EC2 instance running on a physical host reserved for and controlled by a single AWS account",
+            "C": "An EC2 AMI that can be launched only on an instance within a single AWS account",
+            "D": "An EC2 instance optimized for a particular compute role"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch7_q7",
+          "number": 7,
+          "question": "Which of the following describes an EBS volume?",
+          "choices": {
+            "A": "A software stack archive packaged to make it easy to copy and deploy to an EC2 instance",
+            "B": "A virtualized partition of a physical storage drive that’s directly connected to the EC2 instance it’s associated with",
+            "C": "A virtualized partition of a physical storage drive that’s not directly connected to the EC2 instance it’s associated with",
+            "D": "A storage volume that’s encrypted for greater security"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch7_q8",
+          "number": 8,
+          "question": "Why might you want to use an instance store volume with your EC2 instance rather than a volume from the more common EBS service? (Choose two.)",
+          "choices": {
+            "A": "Instance store volumes can be encrypted.",
+            "B": "Data on instance store volumes will survive an instance shutdown.",
+            "C": "Instance store volumes provide faster data read/write performance.",
+            "D": "Instance store volumes are connected directly to your EC2 instance."
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "C,D",
+          "result": null
+        },
+        {
+          "id": "ch7_q9",
+          "number": 9,
+          "question": "Your web application experiences periodic spikes in demand that require the provisioning of extra instances. Which of the following pricing models would make the most sense for those extra instances?",
+          "choices": {
+            "A": "Spot",
+            "B": "On-demand",
+            "C": "Reserved",
+            "D": "Dedicated"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch7_q10",
+          "number": 10,
+          "question": "Your web application experiences periodic spikes in demand that require the provisioning of extra instances. Which of the following pricing models would make the most sense for the “base” instances that will run constantly?",
+          "choices": {
+            "A": "Spot",
+            "B": "On-demand",
+            "C": "Spot fleet",
+            "D": "Reserved"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch7_q11",
+          "number": 11,
+          "question": "Which of the following best describes what happens when you purchase an EC2 reserved instance?",
+          "choices": {
+            "A": "Charges for any instances you run matching the reserved instance type will be covered by the reservation.",
+            "B": "Capacity matching the reserved definition will be guaranteed to be available whenever you request it.",
+            "C": "Your account will immediately and automatically be billed for the full reservation amount.",
+            "D": "An EC2 instance matching your reservation will automatically be launched in the selected AWS region."
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch7_q12",
+          "number": 12,
+          "question": "Which of the following use cases are good candidates for spot instances? (Choose two.)",
+          "choices": {
+            "A": "Big data processing workloads",
+            "B": "E-commerce websites",
+            "C": "Continuous integration development environments",
+            "D": "Long-term, highly available, content-rich websites"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch7_q13",
+          "number": 13,
+          "question": "Which AWS services simplify the process of bringing web applications to deployment? (Choose two.)",
+          "choices": {
+            "A": "Elastic Block Store",
+            "B": "Elastic Compute Cloud",
+            "C": "Elastic Beanstalk",
+            "D": "Lightsail"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch7_q14",
+          "number": 14,
+          "question": "Which of the following services bills at a flat rate regardless of how it’s consumed?",
+          "choices": {
+            "A": "Lightsail",
+            "B": "Elastic Beanstalk",
+            "C": "Elastic Compute Cloud",
+            "D": "Relational Database Service"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch7_q15",
+          "number": 15,
+          "question": "Which of these stacks are available from Lightsail blueprints? (Choose two.)",
+          "choices": {
+            "A": "Ubuntu",
+            "B": "Gitlab",
+            "C": "WordPress",
+            "D": "LAMP"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch7_q16",
+          "number": 16,
+          "question": "Which of these AWS services use primarily EC2 resources under the hood? (Choose two.)",
+          "choices": {
+            "A": "Elastic Block Store",
+            "B": "Lightsail",
+            "C": "Elastic Beanstalk",
+            "D": "Relational Database Service (RDS)"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch7_q17",
+          "number": 17,
+          "question": "Which of the following AWS services are designed to let you deploy Docker containers? (Choose two.)",
+          "choices": {
+            "A": "Elastic Container Service",
+            "B": "Lightsail",
+            "C": "Elastic Beanstalk",
+            "D": "Elastic Compute Cloud"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch7_q18",
+          "number": 18,
+          "question": "Which of the following directly use container technologies? (Choose two.)",
+          "choices": {
+            "A": "Docker",
+            "B": "Kubernetes",
+            "C": "Lambda",
+            "D": "Lightsail"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch7_q19",
+          "number": 19,
+          "question": "What role can the Python programming language play in AWS Lambda?",
+          "choices": {
+            "A": "Python cannot be used for Lambda.",
+            "B": "It is the primary language for API calls to administer Lambda remotely.",
+            "C": "It is used as the underlying code driving the service.",
+            "D": "It can be set as the runtime environment for a function."
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch7_q20",
+          "number": 20,
+          "question": "What is the maximum time a Lambda function may run before timing out?",
+          "choices": {
+            "A": "15 minutes",
+            "B": "5 minutes",
+            "C": "1 minute",
+            "D": "1 hour"
+          },
+          "course_part": "05 - EC2 - Elastic Compute Cloud",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 9,
+      "title": "The Core Database Services",
+      "questions": [
+        {
+          "id": "ch9_q1",
+          "number": 1,
+          "question": "Which type of database stores data in columns and rows?",
+          "choices": {
+            "A": "Nonrelational",
+            "B": "Relational",
+            "C": "Key-value store",
+            "D": "Document"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch9_q2",
+          "number": 2,
+          "question": "Which of the following Structured Query Language (SQL) statements can you use to write data to a relational database table?",
+          "choices": {
+            "A": "CREATE",
+            "B": "INSERT",
+            "C": "QUERY",
+            "D": "WRITE"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch9_q3",
+          "number": 3,
+          "question": "Which of the following statements is true regarding nonrelational databases?",
+          "choices": {
+            "A": "You can create only one table.",
+            "B": "No primary key is required.",
+            "C": "You can’t store data with a fixed structure.",
+            "D": "You don’t have to define all the types of data that a table can store before adding data to it."
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch9_q4",
+          "number": 4,
+          "question": "What is a no-SQL database?",
+          "choices": {
+            "A": "A nonrelational database without primary keys",
+            "B": "A schemaless relational database",
+            "C": "A schemaless nonrelational database",
+            "D": "A relational database with primary keys"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch9_q5",
+          "number": 5,
+          "question": "What do new Relational Database Service (RDS) instances use for database storage?",
+          "choices": {
+            "A": "Instance volumes",
+            "B": "Elastic Block Store (EBS) volumes",
+            "C": "Snapshots",
+            "D": "Magnetic storage"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch9_q6",
+          "number": 6,
+          "question": "Which of the following are database engine options for Amazon Relational Database Service (RDS)? (Choose two.)",
+          "choices": {
+            "A": "IBM Db2",
+            "B": "PostgreSQL",
+            "C": "DynamoDB",
+            "D": "Amazon Aurora",
+            "E": "Redis"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        },
+        {
+          "id": "ch9_q7",
+          "number": 7,
+          "question": "What two databases is Amazon Aurora compatible with? (Choose two.)",
+          "choices": {
+            "A": "MySQL",
+            "B": "PostgreSQL",
+            "C": "MariaDB",
+            "D": "Oracle",
+            "E": "Microsoft SQL Server"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "A,B",
+          "result": null
+        },
+        {
+          "id": "ch9_q8",
+          "number": 8,
+          "question": "Which of the following features of Relational Database Service (RDS) can prevent data loss in the event of an availability zone failure? (Choose two.)",
+          "choices": {
+            "A": "Read replicas",
+            "B": "Multi-AZ",
+            "C": "Snapshots",
+            "D": "IOPS",
+            "E": "Vertical scaling"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B,C",
+          "result": null
+        },
+        {
+          "id": "ch9_q9",
+          "number": 9,
+          "question": "Which RDS database engine offers automatically expanding database storage up to 64 TB?",
+          "choices": {
+            "A": "Microsoft SQL Server",
+            "B": "Amazon Aurora",
+            "C": "Oracle",
+            "D": "Amazon Athena"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch9_q10",
+          "number": 10,
+          "question": "Which of the following Relational Database Service (RDS) features can help you achieve a monthly availability of 99.95 percent?",
+          "choices": {
+            "A": "Multi-AZ",
+            "B": "Read replicas",
+            "C": "Point-in-time recovery",
+            "D": "Horizontal scaling"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch9_q11",
+          "number": 11,
+          "question": "What is true regarding a DynamoDB partition? (Choose two.)",
+          "choices": {
+            "A": "It’s stored within a table.",
+            "B": "It’s backed by solid-state drives.",
+            "C": "It’s a way to uniquely identify an item in a table.",
+            "D": "It’s replicated across multiple availability zones."
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        },
+        {
+          "id": "ch9_q12",
+          "number": 12,
+          "question": "What is the minimum monthly availability for DynamoDB in a single region?",
+          "choices": {
+            "A": "99.99 percent",
+            "B": "99.95 percent",
+            "C": "99.9 percent",
+            "D": "99.0 percent"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch9_q13",
+          "number": 13,
+          "question": "Which of the following statements is true regarding a DynamoDB table?",
+          "choices": {
+            "A": "It can store only one data type.",
+            "B": "When you create a table, you must define the maximum number of items that it can store.",
+            "C": "Items in a table can have duplicate values for the primary key.",
+            "D": "Items in a table don’t have to have all the same attributes."
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch9_q14",
+          "number": 14,
+          "question": "Which configuration parameters can you adjust to improve write performance against a DynamoDB table? (Choose two.)",
+          "choices": {
+            "A": "Decrease read capacity units (RCU).",
+            "B": "Increase read capacity units.",
+            "C": "Increase write capacity units (WCU).",
+            "D": "Decrease write capacity units.",
+            "E": "Enable DynamoDB Auto Scaling."
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "C,E",
+          "result": null
+        },
+        {
+          "id": "ch9_q15",
+          "number": 15,
+          "question": "Which DynamoDB operation is the most read-intensive?",
+          "choices": {
+            "A": "Write",
+            "B": "Query",
+            "C": "Scan",
+            "D": "Update"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch9_q16",
+          "number": 16,
+          "question": "Which of the following would be appropriate to use for a primary key in a DynamoDB table that stores a customer list?",
+          "choices": {
+            "A": "The customer’s full name",
+            "B": "The customer’s phone number",
+            "C": "The customer’s city",
+            "D": "A randomly generated customer ID number"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch9_q17",
+          "number": 17,
+          "question": "Which type of Redshift node uses magnetic storage?",
+          "choices": {
+            "A": "Cost-optimized",
+            "B": "Dense compute",
+            "C": "Dense storage",
+            "D": "Dense memory"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch9_q18",
+          "number": 18,
+          "question": "Which Redshift feature can analyze structured data stored in S3?",
+          "choices": {
+            "A": "Redshift Spectrum",
+            "B": "Redshift S3",
+            "C": "Amazon Athena",
+            "D": "Amazon RDS"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch9_q19",
+          "number": 19,
+          "question": "What is the term for a relational database that stores large amounts of structured data from a variety of sources for reporting and analysis?",
+          "choices": {
+            "A": "Data warehouse",
+            "B": "Data warehouse",
+            "C": "Report cluster",
+            "D": "Dense storage node"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch9_q20",
+          "number": 20,
+          "question": "What’s the maximum amount of data you can store in a Redshift cluster when using dense storage nodes?",
+          "choices": {
+            "A": "2 PB",
+            "B": "326 TB",
+            "C": "2 TB",
+            "D": "326 PB",
+            "E": "236 TB"
+          },
+          "course_part": "09 - Databases & Analytics",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 10,
+      "title": "The Core Networking Services",
+      "questions": [
+        {
+          "id": "ch10_q1",
+          "number": 1,
+          "question": "Which of the following is true of a default VPC? (Choose two.)",
+          "choices": {
+            "A": "A default VPC spans multiple regions.",
+            "B": "AWS creates a default VPC in each region.",
+            "C": "AWS creates a default VPC in each availability zone.",
+            "D": "By default, each default VPC is available to one AWS account."
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q2",
+          "number": 2,
+          "question": "Which of the following is a valid CIDR for a VPC or subnet?",
+          "choices": {
+            "A": "10.0.0.0/28",
+            "B": "10.0.0.0/29",
+            "C": "10.0.0.0/8",
+            "D": "10.0.0.0/15"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q3",
+          "number": 3,
+          "question": "Which of the following are true regarding subnets? (Choose two.)",
+          "choices": {
+            "A": "A VPC must have at least two subnets.",
+            "B": "A subnet must have a CIDR that’s a subset of the CIDR of the VPC in which it resides.",
+            "C": "A subnet spans one availability zone.",
+            "D": "A subnet spans multiple availability zones."
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q4",
+          "number": 4,
+          "question": "Which of the following is true of a new security group?",
+          "choices": {
+            "A": "It contains an inbound rule denying access from public IP addresses.",
+            "B": "It contains an outbound rule denying access to public IP addresses.",
+            "C": "It contains an outbound rule allowing access to any IP address.",
+            "D": "It contains an inbound rule allowing access from any IP address.",
+            "E": "It contains an inbound rule denying access from any IP address."
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q5",
+          "number": 5,
+          "question": "What’s the difference between a security group and a network access control list (NACL)? (Choose two.)",
+          "choices": {
+            "A": "A network access control list operates at the instance level.",
+            "B": "A security group operates at the instance level.",
+            "C": "A security group operates at the subnet level.",
+            "D": "A network access control list operates at the subnet level."
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q6",
+          "number": 6,
+          "question": "Which of the following is true of a VPC peering connection?",
+          "choices": {
+            "A": "It’s a private connection that connects more than three VPCs.",
+            "B": "It’s a private connection between two VPCs.",
+            "C": "It’s a public connection between two VPCs.",
+            "D": "It’s a virtual private network (VPN) connection between two VPCs."
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q7",
+          "number": 7,
+          "question": "What are two differences between a virtual private network (VPN) connection and a Direct Connect connection? (Choose two.)",
+          "choices": {
+            "A": "A Direct Connect connection offers predictable latency because it doesn’t traverse the Internet.",
+            "B": "A VPN connection uses the Internet for transport.",
+            "C": "A Direct Connect connection uses AES 128- or 256-bit encryption.",
+            "D": "A VPN connection requires proprietary hardware."
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q8",
+          "number": 8,
+          "question": "Which of the following are true about registering a domain name with Route 53? (Choose two.)",
+          "choices": {
+            "A": "The registrar you use to register a domain name determines who will host DNS for that domain.",
+            "B": "You can register a domain name for a term of up to 10 years.",
+            "C": "Route 53 creates a private hosted zone for the domain.",
+            "D": "Route 53 creates a public hosted zone for the domain."
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q9",
+          "number": 9,
+          "question": "Which of the following Route 53 routing policies can return a set of randomly ordered values?",
+          "choices": {
+            "A": "Simple",
+            "B": "Multivalue Answer",
+            "C": "Failover",
+            "D": "Latency"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q10",
+          "number": 10,
+          "question": "Which of the following Route 53 routing policies doesn’t use health checks?",
+          "choices": {
+            "A": "Latency",
+            "B": "Multivalue Answer",
+            "C": "Simple",
+            "D": "Geolocation"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q11",
+          "number": 11,
+          "question": "Which of the following types of Route 53 health checks works by making a test connection to a TCP port?",
+          "choices": {
+            "A": "Simple",
+            "B": "CloudWatch alarm",
+            "C": "Endpoint",
+            "D": "Calculated"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q12",
+          "number": 12,
+          "question": "You have two EC2 instances hosting a web application. You want to distribute 20 percent of traffic to one instance and 80 percent to the other. Which of the following Route 53 routing policies should you use?",
+          "choices": {
+            "A": "Weighted",
+            "B": "Failover",
+            "C": "Multivalue Answer",
+            "D": "Simple"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q13",
+          "number": 13,
+          "question": "Resources in a VPC need to be able to resolve internal IP addresses for other resources in the VPC. No one outside of the VPC should be able to resolve these addresses. Which of the following Route 53 resources can help you achieve this?",
+          "choices": {
+            "A": "A public hosted zone",
+            "B": "A private hosted zone",
+            "C": "Domain name registration",
+            "D": "Health checks"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q14",
+          "number": 14,
+          "question": "You want to provide private name resolution for two VPCs using the domain name company.pri. How many private hosted zones do you need to create?",
+          "choices": {
+            "A": "1",
+            "B": "2",
+            "C": "3",
+            "D": "4"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q15",
+          "number": 15,
+          "question": "On how many continents are CloudFront edge locations distributed?",
+          "choices": {
+            "A": "7",
+            "B": "6",
+            "C": "5",
+            "D": "4"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q16",
+          "number": 16,
+          "question": "From where does CloudFront retrieve content to store for caching?",
+          "choices": {
+            "A": "Regions",
+            "B": "Origins",
+            "C": "Distributions",
+            "D": "Edge locations"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q17",
+          "number": 17,
+          "question": "Which CloudFront distribution type requires you to provide a media player?",
+          "choices": {
+            "A": "Streaming",
+            "B": "RTMP",
+            "C": "Web",
+            "D": "Edge"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q18",
+          "number": 18,
+          "question": "You need to deliver content to users in the United States and Canada. Which of the following edge location options will be the most cost-effective for your CloudFront distribution?",
+          "choices": {
+            "A": "United States, Canada, and Europe",
+            "B": "United States, Canada, Europe, and Asia",
+            "C": "United States, Canada, Europe, Asia, and Africa",
+            "D": "All edge locations"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q19",
+          "number": 19,
+          "question": "Approximately how many different CloudFront edge locations are there?",
+          "choices": {
+            "A": "About 50",
+            "B": "More than 150",
+            "C": "More than 300",
+            "D": "More than 500"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch10_q20",
+          "number": 20,
+          "question": "Which of the following are valid origins for a CloudFront distribution? (Choose two.)",
+          "choices": {
+            "A": "EC2 instance",
+            "B": "A public S3 bucket",
+            "C": "A private S3 bucket that you don’t have access to",
+            "D": "A private S3 bucket that you own"
+          },
+          "course_part": "15 - VPC & Networking",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 11,
+      "title": "Automating Your AWS Workloads",
+      "questions": [
+        {
+          "id": "ch11_q1",
+          "number": 1,
+          "question": "Which of the following is an advantage of using CloudFormation?",
+          "choices": {
+            "A": "It uses the popular Python programming language.",
+            "B": "It prevents unauthorized manual changes to resources.",
+            "C": "It lets you create multiple separate AWS environments using a single template.",
+            "D": "It can create resources outside of AWS."
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q2",
+          "number": 2,
+          "question": "What formats do CloudFormation templates support? (Choose two.)",
+          "choices": {
+            "A": "XML",
+            "B": "YAML",
+            "C": "HTML",
+            "D": "JSON"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q3",
+          "number": 3,
+          "question": "What’s an advantage of using parameters in a CloudFormation template?",
+          "choices": {
+            "A": "Allow customizing a stack without changing the template.",
+            "B": "Prevent unauthorized users from using a template.",
+            "C": "Prevent stack updates.",
+            "D": "Allow multiple stacks to be created from the same template."
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q4",
+          "number": 4,
+          "question": "Why would you use CloudFormation to automatically create resources for a development environment instead of creating them using AWS CLI commands? (Choose two.)",
+          "choices": {
+            "A": "The resources CloudFormation creates are organized into stacks and can be managed as a single unit.",
+            "B": "CloudFormation stack updates help ensure that changes to one resource won’t break another.",
+            "C": "Resources created by CloudFormation always work as expected.",
+            "D": "CloudFormation can provision resources faster than the AWS CLI."
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q5",
+          "number": 5,
+          "question": "What are two features of CodeCommit? (Choose two.)",
+          "choices": {
+            "A": "Versioning",
+            "B": "Automatic deployment",
+            "C": "Differencing",
+            "D": "Manual deployment"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q6",
+          "number": 6,
+          "question": "In the context of CodeCommit, what can differencing accomplish?",
+          "choices": {
+            "A": "Allowing reverting to an older version of a file",
+            "B": "Understanding what code change introduced a bug",
+            "C": "Deleting duplicate lines of code",
+            "D": "Seeing when an application was last deployed"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q7",
+          "number": 7,
+          "question": "What software development practice regularly tests new code for bugs but doesn’t do anything else?",
+          "choices": {
+            "A": "Differencing",
+            "B": "Continuous deployment",
+            "C": "Continuous delivery",
+            "D": "Continuous integration"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q8",
+          "number": 8,
+          "question": "Which CodeBuild build environment compute types support Windows operating systems? (Choose two.)",
+          "choices": {
+            "A": "build.general2.large",
+            "B": "build.general1.medium",
+            "C": "build.general1.small",
+            "D": "build.general1.large",
+            "E": "build.windows1.small"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q9",
+          "number": 9,
+          "question": "What does a CodeBuild environment always contain? (Choose two.)",
+          "choices": {
+            "A": "An operating system",
+            "B": "A Docker image",
+            "C": "The Python programming language",
+            "D": ".NET Core",
+            "E": "The PHP programming language"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q10",
+          "number": 10,
+          "question": "Which of the following can CodeDeploy do? (Choose three.)",
+          "choices": {
+            "A": "Deploy an application to an on-premises Windows instance.",
+            "B": "Deploy a Docker container to the Elastic Container Service.",
+            "C": "Upgrade an application on an EC2 instance running Red Hat Enterprise Linux.",
+            "D": "Deploy an application to an Android smartphone.",
+            "E": "Deploy a website to an S3 bucket."
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": null,
+          "result": null
+        },
+        {
+          "id": "ch11_q11",
+          "number": 11,
+          "question": "What is the minimum number of actions in a CodePipeline pipeline?",
+          "choices": {
+            "A": "1",
+            "B": "2",
+            "C": "3",
+            "D": "4",
+            "E": "0"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch11_q12",
+          "number": 12,
+          "question": "You want to predefine the configuration of EC2 instances that you plan to launch manually and using Auto Scaling. What resource must you use?",
+          "choices": {
+            "A": "CloudFormation template",
+            "B": "Instance role",
+            "C": "Launch configuration",
+            "D": "Launch template"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch11_q13",
+          "number": 13,
+          "question": "What Auto Scaling group parameters set the limit for the number of instances that Auto Scaling creates? (Choose two.)",
+          "choices": {
+            "A": "Maximum",
+            "B": "Group size",
+            "C": "Desired capacity",
+            "D": "Minimum"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "A,D",
+          "result": null
+        },
+        {
+          "id": "ch11_q14",
+          "number": 14,
+          "question": "An Auto Scaling group has a desired capacity of 7 and a maximum size of 7. What will Auto Scaling do if someone manually terminates one of these instances?",
+          "choices": {
+            "A": "It will not launch any new instances.",
+            "B": "It will launch one new instance.",
+            "C": "It will terminate one instance.",
+            "D": "It will change the desired capacity to 6."
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch11_q15",
+          "number": 15,
+          "question": "What Auto Scaling feature creates a scaling schedule based on past usage patterns?",
+          "choices": {
+            "A": "Predictive scaling",
+            "B": "Scheduled scaling",
+            "C": "Dynamic scaling",
+            "D": "Pattern scaling"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch11_q16",
+          "number": 16,
+          "question": "What type of AWS Systems Manager document can run Bash or PowerShell scripts on an EC2 instance?",
+          "choices": {
+            "A": "Run document",
+            "B": "Command document",
+            "C": "Automation document",
+            "D": "Script document"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch11_q17",
+          "number": 17,
+          "question": "What type of AWS Systems Manager document can take a snapshot of an EC2 instance?",
+          "choices": {
+            "A": "Command document",
+            "B": "Run document",
+            "C": "Script document",
+            "D": "Automation document"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch11_q18",
+          "number": 18,
+          "question": "Which of the following OpsWorks services uses Chef recipes?",
+          "choices": {
+            "A": "AWS OpsWorks for Puppet Enterprise",
+            "B": "AWS OpsWorks Stacks",
+            "C": "AWS OpsWorks Layers",
+            "D": "AWS OpsWorks for Automation"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch11_q19",
+          "number": 19,
+          "question": "What configuration management platforms does OpsWorks support? (Choose two.)",
+          "choices": {
+            "A": "SaltStack",
+            "B": "Puppet Enterprise",
+            "C": "CFEngine",
+            "D": "Chef",
+            "E": "Ansible"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        },
+        {
+          "id": "ch11_q20",
+          "number": 20,
+          "question": "Which of the following OpsWorks Stacks layers contains at least one EC2 instance?",
+          "choices": {
+            "A": "EC2 Auto Scaling layer",
+            "B": "Elastic Container Service (ECS) cluster layer",
+            "C": "OpsWorks layer",
+            "D": "Relational Database Service (RDS) layer",
+            "E": "Elastic Load Balancer (ELB) layer"
+          },
+          "course_part": "16 - AWS Automation & DevOps",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        }
+      ]
+    },
+    {
+      "chapter_number": 12,
+      "title": "Common Use-Case Scenarios",
+      "questions": [
+        {
+          "id": "ch12_q1",
+          "number": 1,
+          "question": "Which of the following is not one of the pillars of the Well-Architected Framework?",
+          "choices": {
+            "A": "Performance efficiency",
+            "B": "Reliability",
+            "C": "Resiliency",
+            "D": "Security",
+            "E": "Cost optimization"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch12_q2",
+          "number": 2,
+          "question": "Which of the following are examples of applying the principles of the security pillar of the Well-Architected Framework? (Choose two.)",
+          "choices": {
+            "A": "Granting each AWS user their own IAM username and password",
+            "B": "Creating a security group rule to deny access to unused ports",
+            "C": "Deleting an empty S3 bucket",
+            "D": "Enabling S3 versioning"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "A,D",
+          "result": null
+        },
+        {
+          "id": "ch12_q3",
+          "number": 3,
+          "question": "You’re hosting a web application on two EC2 instances in an Auto Scaling group. If the performance of the application is consistently acceptable, which of the following can help maintain or improve performance efficiency? (Choose two.)",
+          "choices": {
+            "A": "Monitoring for unauthorized access",
+            "B": "Doubling the number of instances in the Auto Scaling group",
+            "C": "Implementing policies to prevent the accidental termination of EC2 instances in the same Auto Scaling group",
+            "D": "Using CloudFront"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B,D",
+          "result": null
+        },
+        {
+          "id": "ch12_q4",
+          "number": 4,
+          "question": "Which of the following can help achieve cost optimization? (Choose two.)",
+          "choices": {
+            "A": "Deleting unused S3 objects",
+            "B": "Deleting empty S3 buckets",
+            "C": "Deleting unused application load balancers",
+            "D": "Deleting unused VPCs"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "A,C",
+          "result": null
+        },
+        {
+          "id": "ch12_q5",
+          "number": 5,
+          "question": "Which of the following is a key component of operational excellence?",
+          "choices": {
+            "A": "Adding more security personnel",
+            "B": "Automating manual processes",
+            "C": "Making minor improvements to bad processes",
+            "D": "Making people work longer hours"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch12_q6",
+          "number": 6,
+          "question": "Your default VPC in the us-west-1 region has three default subnets. How many availability zones are in this region?",
+          "choices": {
+            "A": "2",
+            "B": "3",
+            "C": "4",
+            "D": "5"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch12_q7",
+          "number": 7,
+          "question": "Your organization is building a database-backed web application that will sit behind an application load balancer. You add an inbound security group rule to allow HTTP traffic on TCP port 80. Where should you apply this security group to allow users to access the application?",
+          "choices": {
+            "A": "The application load balancer listener",
+            "B": "The database instance",
+            "C": "The subnets where the instances reside",
+            "D": "None of these"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch12_q8",
+          "number": 8,
+          "question": "How does an application load balancer enable reliability?",
+          "choices": {
+            "A": "By routing traffic away from failed instances",
+            "B": "By replacing failed instances",
+            "C": "By routing traffic to the least busy instances",
+            "D": "By caching frequently accessed content"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "A",
+          "result": null
+        },
+        {
+          "id": "ch12_q9",
+          "number": 9,
+          "question": "Which of the following contains the configuration information for instances in an Auto Scaling group?",
+          "choices": {
+            "A": "Launch directive",
+            "B": "Dynamic scaling policy",
+            "C": "CloudFormation template",
+            "D": "Launch template"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch12_q10",
+          "number": 10,
+          "question": "You’ve created a target tracking policy for an Auto Scaling group. You want to ensure that the number of instances in the group never exceeds 5. How can you accomplish this?",
+          "choices": {
+            "A": "Set the group size to 5.",
+            "B": "Set the maximum group size to 5.",
+            "C": "Set the minimum group size to 5.",
+            "D": "Delete the target tracking policy."
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch12_q11",
+          "number": 11,
+          "question": "Which of the following is an example of a static website?",
+          "choices": {
+            "A": "A WordPress blog",
+            "B": "A website hosted on S3",
+            "C": "A popular social media website",
+            "D": "A web-based email application"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch12_q12",
+          "number": 12,
+          "question": "Which of the following features of S3 improve the security of data you store in an S3 bucket? (Choose two.)",
+          "choices": {
+            "A": "Objects in S3 are not public by default.",
+            "B": "All objects are readable by all AWS users by default.",
+            "C": "By default, S3 removes ACLs that allow public access to objects.",
+            "D": "S3 removes public objects by default."
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "A,C",
+          "result": null
+        },
+        {
+          "id": "ch12_q13",
+          "number": 13,
+          "question": "Which of the following is required to enable S3 static website hosting on a bucket?",
+          "choices": {
+            "A": "Enable bucket hosting in the S3 service console.",
+            "B": "Disable default encryption.",
+            "C": "Disable object versioning.",
+            "D": "Enable object versioning.",
+            "E": "Make all objects in the bucket public."
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "E",
+          "result": null
+        },
+        {
+          "id": "ch12_q14",
+          "number": 14,
+          "question": "You’ve created a static website hosted on S3 and given potential customers the URL that consists of words and numbers. They’re complaining that it’s too hard to type in. How can you come up with a friendlier URL?",
+          "choices": {
+            "A": "Re-create the bucket using only words in the name.",
+            "B": "Use a custom domain name.",
+            "C": "Re-create the bucket in a different region.",
+            "D": "Re-create the bucket using only numbers in the name."
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch12_q15",
+          "number": 15,
+          "question": "Which of the following is true regarding static websites hosted in S3?",
+          "choices": {
+            "A": "The content served is not encrypted in transit.",
+            "B": "Anyone can modify the content.",
+            "C": "You must use a custom domain name.",
+            "D": "A website hosted on S3 is stored in multiple Regions."
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch12_q16",
+          "number": 16,
+          "question": "Which of the following can impact the reliability of a web application running on EC2 instances?",
+          "choices": {
+            "A": "Taking EBS snapshots of the instances.",
+            "B": "The user interface is too difficult to use.",
+            "C": "Not replacing a misconfigured resource that the application depends on.",
+            "D": "Provisioning too many instances."
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "C",
+          "result": null
+        },
+        {
+          "id": "ch12_q17",
+          "number": 17,
+          "question": "You have a public web application running on EC2 instances. Which of the following factors affecting the performance of your application might be out of your control?",
+          "choices": {
+            "A": "Storage",
+            "B": "Compute",
+            "C": "Network",
+            "D": "Database"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch12_q18",
+          "number": 18,
+          "question": "An Auto Scaling group can use an EC2 system health check to determine whether an instance is healthy. What other type of health check can it use?",
+          "choices": {
+            "A": "S3",
+            "B": "SNS",
+            "C": "VPC",
+            "D": "ELB"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "D",
+          "result": null
+        },
+        {
+          "id": "ch12_q19",
+          "number": 19,
+          "question": "You’re hosting a static website on S3. Your web assets are stored under the STANDARD storage class. Which of the following is true regarding your site?",
+          "choices": {
+            "A": "Someone may modify the content of your site without authorization.",
+            "B": "You’re responsible for S3 charges.",
+            "C": "You’re charged for any compute power used to host the site.",
+            "D": "An availability zone outage may bring down the site."
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        },
+        {
+          "id": "ch12_q20",
+          "number": 20,
+          "question": "You’re hosting a static website on S3. Your web assets are stored in the US East 1 Region in the bucket named mygreatwebsite. What is the URL of the website?",
+          "choices": {
+            "A": "http://mygreatwebsite.s3-website-us-east-1.amazonaws.com",
+            "B": "http://mygreatwebsite.s3.amazonaws.com",
+            "C": "http://mygreatwebsite.s3-website-us-east.amazonaws.com",
+            "D": "http://mygreatwebsite.s3-us-east-1.amazonaws.com"
+          },
+          "course_part": "Common Use-Case Scenarios",
+          "user_answer": null,
+          "book_answer": "B",
+          "result": null
+        }
+      ]
+    }
+  ]
+}
