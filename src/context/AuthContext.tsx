@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
-import { readSession, TOKEN_KEY, USER_KEY } from '../services/userStorage'
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import { readSession, sessionChangedForTab, TOKEN_KEY, USER_KEY } from '../services/userStorage'
 
 interface User { id: number; email: string }
 
@@ -32,6 +32,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null)
     setUser(null)
   }
+
+  // A reload drops everything this tab holds in memory for the previous account.
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (sessionChangedForTab(event.key, user?.id ?? null)) window.location.reload()
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [user?.id])
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await fetch('/api/auth/login', {
