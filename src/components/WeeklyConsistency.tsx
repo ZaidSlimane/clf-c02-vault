@@ -1,34 +1,58 @@
-import { studyLogs } from '../data/domains'
+import { useEffect, useState } from 'react'
+import { minutesByWeekday, startSession, stopSession, useStudySessions } from '../services/studySessions'
+
+const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+
+function formatElapsed(ms: number): string {
+  const seconds = Math.floor(ms / 1000)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${pad(Math.floor(seconds / 3600))}:${pad(Math.floor(seconds / 60) % 60)}:${pad(seconds % 60)}`
+}
 
 export default function WeeklyConsistency() {
-  if (studyLogs.length === 0) {
-    return <div className="empty-state">No data for this week.</div>
-  }
+  const { sessions, activeSince } = useStudySessions()
+  const [now, setNow] = useState(Date.now())
 
-  const oneWeekAgo = new Date()
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+  useEffect(() => {
+    if (!activeSince) return
+    setNow(Date.now())
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
+  }, [activeSince])
 
-  const weekLogs = studyLogs.filter((log) => new Date(log.date) >= oneWeekAgo)
-  const totalMinutes = weekLogs.reduce((s, l) => s + l.minutes, 0)
-  const hours = Math.round((totalMinutes / 60) * 10) / 10
+  const days = minutesByWeekday(sessions)
+  const totalMinutes = days.reduce((sum, m) => sum + m, 0)
+  const sessionCount = sessions.filter((s) => {
+    const monday = Date.now() - (((new Date().getDay() + 6) % 7) * 86400000)
+    return new Date(s.startedAt).setHours(0, 0, 0, 0) >= new Date(monday).setHours(0, 0, 0, 0)
+  }).length
+  const busiest = Math.max(...days, 1)
+  const today = (new Date().getDay() + 6) % 7
 
   return (
-    <div className="stats-row">
-      <div className="card stat-card">
-        <div className="stat-value">{hours}</div>
-        <div className="stat-label">Hours</div>
+    <div className="session-tracker">
+      <div className="session-tracker__timer">
+        <strong>{activeSince ? formatElapsed(Math.max(now - activeSince, 0)) : `${Math.round((totalMinutes / 60) * 10) / 10} h`}</strong>
+        <button
+          type="button"
+          className={`vault-button ${activeSince ? 'vault-button--quiet' : 'vault-button--primary'}`}
+          onClick={activeSince ? stopSession : startSession}
+        >
+          {activeSince ? 'Stop session' : 'Start session'}
+        </button>
       </div>
-      <div className="card stat-card">
-        <div className="stat-value">{weekLogs.length}</div>
-        <div className="stat-label">Sessions</div>
-      </div>
-      <div className="card stat-card">
-        <div className="stat-value">{totalMinutes}</div>
-        <div className="stat-label">Minutes</div>
-      </div>
-      <div className="card stat-card">
-        <div className="stat-value">{weekLogs.length > 0 ? Math.round(totalMinutes / weekLogs.length) : 0}</div>
-        <div className="stat-label">Minutes per session</div>
+      <p className="session-tracker__summary">
+        {sessionCount} {sessionCount === 1 ? 'session' : 'sessions'} · {totalMinutes} minutes
+      </p>
+      <div className="session-week" role="img" aria-label={`${totalMinutes} minutes studied this week`}>
+        {days.map((minutes, i) => (
+          <div key={i} className={`session-day ${i === today ? 'session-day--today' : ''}`}>
+            <div className="session-day__track" title={`${minutes} min`}>
+              <div className="session-day__fill" style={{ height: `${(minutes / busiest) * 100}%` }} />
+            </div>
+            <span>{WEEKDAYS[i]}</span>
+          </div>
+        ))}
       </div>
     </div>
   )

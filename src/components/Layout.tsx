@@ -60,6 +60,9 @@ export default function Layout() {
             <Link to="/tracker" className={isActive('/tracker')}>Course tracker</Link>
             <Link to="/exam" className={isActive('/exam')}>Practice mode</Link>
           </nav>
+          <nav className="vault-rail__nav vault-rail__nav--bottom" aria-label="Account">
+            <Link to="/settings" className={isActive('/settings')}>Settings</Link>
+          </nav>
           <div className="vault-rail__footer">
             <p>Notes, quiz answers and course progress save to your account</p>
           </div>
