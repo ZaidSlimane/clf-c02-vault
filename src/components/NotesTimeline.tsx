@@ -20,19 +20,6 @@ function loadProgress(): Progress {
   }
 }
 
-const domainColors: Record<string, string> = {
-  '1': '#FF9900',
-  '2': '#10B981',
-  '3': '#3B82F6',
-  '4': '#8B5CF6',
-  'prep': '#6B7280',
-}
-
-function getDomainForTag(tag: string): string {
-  const section = sections.find(s => s.id === tag)
-  return section?.domainId || ''
-}
-
 function getRelativeTime(ts: number): string {
   const diff = Date.now() - ts
   const mins = Math.floor(diff / 60000)
@@ -45,70 +32,41 @@ function getRelativeTime(ts: number): string {
   return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-function formatTime(ts: number): string {
-  return new Date(ts).toLocaleString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  })
-}
+const PAGE_SIZE = 4
 
-type TimeGroup = { label: string; entries: { idx: number; note: string; tag: string; ts: number }[] }
-
-function groupByTime(entries: { idx: number; note: string; tag: string; ts: number }[]): TimeGroup[] {
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-  const yesterday = today - 86400000
-  const thisWeek = today - (now.getDay() * 86400000)
-  const lastWeek = thisWeek - 604800000
-
-  const groups: { label: string; cutoff: number }[] = [
-    { label: 'Today', cutoff: today },
-    { label: 'Yesterday', cutoff: yesterday },
-    { label: 'This Week', cutoff: thisWeek },
-    { label: 'Last Week', cutoff: lastWeek },
-  ]
-
-  const result: TimeGroup[] = []
-  let remaining = [...entries]
-
-  for (const group of groups) {
-    const matched = remaining.filter(e => e.ts >= group.cutoff)
-    if (matched.length > 0) {
-      result.push({ label: group.label, entries: matched })
-      remaining = remaining.filter(e => e.ts < group.cutoff)
-    }
-  }
-
-  if (remaining.length > 0) {
-    result.push({ label: 'Older', entries: remaining })
-  }
-
-  return result
+interface NoteEntry {
+  idx: number
+  note: string
+  section: string
+  ts: number
 }
 
 export default function NotesTimeline() {
-  const [timeGroups, setTimeGroups] = useState<TimeGroup[]>([])
-  const [totalNotes, setTotalNotes] = useState(0)
+  const [entries, setEntries] = useState<NoteEntry[]>([])
+  const [query, setQuery] = useState('')
+  const [page, setPage] = useState(0)
 
   useEffect(() => {
-    const progress = loadProgress()
-    const { notes, tags, noteTimestamps } = progress
-
-    const entries = Object.entries(notes)
-      .map(([idx, note]) => ({
-        idx: Number(idx),
-        note,
-        tag: tags[Number(idx)] || '',
-        ts: noteTimestamps[Number(idx)] || 0,
-      }))
-      .sort((a, b) => b.ts - a.ts)
-
-    setTotalNotes(entries.length)
-    setTimeGroups(groupByTime(entries))
+    const { notes, tags, noteTimestamps } = loadProgress()
+    setEntries(
+      Object.entries(notes)
+        .map(([idx, note]) => ({
+          idx: Number(idx),
+          note,
+          section: sections.find(s => s.id === tags[Number(idx)])?.title || '',
+          ts: noteTimestamps[Number(idx)] || 0,
+        }))
+        .sort((a, b) => b.ts - a.ts)
+    )
   }, [])
+
+  const term = query.trim().toLowerCase()
+  const matches = term
+    ? entries.filter(e => `${e.note} ${e.section} ${e.idx + 1}`.toLowerCase().includes(term))
+    : entries
+  const pageCount = Math.max(1, Math.ceil(matches.length / PAGE_SIZE))
+  const current = Math.min(page, pageCount - 1)
+  const visible = matches.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE)
 
   return (
     <div>
@@ -116,50 +74,43 @@ export default function NotesTimeline() {
         <h2>Study notes</h2>
       </div>
 
-      <div className="nt-summary">
-        {totalNotes > 0 ? (
-          <span className="nt-summary-count">{totalNotes} note{totalNotes !== 1 ? 's' : ''} written</span>
-        ) : (
-          <span className="nt-summary-empty">No notes yet — open a question in the exam and take a note.</span>
-        )}
-      </div>
+      {entries.length === 0 ? (
+        <p className="nt-summary-empty">No notes yet. Open a question in the exam and take a note.</p>
+      ) : (
+        <>
+          <input
+            className="nt-search"
+            type="search"
+            value={query}
+            onChange={e => { setQuery(e.target.value); setPage(0) }}
+            placeholder={`Search ${entries.length} note${entries.length !== 1 ? 's' : ''}`}
+            aria-label="Search notes"
+          />
 
-      {timeGroups.map(group => (
-        <div key={group.label} className="nt-group">
-          <div className="nt-group-header">
-            <span className="nt-group-label">{group.label}</span>
-            <span className="nt-group-count">{group.entries.length}</span>
-          </div>
-          <div className="nt-entries">
-            {group.entries.map(e => {
-              const domainId = e.tag ? getDomainForTag(e.tag) : ''
-              const borderColor = domainColors[domainId] || 'transparent'
-              const section = sections.find(s => s.id === e.tag)
-              const domainName = section?.domainTitle || ''
-              return (
-                <div key={e.idx} className="nt-entry" style={{ borderLeftColor: borderColor }}>
-                  <div className="nt-entry-top">
-                    <Link to={`/exam?question=${e.idx + 1}`} className="nt-entry-question">
-                      Question #{e.idx + 1}
-                    </Link>
-                    <span className="nt-entry-time">{getRelativeTime(e.ts)}</span>
-                  </div>
-                  <div className="nt-entry-note">{e.note}</div>
-                  <div className="nt-entry-meta">
-                    {section && (
-                      <span className="nt-entry-section">{section.title}</span>
-                    )}
-                    {domainName && (
-                      <span className="nt-entry-domain">{domainName}</span>
-                    )}
-                    <span className="nt-entry-timestamp" title={formatTime(e.ts)}>{formatTime(e.ts)}</span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      ))}
+          {visible.length === 0 && <p className="nt-summary-empty">No matching notes</p>}
+
+          <ul className="nt-list">
+            {visible.map(e => (
+              <li key={e.idx}>
+                <Link to={`/exam?question=${e.idx + 1}`} className="nt-row">
+                  <span className="nt-row-note">{e.note}</span>
+                  <span className="nt-row-meta">
+                    Question {e.idx + 1}{e.section ? ` · ${e.section}` : ''} · {e.ts ? getRelativeTime(e.ts) : 'No date'}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {pageCount > 1 && (
+            <div className="nt-pager">
+              <button type="button" onClick={() => setPage(current - 1)} disabled={current === 0}>Newer</button>
+              <span>{current + 1} of {pageCount}</span>
+              <button type="button" onClick={() => setPage(current + 1)} disabled={current === pageCount - 1}>Older</button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }
