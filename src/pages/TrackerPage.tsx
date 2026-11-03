@@ -231,8 +231,8 @@ export default function TrackerPage() {
       <div className="tracker-hero">
         <div className="tracker-hero__copy">
           <span className="vault-eyebrow">COURSE TRACKER · ACTIVE ROUTE</span>
-          <h1>Keep the course<br /><em>moving forward.</em></h1>
-          <p className="tracker-hero-sub">Mark complete, keep context, and use each checked lecture as a visible step toward exam readiness.</p>
+          <h1>AWS Cloud Practitioner course</h1>
+          <p className="tracker-hero-sub">By Stephane Maarek. Check off each lecture as you finish it.</p>
           <div className="tracker-hero-stats">
             <div className="tracker-hero-stat"><span className="tracker-hero-pct">{pct}%</span><span className="tracker-hero-label">Complete</span></div>
             <div className="tracker-hero-stat"><span className="tracker-hero-count">{completed}<span className="tracker-hero-total">/{total}</span></span><span className="tracker-hero-label">Lectures</span></div>
