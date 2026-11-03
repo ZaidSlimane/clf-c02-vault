@@ -6,6 +6,7 @@ import { useAiChat } from '../context/AiChat'
 import { useAuth } from '../context/AuthContext'
 import { fetchProgress, saveFullProgress } from '../services/api'
 import { callAiAPI, type AiError } from '../services/aiConfig'
+import { currentUserId, readUserItem, writeUserItem } from '../services/userStorage'
 import AiErrorNotice from './AiErrorNotice'
 
 interface Question {
@@ -35,7 +36,7 @@ const TOTAL = questions.length
 
 function loadProgress(): Progress {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY)
+    const saved = readUserItem(STORAGE_KEY)
     if (!saved) return { answers: {}, flags: {}, notes: {}, tags: {}, noteTimestamps: {} }
     const parsed = JSON.parse(saved)
     const progress: Progress = { answers: {}, flags: {}, notes: {}, tags: {}, noteTimestamps: {} }
@@ -95,7 +96,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   const initRef = useRef(false)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
+    writeUserItem(STORAGE_KEY, JSON.stringify(progress))
     if (token && initRef.current) {
       clearTimeout(syncRef.current)
       syncRef.current = setTimeout(() => {
@@ -119,8 +120,10 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
 
   useEffect(() => {
     if (token) {
+      let cancelled = false
       fetchProgress()
         .then(serverProgress => {
+          if (cancelled) return
           const local = loadProgress()
           const merged: Progress = {
             answers: { ...local.answers, ...Object.fromEntries(
@@ -131,11 +134,12 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
             tags: { ...local.tags, ...serverProgress.tags },
             noteTimestamps: { ...local.noteTimestamps, ...serverProgress.noteTimestamps },
           }
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+          writeUserItem(STORAGE_KEY, JSON.stringify(merged))
           setProgress(merged)
           initRef.current = true
         })
-        .catch(() => { initRef.current = true })
+        .catch(() => { if (!cancelled) initRef.current = true })
+      return () => { cancelled = true }
     } else {
       initRef.current = true
     }
@@ -281,7 +285,12 @@ Correct Answer(s): ${correctAnswers.join(', ')}
 
 Provide a clear, concise explanation suitable for someone studying for the AWS Cloud Practitioner exam. Be specific about AWS services and concepts.`
 
+    const owner = currentUserId()
     const result = await callAiAPI(prompt)
+    if (currentUserId() !== owner) {
+      setAiLoading(false)
+      return
+    }
     if (result.ok) {
       addConversation(q.question, result.answer)
       openSidebar()

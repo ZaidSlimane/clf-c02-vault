@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, type ChangeEvent } from 'react'
 import exampleQuiz from '../../aws_certified_cloud_practitioner_full_10_chapters.json'
 import { sections, domains as siteDomains } from '../data/sections'
+import { readUserItem, writeUserItem } from '../services/userStorage'
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -210,17 +211,15 @@ export default function CustomQuiz() {
   /* Persist progress */
   useEffect(() => {
     if (!readyRef.current || !progress) return
-    try {
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress))
-    } catch { /* storage full */ }
+    writeUserItem(PROGRESS_KEY, JSON.stringify(progress))
   }, [progress])
 
   /* Restore from localStorage on mount */
   useEffect(() => {
     try {
-      const savedSource = localStorage.getItem(SOURCE_KEY)
+      const savedSource = readUserItem(SOURCE_KEY)
       if (!savedSource) { readyRef.current = true; return }
-      const savedProgress = localStorage.getItem(PROGRESS_KEY)
+      const savedProgress = readUserItem(PROGRESS_KEY)
       const sourceHash = hashCode(savedSource)
       hashRef.current = sourceHash
       const quiz = parseQuiz(JSON.parse(savedSource))
@@ -265,7 +264,7 @@ export default function CustomQuiz() {
       setParsed({ questions: quiz.questions, sourceHash: h })
       setProgress(blankProgress(h))
       setShowAnalytics(false)
-      try { localStorage.setItem(SOURCE_KEY, text) } catch { /* storage full */ }
+      writeUserItem(SOURCE_KEY, text)
     } catch {
       setError('Invalid JSON. Paste a valid JSON quiz file and try again.')
     }

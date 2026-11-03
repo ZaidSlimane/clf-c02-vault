@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import type { Domain } from '../data/domains'
+import { readUserItem, writeUserItem } from './userStorage.ts'
 
 const STORAGE_KEY = 'clf-c02-checked-topics'
 const CHANGE_EVENT = 'clf-c02-checked-topics-change'
 
 function readCheckedTopics(): string[] {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    const saved = JSON.parse(readUserItem(STORAGE_KEY) || '[]')
     return Array.isArray(saved) ? saved : []
   } catch {
     return []
@@ -16,9 +17,7 @@ function readCheckedTopics(): string[] {
 export function toggleTopic(key: string): void {
   const checked = readCheckedTopics()
   const next = checked.includes(key) ? checked.filter((k) => k !== key) : [...checked, key]
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-  } catch {}
+  writeUserItem(STORAGE_KEY, JSON.stringify(next))
   window.dispatchEvent(new Event(CHANGE_EVENT))
 }
 

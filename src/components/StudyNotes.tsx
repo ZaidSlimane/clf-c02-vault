@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { sections } from '../data/sections'
+import { readUserItem } from '../services/userStorage'
 
 const STORAGE_KEY = 'clf-c02-exam-progress'
 
@@ -12,7 +13,7 @@ interface Progress {
 
 function loadProgress(): Progress {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY)
+    const saved = readUserItem(STORAGE_KEY)
     return saved ? JSON.parse(saved) : { answers: {}, flags: {}, notes: {}, tags: {} }
   } catch {
     return { answers: {}, flags: {}, notes: {}, tags: {} }

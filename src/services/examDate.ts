@@ -1,21 +1,16 @@
 import { useEffect, useState } from 'react'
+import { readUserItem, removeUserItem, writeUserItem } from './userStorage.ts'
 
 const STORAGE_KEY = 'clf-c02-exam-date'
 const CHANGE_EVENT = 'clf-c02-exam-date-change'
 
 function readExamDate(): string {
-  try {
-    return localStorage.getItem(STORAGE_KEY) || ''
-  } catch {
-    return ''
-  }
+  return readUserItem(STORAGE_KEY) || ''
 }
 
 export function saveExamDate(date: string): void {
-  try {
-    if (date) localStorage.setItem(STORAGE_KEY, date)
-    else localStorage.removeItem(STORAGE_KEY)
-  } catch {}
+  if (date) writeUserItem(STORAGE_KEY, date)
+  else removeUserItem(STORAGE_KEY)
   window.dispatchEvent(new Event(CHANGE_EVENT))
 }
 
