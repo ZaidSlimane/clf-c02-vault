@@ -1323,6 +1323,10 @@ td {
   color: var(--color-text-muted);
   line-height: 1.4;
 }
+.ais-chat-hint a {
+  color: var(--color-primary-dark);
+  font-weight: 500;
+}
 
 /* ── Notes Timeline ── */
 .nt-summary {
@@ -2197,7 +2201,63 @@ td {
 .settings-btn-danger:hover {
   background: #FEF2F2;
 }
+.settings-field .settings-input {
+  width: 100%;
+}
+.settings-input:disabled,
+.settings-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.settings-actions {
+  flex-wrap: wrap;
+}
+.settings-loading {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}
+.settings-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border: 1px solid var(--color-border-wrong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-wrong);
+  color: var(--color-text-wrong-on);
+}
+.ai-error {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  padding: 8px 10px;
+  margin: 8px 0;
+  border: 1px solid var(--color-border-wrong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-wrong);
+  color: var(--color-text-wrong-on);
+}
+.ai-error-text a {
+  color: inherit;
+  font-weight: 600;
+}
+.ai-error-dismiss {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
 .settings-status {
+  overflow-wrap: anywhere;
   display: flex;
   align-items: center;
   gap: 8px;
