@@ -2664,3 +2664,58 @@ body { font-variant-numeric: tabular-nums; }
 .topic-check { min-height: 44px; margin-top: 16px; display: flex; align-items: center; gap: 8px; color: var(--color-text); font-size: 14px; font-weight: 500; cursor: pointer; }
 .topic-check input { width: 20px; height: 20px; flex: 0 0 20px; accent-color: var(--color-primary); cursor: pointer; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Rail bottom */
+.vault-rail__nav--bottom { margin-top: auto; }
+.vault-rail__nav--bottom + .vault-rail__footer { margin-top: 12px; }
+
+/* Session tracker */
+.session-tracker__timer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.session-tracker__timer strong { color: var(--color-text); font: 500 24px/1.2 var(--font-display); }
+.session-tracker__summary { margin-top: 4px; color: var(--color-text-muted); font-size: 12px; }
+.session-week { margin-top: 16px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.session-day { display: grid; gap: 4px; justify-items: center; color: var(--color-text-muted); font: 400 12px var(--font-instrument); }
+.session-day__track { width: 100%; height: 56px; display: flex; align-items: flex-end; overflow: hidden; border-radius: 4px; background: var(--color-raised); }
+.session-day__fill { width: 100%; background: var(--color-text-muted); }
+.session-day--today { color: var(--color-text); }
+.session-day--today .session-day__fill { background: var(--color-primary); }
+
+/* AI assistant */
+.ais-toggle { width: 44px; height: 44px; padding: 0; display: grid; place-items: center; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-md); font-size: 0; transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out), transform 160ms var(--ease-out); }
+.ais-toggle:hover { border-color: var(--color-primary); color: var(--color-primary-dark); background: var(--color-surface); }
+.ais-toggle:active { transform: scale(.96); }
+.ais-sidebar { background: var(--color-surface); border-color: var(--color-border); box-shadow: var(--shadow-lg); transition: transform 280ms var(--ease-out); }
+.ais-header { min-height: 56px; padding: 0 12px 0 16px; background: var(--color-surface); border-bottom: 1px solid var(--color-border); color: var(--color-text); }
+.ais-title { color: var(--color-text); font-size: 14px; font-weight: 500; }
+.ais-header-actions { gap: 4px; }
+.ais-btn-icon { width: 32px; height: 32px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: var(--color-text-muted); transition: color 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+.ais-btn-icon:hover { background: var(--color-raised); color: var(--color-text); }
+.ais-body { padding: 16px; background: var(--color-surface); }
+.ais-empty { padding: 32px 0; text-align: left; }
+.ais-empty-title { margin-bottom: 12px; color: var(--color-text); font-size: 18px; font-weight: 500; }
+.ais-suggestions { display: grid; gap: 8px; }
+.ais-suggestion { padding: 12px; border: 1px solid var(--color-border); border-radius: 12px; background: transparent; color: var(--color-text-secondary); font-size: 14px; text-align: left; cursor: pointer; animation: ais-rise 280ms var(--ease-out) both; transition: color 160ms var(--ease-out), background-color 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+.ais-suggestion:hover:not(:disabled) { background: var(--color-raised); color: var(--color-text); border-color: var(--color-text-muted); }
+.ais-suggestion:disabled { cursor: default; opacity: .6; }
+.ais-message { display: grid; gap: 8px; margin-bottom: 16px; padding: 0; border: 0; background: transparent; }
+.ais-bubble { max-width: 90%; padding: 8px 12px; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; animation: ais-rise 240ms var(--ease-out) both; }
+.ais-bubble-question { justify-self: end; border-radius: 12px 12px 4px 12px; background: var(--color-primary); color: var(--color-on-accent); white-space: pre-wrap; }
+.ais-bubble-answer { justify-self: start; border-radius: 12px 12px 12px 4px; background: var(--color-raised); color: var(--color-text); white-space: pre-wrap; }
+.ais-typing { display: inline-flex; gap: 4px; align-items: center; height: 36px; }
+.ais-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-muted); animation: ais-dot 1s var(--ease-out) infinite; }
+.ais-typing i:nth-child(2) { animation-delay: 140ms; }
+.ais-typing i:nth-child(3) { animation-delay: 280ms; }
+.ais-footer { padding: 12px 16px; background: var(--color-surface); border-top: 1px solid var(--color-border); }
+.ais-chat-input-row { position: relative; gap: 0; }
+.ais-chat-input { width: 100%; height: 44px; padding: 0 48px 0 16px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-raised); color: var(--color-text); font-size: 14px; transition: border-color 160ms var(--ease-out); }
+.ais-chat-input:focus { border-color: var(--color-primary); box-shadow: none; outline: none; }
+.ais-chat-send { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 8px; background: var(--color-primary); color: var(--color-on-accent); cursor: pointer; transition: opacity 160ms var(--ease-out), transform 160ms var(--ease-out); }
+.ais-chat-send:hover { background: #FFAD33; }
+.ais-chat-send:active { transform: scale(.94); }
+.ais-chat-send:disabled { background: var(--color-primary); opacity: .4; cursor: default; }
+.ais-chat-hint { margin-top: 8px; color: var(--color-text-muted); font-size: 12px; }
+.ais-chat-hint a { color: var(--color-primary-dark); }
+@keyframes ais-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes ais-dot { 0%, 100% { opacity: .4; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+
+.app-wrapper-sidebar-open .domain-grid { grid-template-columns: 1fr; }
