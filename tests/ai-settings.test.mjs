@@ -123,12 +123,48 @@ test('PUT validates model and key', async () => {
     { baseUrl: row.base_url, model: 'a\nb' },
     { baseUrl: row.base_url, model: 'm', apiKey: 'x'.repeat(4097) },
     { baseUrl: row.base_url, model: 'm', apiKey: 'a\r\nb' },
+    { baseUrl: row.base_url, model: 'm', apiKey: 'sk-\u201cquoted\u201d' },
+    { baseUrl: row.base_url, model: 'm', apiKey: 'sk-caf\u00e9' },
+    { baseUrl: row.base_url, model: 'm', apiKey: 'sk with space' },
     { baseUrl: row.base_url, model: 'm', apiKey: 5 },
     undefined,
   ]) {
     assert.equal((await run(handle, 'PUT', body)).statusCode, 400)
   }
   assert.deepEqual(db.rows.get(1), row)
+})
+
+test('a key-less save fails if the base URL changed after the origin check', async () => {
+  const db = fakeAiSettingsSql(new Map([[1, { ...row }]]))
+  const racingSql = async (strings, ...values) => {
+    const result = await db.sql(strings, ...values)
+    if (strings.join('?').includes('SELECT')) {
+      db.rows.set(1, { ...row, base_url: 'https://attacker.example.com/v1' })
+    }
+    return result
+  }
+  const handle = createHandler({
+    sql: racingSql,
+    encryptApiKey: () => { throw new Error('must not encrypt') },
+    assertPublicHost: async () => {},
+  })
+  const res = await run(handle, 'PUT', { baseUrl: row.base_url, model: 'new' })
+  assert.equal(res.statusCode, 409)
+  assert.equal(db.rows.get(1).base_url, 'https://attacker.example.com/v1')
+  assert.equal(db.rows.get(1).model, 'old')
+})
+
+test('a key-less save fails if the row was removed after the check', async () => {
+  const db = fakeAiSettingsSql(new Map([[1, { ...row }]]))
+  const racingSql = async (strings, ...values) => {
+    const result = await db.sql(strings, ...values)
+    if (strings.join('?').includes('SELECT')) db.rows.delete(1)
+    return result
+  }
+  const handle = createHandler({ sql: racingSql, encryptApiKey: () => '', assertPublicHost: async () => {} })
+  const res = await run(handle, 'PUT', { baseUrl: row.base_url, model: 'new' })
+  assert.equal(res.statusCode, 409)
+  assert.equal(db.rows.has(1), false)
 })
 
 test('a blocked host is rejected on save with the generic message', async () => {

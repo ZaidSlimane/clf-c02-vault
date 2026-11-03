@@ -38,9 +38,11 @@ export function fakeAiSettingsSql(rows = new Map()) {
       return []
     }
     if (text.includes('UPDATE')) {
-      const [base_url, model, userId] = values
-      rows.set(userId, { ...rows.get(userId), base_url, model })
-      return []
+      const [base_url, model, userId, expectedBaseUrl] = values
+      const row = rows.get(userId)
+      if (!row || row.base_url !== expectedBaseUrl) return []
+      rows.set(userId, { ...row, base_url, model })
+      return [{ user_id: userId }]
     }
     if (text.includes('DELETE')) {
       rows.delete(values[0])

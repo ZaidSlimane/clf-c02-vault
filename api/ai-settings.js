@@ -7,6 +7,9 @@ const MAX_MODEL_LENGTH = 200
 const MAX_API_KEY_LENGTH = 4096
 const CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/
 
+// Sent as an HTTP header value, so anything else could never authenticate.
+const VISIBLE_ASCII = /^[\x21-\x7e]+$/
+
 const publicShape = (row) => row
   ? { configured: true, baseUrl: row.base_url, model: row.model }
   : { configured: false, baseUrl: null, model: null }
@@ -38,7 +41,7 @@ export function createHandler({ sql, encryptApiKey, assertPublicHost }) {
 
     const { apiKey } = body
     const hasKey = apiKey !== undefined && apiKey !== null && apiKey !== ''
-    if (hasKey && (typeof apiKey !== 'string' || apiKey.length > MAX_API_KEY_LENGTH || CONTROL_CHARS.test(apiKey))) {
+    if (hasKey && (typeof apiKey !== 'string' || apiKey.length > MAX_API_KEY_LENGTH || !VISIBLE_ASCII.test(apiKey))) {
       return res.status(400).json({ error: 'API key is not valid' })
     }
 
@@ -51,11 +54,16 @@ export function createHandler({ sql, encryptApiKey, assertPublicHost }) {
       if (new URL(existing.base_url).origin !== new URL(baseUrl).origin) {
         return res.status(400).json({ error: 'Enter the API key again when changing the provider host' })
       }
-      await sql`
+      // Matching the checked base_url keeps the origin check and the write atomic.
+      const updated = await sql`
         UPDATE user_ai_settings
         SET base_url = ${baseUrl}, model = ${model}, updated_at = NOW()
-        WHERE user_id = ${userId}
+        WHERE user_id = ${userId} AND base_url = ${existing.base_url}
+        RETURNING user_id
       `
+      if (updated.length === 0) {
+        return res.status(409).json({ error: 'Your AI settings changed. Reload the page and try again.' })
+      }
     } else {
       const encrypted = encryptApiKey(apiKey, userId)
       await sql`
