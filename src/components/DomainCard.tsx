@@ -1,18 +1,20 @@
 import { Link } from 'react-router-dom'
 import type { Domain } from '../data/domains'
+import { domainProgress, useCheckedTopics } from '../services/topicProgress'
 
 interface Props {
   domain: Domain
 }
 
 export default function DomainCard({ domain }: Props) {
+  const progress = domainProgress(domain, useCheckedTopics())
   const statusLabel =
-    domain.status === 'in-progress' ? 'In progress' :
-    domain.status === 'complete' ? 'Complete' : 'Not started'
+    progress.status === 'in-progress' ? 'In progress' :
+    progress.status === 'complete' ? 'Complete' : 'Not started'
 
   const statusClass =
-    domain.status === 'in-progress' ? 'badge-in-progress' :
-    domain.status === 'complete' ? 'badge-complete' : 'badge-not-started'
+    progress.status === 'in-progress' ? 'badge-in-progress' :
+    progress.status === 'complete' ? 'badge-complete' : 'badge-not-started'
 
   return (
     <div className="card domain-card">
@@ -29,14 +31,14 @@ export default function DomainCard({ domain }: Props) {
           </div>
           <div className="domain-card-row">
             <span className="domain-card-label">Mastery</span>
-            <span className="domain-card-value">{domain.mastery}%</span>
+            <span className="domain-card-value">{progress.mastery}% · {progress.done} of {progress.total} topics</span>
           </div>
           <div className="progress-bar">
-            <div className="progress-bar-fill" style={{ width: `${domain.mastery}%` }} />
+            <div className="progress-bar-fill" style={{ width: `${progress.mastery}%` }} />
           </div>
           <div className="domain-card-row">
             <span className="domain-card-label">Next topic</span>
-            <span className="domain-card-value">{domain.nextTopic}</span>
+            <span className="domain-card-value">{progress.nextTopic}</span>
           </div>
           <div className="domain-card-row">
             <span className="domain-card-label">Key services</span>

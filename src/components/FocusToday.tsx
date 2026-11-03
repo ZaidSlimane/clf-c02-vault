@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom'
 import { domains } from '../data/domains'
+import { domainProgress, useCheckedTopics } from '../services/topicProgress'
 
 export default function FocusToday() {
+  const checked = useCheckedTopics()
   const incomplete = domains
+    .map((d) => ({ ...d, ...domainProgress(d, checked) }))
     .filter((d) => d.status !== 'complete')
     .sort((a, b) => a.mastery - b.mastery)
     .slice(0, 3)

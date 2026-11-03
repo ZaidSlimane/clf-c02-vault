@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { getDomain } from '../data/domains'
+import { domainProgress, domainTopics, toggleTopic, useCheckedTopics } from '../services/topicProgress'
 
 export default function DomainPage() {
   const { domainId, subNoteId } = useParams<{ domainId: string; subNoteId?: string }>()
   const domain = getDomain(domainId || '')
+  const checked = useCheckedTopics()
 
   useEffect(() => { window.scrollTo(0, 0) }, [domainId, subNoteId])
 
@@ -17,15 +19,17 @@ export default function DomainPage() {
     )
   }
 
+  const progress = domainProgress(domain, checked)
+
   const statusLabel =
-    domain.status === 'in-progress' ? 'In Progress' :
-    domain.status === 'complete' ? 'Complete' : 'Not Started'
+    progress.status === 'in-progress' ? 'In Progress' :
+    progress.status === 'complete' ? 'Complete' : 'Not Started'
 
   const statusClass =
-    domain.status === 'in-progress' ? 'badge-in-progress' :
-    domain.status === 'complete' ? 'badge-complete' : 'badge-not-started'
+    progress.status === 'in-progress' ? 'badge-in-progress' :
+    progress.status === 'complete' ? 'badge-complete' : 'badge-not-started'
 
-  const topics = domain.subNotes.flatMap((note) => note.content.map((topic) => ({ ...topic, noteTitle: note.title })))
+  const topics = domainTopics(domain)
   const requested = Number(subNoteId)
   const index = requested >= 1 && requested <= topics.length ? requested - 1 : 0
   const topic = topics[index]
@@ -43,9 +47,9 @@ export default function DomainPage() {
         </div>
         <aside className="vault-study-hero__signal">
           <span className="vault-eyebrow">MASTERY SIGNAL</span>
-          <strong>{domain.mastery}<em>%</em></strong>
-          <div className="progress-bar"><div className="progress-bar-fill" style={{ width: `${domain.mastery}%`, background: domain.color }} /></div>
-          <p>Next: <b>{domain.nextTopic}</b></p>
+          <strong>{progress.mastery}<em>%</em></strong>
+          <div className="progress-bar"><div className="progress-bar-fill" style={{ width: `${progress.mastery}%` }} /></div>
+          <p>{progress.done} of {progress.total} topics. Next: <b>{progress.nextTopic}</b></p>
         </aside>
       </section>
       <div className="vault-study-layout">
@@ -54,8 +58,8 @@ export default function DomainPage() {
           <nav className="note-list" aria-label={`${domain.title} topics`}>
             {topics.map((t, i) => (
               <Link key={i} to={topicPath(i)} className={i === index ? 'active' : ''} aria-current={i === index ? 'page' : undefined}>
-                <span className="answer-bubble" aria-hidden="true">{i + 1}</span>
-                <span>{t.section}</span>
+                <span className={`answer-bubble ${checked.includes(t.key) ? 'answer-bubble--checked' : ''}`} aria-hidden="true">{checked.includes(t.key) ? '✓' : i + 1}</span>
+                <span>{t.section}{checked.includes(t.key) && <span className="sr-only"> (checked)</span>}</span>
               </Link>
             ))}
           </nav>
@@ -69,6 +73,10 @@ export default function DomainPage() {
               <div className="subnote-card__topline"><span className="vault-eyebrow">Topic {index + 1} of {topics.length} · {topic.noteTitle}</span></div>
               <h3>{topic.section}</h3>
               <div className="content-section"><ul>{topic.items.map((item, j) => <li key={j}>{item}</li>)}</ul></div>
+              <label className="topic-check">
+                <input type="checkbox" checked={checked.includes(topic.key)} onChange={() => toggleTopic(topic.key)} />
+                <span>I understand this topic</span>
+              </label>
               <div className="note-pager">
                 {index > 0 ? <Link to={topicPath(index - 1)} className="vault-button vault-button--quiet">Previous topic</Link> : <span />}
                 {index < topics.length - 1
