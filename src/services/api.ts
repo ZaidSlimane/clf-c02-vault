@@ -73,32 +73,35 @@ export interface AiSettingsInput {
   apiKey?: string
 }
 
+export const SESSION_EXPIRED_MESSAGE = 'Your session has expired. Sign out and sign in again.'
+
+async function aiSettingsFetch(init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch('/api/ai-settings', { ...init, headers: headers() })
+  } catch {
+    throw new Error('Could not reach the server. Try again.')
+  }
+}
+
 async function aiSettingsError(res: Response, fallback: string): Promise<Error> {
-  if (res.status === 401) return new Error('Your session has expired. Sign out and sign in again.')
+  if (res.status === 401) return new Error(SESSION_EXPIRED_MESSAGE)
   const data = await res.json().catch(() => null)
   return new Error(typeof data?.error === 'string' ? data.error : fallback)
 }
 
 export async function getAiSettings(): Promise<AiSettings> {
-  const res = await fetch('/api/ai-settings', { headers: headers() })
+  const res = await aiSettingsFetch()
   if (!res.ok) throw await aiSettingsError(res, 'Failed to load AI settings')
   return res.json()
 }
 
 export async function saveAiSettings(input: AiSettingsInput): Promise<AiSettings> {
-  const res = await fetch('/api/ai-settings', {
-    method: 'PUT',
-    headers: headers(),
-    body: JSON.stringify(input),
-  })
+  const res = await aiSettingsFetch({ method: 'PUT', body: JSON.stringify(input) })
   if (!res.ok) throw await aiSettingsError(res, 'Failed to save AI settings')
   return res.json()
 }
 
 export async function deleteAiSettings(): Promise<void> {
-  const res = await fetch('/api/ai-settings', {
-    method: 'DELETE',
-    headers: headers(),
-  })
+  const res = await aiSettingsFetch({ method: 'DELETE' })
   if (!res.ok) throw await aiSettingsError(res, 'Failed to remove AI settings')
 }

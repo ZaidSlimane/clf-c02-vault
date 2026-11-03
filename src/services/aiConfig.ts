@@ -1,4 +1,4 @@
-import { headers } from './api'
+import { headers, SESSION_EXPIRED_MESSAGE } from './api'
 
 export const SUGGESTED_AI_PROVIDER = {
   baseUrl: 'https://inference.dahl.global/v1',
@@ -25,7 +25,7 @@ export type AiResult = ({ ok: true; answer: string }) | ({ ok: false } & AiError
 const AI_ERROR_MESSAGES: Record<AiErrorCode, string> = {
   AI_NOT_CONFIGURED: 'AI is not set up yet. Add your provider in Settings.',
   AI_KEY_UNREADABLE: 'Your saved API key can no longer be read. Enter it again in Settings.',
-  AI_SESSION_EXPIRED: 'Your session has expired. Sign out and sign in again.',
+  AI_SESSION_EXPIRED: SESSION_EXPIRED_MESSAGE,
   AI_PROVIDER_AUTH: 'Your AI provider rejected the API key. Check it in Settings.',
   AI_PROVIDER_RATE_LIMIT: 'Your AI provider is rate limiting requests. Wait a moment and try again.',
   AI_PROVIDER_ERROR: 'Your AI provider is unavailable or timed out. Try again shortly.',

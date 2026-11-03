@@ -1,26 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAiChat } from '../context/AiChat'
 import { SUGGESTED_AI_PROVIDER } from '../services/aiConfig'
-import { deleteAiSettings, getAiSettings, saveAiSettings, type AiSettings } from '../services/api'
+import { deleteAiSettings, getAiSettings, saveAiSettings, SESSION_EXPIRED_MESSAGE, type AiSettings } from '../services/api'
 
 type LoadState = 'loading' | 'ready' | 'failed'
+type Action = 'save' | 'remove'
+type Done = 'saved' | 'removed'
 
 const ERROR_ID = 'ai-settings-error'
 
 export default function SettingsPage() {
-  const { refreshAiStatus } = useAiChat()
+  const { refreshAiStatus, dismissAiError } = useAiChat()
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [current, setCurrent] = useState<AiSettings | null>(null)
   const [baseUrl, setBaseUrl] = useState('')
   const [model, setModel] = useState('')
   const [apiKey, setApiKey] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [action, setAction] = useState<Action | null>(null)
+  const [done, setDone] = useState<Done | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const mounted = useRef(true)
   const inFlight = useRef(false)
-  const savedTimer = useRef<ReturnType<typeof setTimeout>>()
+  const doneTimer = useRef<ReturnType<typeof setTimeout>>()
 
   const load = useCallback(async () => {
     setLoadState('loading')
@@ -31,8 +34,10 @@ export default function SettingsPage() {
       setBaseUrl(settings.baseUrl ?? SUGGESTED_AI_PROVIDER.baseUrl)
       setModel(settings.model ?? SUGGESTED_AI_PROVIDER.model)
       setLoadState('ready')
-    } catch {
-      if (mounted.current) setLoadState('failed')
+    } catch (err) {
+      if (!mounted.current) return
+      setLoadError(err instanceof Error ? err.message : 'Could not load your AI settings.')
+      setLoadState('failed')
     }
   }, [])
 
@@ -41,64 +46,71 @@ export default function SettingsPage() {
     load()
     return () => {
       mounted.current = false
-      clearTimeout(savedTimer.current)
+      clearTimeout(doneTimer.current)
     }
   }, [load])
 
-  const run = async (action: () => Promise<void>) => {
+  const showDone = (result: Done) => {
+    setDone(result)
+    clearTimeout(doneTimer.current)
+    doneTimer.current = setTimeout(() => setDone(null), 2000)
+  }
+
+  const run = async (kind: Action, work: () => Promise<void>) => {
     if (inFlight.current) return
     inFlight.current = true
-    setBusy(true)
+    setAction(kind)
+    setDone(null)
     setError(null)
     try {
-      await action()
+      await work()
     } catch (err) {
       if (mounted.current) setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
       inFlight.current = false
-      if (mounted.current) setBusy(false)
+      if (mounted.current) setAction(null)
     }
   }
 
-  const handleSave = () => run(async () => {
+  const handleSave = () => run('save', async () => {
     const key = apiKey.trim()
     const settings = await saveAiSettings({
       baseUrl: baseUrl.trim(),
       model: model.trim(),
       ...(key ? { apiKey: key } : {}),
     })
+    dismissAiError()
     await refreshAiStatus()
     if (!mounted.current) return
     setCurrent(settings)
     setBaseUrl(settings.baseUrl ?? '')
     setModel(settings.model ?? '')
     setApiKey('')
-    setSaved(true)
-    clearTimeout(savedTimer.current)
-    savedTimer.current = setTimeout(() => setSaved(false), 2000)
+    showDone('saved')
   })
 
   const handleRemove = () => {
     if (!window.confirm('Remove your AI provider and saved API key?')) return
-    run(async () => {
+    run('remove', async () => {
       await deleteAiSettings()
+      dismissAiError()
       await refreshAiStatus()
       if (!mounted.current) return
       setCurrent({ configured: false, baseUrl: null, model: null })
       setBaseUrl(SUGGESTED_AI_PROVIDER.baseUrl)
       setModel(SUGGESTED_AI_PROVIDER.model)
       setApiKey('')
-      setSaved(false)
+      showDone('removed')
     })
   }
 
   const resetFeedback = () => {
-    setSaved(false)
+    setDone(null)
     setError(null)
   }
 
   const describedBy = (hintId: string) => (error ? `${hintId} ${ERROR_ID}` : hintId)
-  const disabled = loadState !== 'ready' || busy
+  const disabled = loadState !== 'ready' || action !== null
   const configured = current?.configured === true
 
   return (
@@ -114,8 +126,10 @@ export default function SettingsPage() {
         {loadState === 'loading' && <p className="settings-loading">Loading your AI settings...</p>}
         {loadState === 'failed' && (
           <div className="settings-error" role="alert">
-            <p>Could not load your AI settings.</p>
-            <button className="settings-btn settings-btn-primary" onClick={load}>Retry</button>
+            <p>{loadError}</p>
+            {loadError !== SESSION_EXPIRED_MESSAGE && (
+              <button className="settings-btn settings-btn-primary" onClick={load}>Retry</button>
+            )}
           </div>
         )}
 
@@ -158,7 +172,7 @@ export default function SettingsPage() {
             className="settings-input"
             value={apiKey}
             onChange={e => { setApiKey(e.target.value); resetFeedback() }}
-            placeholder={configured ? 'Key saved. Leave blank to keep it' : 'sk-...'}
+            placeholder={configured ? 'Saved. Blank keeps it' : 'sk-...'}
             disabled={disabled}
             aria-describedby={describedBy('ai-api-key-hint')}
           />
@@ -169,13 +183,17 @@ export default function SettingsPage() {
 
         <div className="settings-actions">
           <button className="settings-btn settings-btn-primary" onClick={handleSave} disabled={disabled}>
-            {busy ? 'Saving...' : saved ? '✓ Saved' : 'Save Settings'}
+            {action === 'save' ? 'Saving...' : done === 'saved' ? '✓ Saved' : 'Save Settings'}
           </button>
           {configured && (
             <button className="settings-btn settings-btn-danger" onClick={handleRemove} disabled={disabled}>
-              Remove AI Provider
+              {action === 'remove' ? 'Removing...' : 'Remove AI Provider'}
             </button>
           )}
+        </div>
+
+        <div role="status">
+          {done === 'removed' && <div className="settings-status settings-status-active">AI provider removed.</div>}
         </div>
 
         {configured && (

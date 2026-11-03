@@ -90,6 +90,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   const navigate = useNavigate()
   const [aiLoading, setAiLoading] = useState(false)
   const [aiError, setAiError] = useState<AiError | null>(null)
+  const aiQuestionIndex = useRef(currentIndex)
   const syncRef = useRef<ReturnType<typeof setTimeout>>()
   const initRef = useRef(false)
 
@@ -151,6 +152,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     setNoteText(progress.notes[currentIndex] || '')
     setNoteTag(progress.tags[currentIndex] || '')
     setAiError(null)
+    aiQuestionIndex.current = currentIndex
   }, [currentIndex])
 
   const correctAnswers = q ? getCorrectAnswers(q, choiceCount) : []
@@ -283,7 +285,7 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
     if (result.ok) {
       addConversation(q.question, result.answer)
       openSidebar()
-    } else {
+    } else if (aiQuestionIndex.current === currentIndex) {
       setAiError({ code: result.code, message: result.message })
     }
     setAiLoading(false)
