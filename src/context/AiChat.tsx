@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, ty
 import { useAuth } from './AuthContext'
 import { callAiAPI, type AiError } from '../services/aiConfig'
 import { getAiSettings } from '../services/api'
+import { TOKEN_KEY } from '../services/userStorage'
 
 export type AiStatus = 'loading' | 'configured' | 'unconfigured' | 'error'
 
@@ -77,7 +78,7 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   const openSidebar = useCallback(() => setSidebarOpen(true), [])
   const closeSidebar = useCallback(() => setSidebarOpen(false), [])
 
-  const authToken = () => localStorage.getItem('clf-c02-auth-token')
+  const authToken = () => localStorage.getItem(TOKEN_KEY)
 
   useEffect(() => {
     const token = authToken()

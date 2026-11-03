@@ -5,9 +5,11 @@ import App from './App'
 import { AiChatProvider } from './context/AiChat'
 import { AuthProvider } from './context/AuthContext'
 import { purgeLegacyAiStorage } from './services/aiConfig'
+import { migrateLegacyKeys } from './services/userStorage'
 import './styles.css'
 
 purgeLegacyAiStorage()
+migrateLegacyKeys()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

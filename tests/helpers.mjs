@@ -22,6 +22,22 @@ export function mockRes() {
   }
 }
 
+// In-memory stand-in for the users table, assigning incrementing ids.
+export function fakeUsersSql(rows = []) {
+  const sql = async (strings, ...values) => {
+    const text = strings.join('?')
+    if (text.includes('SELECT')) return rows.filter((row) => row.email === values[0])
+    if (text.includes('INSERT')) {
+      const [email, password_hash] = values
+      const row = { id: rows.length + 1, email, password_hash, created_at: new Date() }
+      rows.push(row)
+      return [row]
+    }
+    throw new Error(`Unexpected query: ${text}`)
+  }
+  return { sql, rows }
+}
+
 // In-memory stand-in for the user_ai_settings table, driven by the SQL verb.
 export function fakeAiSettingsSql(rows = new Map()) {
   const calls = []

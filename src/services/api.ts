@@ -1,4 +1,6 @@
-const getToken = () => localStorage.getItem('clf-c02-auth-token')
+import { TOKEN_KEY } from './userStorage.ts'
+
+const getToken = () => localStorage.getItem(TOKEN_KEY)
 
 export const headers = () => {
   const h: Record<string, string> = { 'Content-Type': 'application/json' }

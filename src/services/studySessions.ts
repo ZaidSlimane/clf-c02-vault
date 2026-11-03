@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { headers } from './api'
+import { headers } from './api.ts'
+import { TOKEN_KEY } from './userStorage.ts'
 
 const PENDING_KEY = 'clf-c02-study-sessions'
 const ACTIVE_KEY = 'clf-c02-active-session'
@@ -47,7 +48,7 @@ function allSessions(): StudySession[] {
 
 /** Uploads finished sessions, keeping any that fail for the next attempt, then reloads from the server. */
 async function syncSessions(): Promise<void> {
-  if (!localStorage.getItem('clf-c02-auth-token')) return
+  if (!localStorage.getItem(TOKEN_KEY)) return
   for (const session of readPending()) {
     try {
       const res = await fetch('/api/study-sessions', { method: 'POST', headers: headers(), body: JSON.stringify(session) })

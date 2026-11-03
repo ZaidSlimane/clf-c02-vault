@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { readSession, TOKEN_KEY, USER_KEY } from '../services/userStorage'
 
 interface User { id: number; email: string }
 
@@ -13,13 +14,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const TOKEN_KEY = 'clf-c02-auth-token'
-const USER_KEY = 'clf-c02-auth-user'
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY))
-  const [loading, setLoading] = useState(true)
+  const [initialSession] = useState(readSession)
+  const [user, setUser] = useState<User | null>(initialSession?.user ?? null)
+  const [token, setToken] = useState<string | null>(initialSession?.token ?? null)
 
   const saveSession = (t: string, u: User) => {
     localStorage.setItem(TOKEN_KEY, t)
@@ -34,16 +32,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null)
     setUser(null)
   }
-
-  useEffect(() => {
-    const savedToken = localStorage.getItem(TOKEN_KEY)
-    const savedUser = localStorage.getItem(USER_KEY)
-    if (savedToken && savedUser) {
-      setToken(savedToken)
-      setUser(JSON.parse(savedUser))
-    }
-    setLoading(false)
-  }, [])
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await fetch('/api/auth/login', {
@@ -72,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading: false, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   )
