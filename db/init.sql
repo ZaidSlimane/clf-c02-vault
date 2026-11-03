@@ -31,6 +31,13 @@ CREATE TABLE IF NOT EXISTS tracker_logs (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS study_sessions (
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  started_at TIMESTAMPTZ NOT NULL,
+  minutes INTEGER NOT NULL CHECK (minutes BETWEEN 1 AND 240),
+  PRIMARY KEY (user_id, started_at)
+);
+
 CREATE TABLE IF NOT EXISTS user_ai_settings (
   user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   base_url TEXT NOT NULL,

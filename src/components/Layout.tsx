@@ -60,12 +60,22 @@ export default function Layout() {
             <Link to="/tracker" className={isActive('/tracker')}>Course tracker</Link>
             <Link to="/exam" className={isActive('/exam')}>Practice mode</Link>
           </nav>
-          <nav className="vault-rail__nav vault-rail__nav--bottom" aria-label="Account">
-            <Link to="/settings" className={isActive('/settings')}>Settings</Link>
-          </nav>
-          <div className="vault-rail__footer">
-            <p>Notes, quiz answers and course progress save to your account</p>
-          </div>
+          {user && (
+            <div className="user-menu" ref={menuRef}>
+              {menuOpen && (
+                <div className="user-menu-dropdown">
+                  <div className="user-menu-header"><span className="user-menu-header-email">{user.email}</span></div>
+                  <Link to="/settings" className="user-menu-item">Settings</Link>
+                  <button className="user-menu-item user-menu-item-danger" onClick={logout}>Sign out</button>
+                </div>
+              )}
+              <button className="user-menu-trigger" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Account menu">
+                <span className="user-menu-avatar">{user.email[0].toUpperCase()}</span>
+                <span className="user-menu-name">{user.email.split('@')[0]}</span>
+                <span className="user-menu-arrow">{menuOpen ? '▼' : '▲'}</span>
+              </button>
+            </div>
+          )}
         </aside>
         <div className="vault-main">
           <header className="vault-topbar">
@@ -74,22 +84,6 @@ export default function Layout() {
               <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
                 {theme === 'dark' ? 'Light mode' : 'Dark mode'}
               </button>
-              {user && (
-                <div className="user-menu" ref={menuRef}>
-                  <button className="user-menu-trigger" onClick={() => setMenuOpen(!menuOpen)}>
-                    <span className="user-menu-avatar">{user.email[0].toUpperCase()}</span>
-                    <span className="user-menu-name">{user.email.split('@')[0]}</span>
-                    <span className="user-menu-arrow">{menuOpen ? '▲' : '▼'}</span>
-                  </button>
-                  {menuOpen && (
-                    <div className="user-menu-dropdown">
-                      <div className="user-menu-header"><span className="user-menu-header-email">{user.email}</span></div>
-                      <Link to="/settings" className="user-menu-item">Settings</Link>
-                      <button className="user-menu-item user-menu-item-danger" onClick={logout}>Sign out</button>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </header>
           <main className="app-container vault-content">

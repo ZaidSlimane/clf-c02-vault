@@ -2719,3 +2719,20 @@ body { font-variant-numeric: tabular-nums; }
 @keyframes ais-dot { 0%, 100% { opacity: .4; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
 
 .app-wrapper-sidebar-open .domain-grid { grid-template-columns: 1fr; }
+
+/* Account lives at the bottom of the rail; Settings and Sign out open from it */
+.vault-rail .user-menu { position: relative; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--color-border); }
+.vault-rail .user-menu-trigger { width: 100%; height: 44px; padding: 0 8px; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 8px; background: transparent; color: var(--color-text); transition: background-color 160ms var(--ease-out); }
+.vault-rail .user-menu-trigger:hover { background: var(--color-raised); }
+.vault-rail .user-menu-avatar { width: 28px; height: 28px; flex: 0 0 28px; background: var(--color-raised); color: var(--color-text); font-size: 12px; font-weight: 500; }
+.vault-rail .user-menu-name { display: block; min-width: 0; flex: 1; overflow: hidden; color: var(--color-text); font-size: 14px; font-weight: 400; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.vault-rail .user-menu-arrow { color: var(--color-text-muted); font-size: 8px; }
+.vault-rail .user-menu-dropdown { position: absolute; top: auto; right: 0; bottom: calc(100% + 4px); left: 0; min-width: 0; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); box-shadow: var(--shadow-md); }
+@media (max-width: 740px) {
+  .vault-rail .user-menu { margin-top: 12px; }
+  .vault-rail .user-menu-dropdown { top: calc(100% + 4px); bottom: auto; z-index: 60; }
+}
+.vault-rail .user-menu { margin-left: 0; padding-left: 0; border-left: 0; }
+.vault-rail .user-menu-header-email { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vault-button--primary { border: 0; cursor: pointer; }
+.vault-button--quiet { cursor: pointer; }

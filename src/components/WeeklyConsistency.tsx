@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { minutesByWeekday, startSession, stopSession, useStudySessions } from '../services/studySessions'
+import { minutesByWeekday, sessionsInWeek, startSession, stopSession, useStudySessions } from '../services/studySessions'
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
@@ -20,12 +20,12 @@ export default function WeeklyConsistency() {
     return () => clearInterval(timer)
   }, [activeSince])
 
-  const days = minutesByWeekday(sessions)
+  const thisWeek = sessionsInWeek(sessions)
+  const days = minutesByWeekday(thisWeek)
   const totalMinutes = days.reduce((sum, m) => sum + m, 0)
-  const sessionCount = sessions.filter((s) => {
-    const monday = Date.now() - (((new Date().getDay() + 6) % 7) * 86400000)
-    return new Date(s.startedAt).setHours(0, 0, 0, 0) >= new Date(monday).setHours(0, 0, 0, 0)
-  }).length
+  const sessionCount = thisWeek.length
+  const lastWeekMinutes = sessionsInWeek(sessions, -1).reduce((sum, s) => sum + s.minutes, 0)
+  const change = totalMinutes - lastWeekMinutes
   const busiest = Math.max(...days, 1)
   const today = (new Date().getDay() + 6) % 7
 
@@ -42,7 +42,7 @@ export default function WeeklyConsistency() {
         </button>
       </div>
       <p className="session-tracker__summary">
-        {sessionCount} {sessionCount === 1 ? 'session' : 'sessions'} · {totalMinutes} minutes
+        {sessionCount} {sessionCount === 1 ? 'session' : 'sessions'} · {totalMinutes} minutes · {change >= 0 ? '+' : ''}{change} vs last week
       </p>
       <div className="session-week" role="img" aria-label={`${totalMinutes} minutes studied this week`}>
         {days.map((minutes, i) => (

@@ -69,6 +69,7 @@ All routes are same-origin; no CORS headers are sent. "Bearer" means the route n
 | `/api/progress` | GET, POST | Bearer | Read or replace exam progress |
 | `/api/tracker` | GET, POST | Bearer | Read or replace study tracker data |
 | `/api/tracker-logs` | GET, POST | Bearer | Read or replace tracker activity logs |
+| `/api/study-sessions` | GET, POST | Bearer | Read the last 84 days of study sessions or add one |
 | `/api/conversations` | GET, POST, DELETE | Bearer | List, add or clear saved AI conversations |
 | `/api/ai-settings` | GET, PUT, DELETE | Bearer | Read, save or remove your AI provider. Never returns the key |
 | `/api/chat` | POST | Bearer | Send a prompt to your saved AI provider |
