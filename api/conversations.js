@@ -1,21 +1,9 @@
-import jwt from 'jsonwebtoken'
-import sql, { initDb } from './db.js'
-
-function getUser(auth) {
-  if (!auth || !auth.startsWith('Bearer ')) return null
-  try { return jwt.verify(auth.slice(7), process.env.JWT_SECRET) } catch { return null }
-}
+import { getUser } from './_lib/auth.js'
+import sql from './_lib/db.js'
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type')
-  if (req.method === 'OPTIONS') return res.status(200).end()
-
   const user = getUser(req.headers.authorization)
   if (!user) return res.status(401).json({ error: 'Unauthorized' })
-
-  await initDb()
 
   if (req.method === 'GET') {
     try {
