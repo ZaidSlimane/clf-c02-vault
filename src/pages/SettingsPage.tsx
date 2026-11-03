@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import ExamDateField from '../components/ExamDateField'
 import { useAiChat } from '../context/AiChat'
 import { SUGGESTED_AI_PROVIDER } from '../services/aiConfig'
 import { deleteAiSettings, getAiSettings, saveAiSettings, SESSION_EXPIRED_MESSAGE, type AiSettings } from '../services/api'
@@ -115,7 +116,9 @@ export default function SettingsPage() {
 
   return (
     <div className="settings-page">
-      <h1>⚙️ Settings</h1>
+      <h1>Settings</h1>
+
+      <ExamDateField />
 
       <section className="settings-section">
         <h2 className="settings-section-title">AI Integration</h2>

@@ -113,8 +113,7 @@ export default function NotesTimeline() {
   return (
     <div>
       <div className="section-header">
-        <span className="section-icon">📝</span>
-        <h2>Study Notes</h2>
+        <h2>Study notes</h2>
       </div>
 
       <div className="nt-summary">

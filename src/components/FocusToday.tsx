@@ -11,13 +11,12 @@ export default function FocusToday() {
 
   return (
     <div className="focus-card">
-      <div className="focus-icon">🎯</div>
       <div className="focus-content">
-        <h3>Focus Today</h3>
+        <h3>Focus today</h3>
         {incomplete.map((d) => (
           <p key={d.id}>
-            <Link to={`/domain/${d.id}`}>Domain {d.id} — {d.title}</Link>
-            &nbsp;&rarr; {d.nextTopic} &middot; Mastery: {d.mastery}%
+            <Link to={`/domain/${d.id}`}>{d.title}</Link>{' '}
+             &middot; {d.nextTopic} &middot; {d.mastery}% mastery
           </p>
         ))}
       </div>

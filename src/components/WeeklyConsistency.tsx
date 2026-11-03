@@ -16,7 +16,7 @@ export default function WeeklyConsistency() {
     <div className="stats-row">
       <div className="card stat-card">
         <div className="stat-value">{hours}</div>
-        <div className="stat-label">Hours This Week</div>
+        <div className="stat-label">Hours</div>
       </div>
       <div className="card stat-card">
         <div className="stat-value">{weekLogs.length}</div>
@@ -24,11 +24,11 @@ export default function WeeklyConsistency() {
       </div>
       <div className="card stat-card">
         <div className="stat-value">{totalMinutes}</div>
-        <div className="stat-label">Total Minutes</div>
+        <div className="stat-label">Minutes</div>
       </div>
       <div className="card stat-card">
         <div className="stat-value">{weekLogs.length > 0 ? Math.round(totalMinutes / weekLogs.length) : 0}</div>
-        <div className="stat-label">Avg Min/Session</div>
+        <div className="stat-label">Minutes per session</div>
       </div>
     </div>
   )

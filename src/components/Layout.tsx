@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useAiChat } from '../context/AiChat'
 import { useAuth } from '../context/AuthContext'
 import AiSidebar from './AiSidebar'
+import { formatExamDate, useExamDate } from '../services/examDate'
 
 function useTheme() {
   const [theme, setTheme] = useState(() => localStorage.getItem('clf-c02-theme') || 'light')
@@ -13,8 +14,17 @@ function useTheme() {
   return [theme, () => setTheme(t => t === 'dark' ? 'light' : 'dark')] as const
 }
 
+function pageTitle(pathname: string): string {
+  if (pathname.startsWith('/domain')) return 'Study notes'
+  if (pathname === '/tracker') return 'Course tracker'
+  if (pathname === '/exam') return 'Practice mode'
+  if (pathname === '/settings') return 'Settings'
+  return 'Overview'
+}
+
 export default function Layout() {
   const location = useLocation()
+  const examDate = useExamDate()
   const { sidebarOpen } = useAiChat()
   const { user, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -42,27 +52,24 @@ export default function Layout() {
       <div className={`app-wrapper vault-shell ${sidebarOpen ? 'app-wrapper-sidebar-open' : ''}`}>
         <aside className="vault-rail">
           <Link to="/" className="vault-brand" aria-label="CLF Vault overview">
-            <span className="vault-brand__mark" aria-hidden="true"><i /><i /><i /><i /></span>
-            <span><strong>CLFVAULT</strong><small>CLF-C02 SYSTEM</small></span>
+            <span><strong>CLF Vault</strong><small>CLF-C02</small></span>
           </Link>
           <nav className="vault-rail__nav" aria-label="Primary navigation">
-            <span className="vault-rail__label">WORKSPACE</span>
-            <Link to="/" className={isActive('/')}><span aria-hidden="true">◌</span> Overview</Link>
-            <Link to="/domain/1" className={isActive('/domain/1')}><span aria-hidden="true">▤</span> Study notes</Link>
-            <Link to="/tracker" className={isActive('/tracker')}><span aria-hidden="true">⌁</span> Course tracker</Link>
-            <Link to="/exam" className={isActive('/exam')}><span aria-hidden="true">◎</span> Practice mode</Link>
+            <Link to="/" className={isActive('/')}>Overview</Link>
+            <Link to="/domain/1" className={isActive('/domain/1')}>Study notes</Link>
+            <Link to="/tracker" className={isActive('/tracker')}>Course tracker</Link>
+            <Link to="/exam" className={isActive('/exam')}>Practice mode</Link>
           </nav>
           <div className="vault-rail__footer">
-            <span className="vault-rail__signal"><i /> PROGRESS SYNCED</span>
-            <p>Your notes, quiz answers, and course progress are preserved in your study vault.</p>
+            <p>Notes, quiz answers and course progress save to your account</p>
           </div>
         </aside>
         <div className="vault-main">
           <header className="vault-topbar">
-            <div><span className="vault-topbar__eyebrow">AWS CERTIFICATION PATH · CLF-C02</span><strong>Build the system behind your score.</strong></div>
+            <strong>{pageTitle(location.pathname)}</strong>
             <div className="vault-topbar__actions">
               <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
-                {theme === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}
+                {theme === 'dark' ? 'Light mode' : 'Dark mode'}
               </button>
               {user && (
                 <div className="user-menu" ref={menuRef}>
@@ -86,7 +93,7 @@ export default function Layout() {
           <Outlet />
         </main>
         <footer className="footer">
-          CLFVAULT · AWS Certified Cloud Practitioner CLF-C02 · Target: September 9, 2026
+          CLF Vault · AWS Certified Cloud Practitioner CLF-C02{examDate ? ` · Exam ${formatExamDate(examDate)}` : ''}
         </footer>
         </div>
       </div>
