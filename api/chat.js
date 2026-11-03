@@ -1,61 +1,62 @@
-import https from 'https'
+import { callProvider, ProviderError } from './_lib/aiProvider.js'
+import { getUser } from './_lib/auth.js'
+import { decryptApiKey, KeyConfigError } from './_lib/crypto.js'
+import sql from './_lib/db.js'
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+const MAX_PROMPT_LENGTH = 20000
 
-  if (req.method === 'OPTIONS') return res.status(200).end()
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+export function createHandler({ sql, decryptApiKey, callProvider }) {
+  return async function handler(req, res) {
+    res.setHeader('Cache-Control', 'no-store')
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const apiKey = process.env.DAHL_API_KEY
-  if (!apiKey) return res.status(500).json({ error: 'API key not configured on Vercel. Set DAHL_API_KEY env var.' })
+    const user = getUser(req.headers.authorization)
+    if (!user) return res.status(401).json({ error: 'Unauthorized' })
 
-  const { prompt } = req.body || {}
-  if (!prompt) return res.status(400).json({ error: 'prompt is required' })
-
-  const body = JSON.stringify({
-    model: 'moonshotai/Kimi-K2.6',
-    messages: [{ role: 'user', content: prompt }],
-  })
-
-  try {
-    const data = await new Promise((resolve, reject) => {
-      const url = new URL('https://inference.dahl.global/v1/chat/completions')
-      const opts = {
-        hostname: url.hostname,
-        path: url.pathname + url.search,
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body),
-          'User-Agent': 'Mozilla/5.0 (compatible; VercelBot; +https://clf-c02-vault.vercel.app)',
-          'Accept': 'application/json, text/plain, */*',
-          'Origin': 'https://clf-c02-vault.vercel.app',
-        },
-      }
-      const request = https.request(opts, (response) => {
-        let chunks = ''
-        response.on('data', (chunk) => chunks += chunk)
-        response.on('end', () => {
-          try {
-            resolve({ status: response.statusCode, body: JSON.parse(chunks) })
-          } catch {
-            resolve({ status: response.statusCode, body: { raw: chunks.slice(0, 500) } })
-          }
-        })
-      })
-      request.on('error', reject)
-      request.write(body)
-      request.end()
-    })
-
-    if (data.status !== 200) {
-      return res.status(data.status).json({ error: data.body?.error?.message || JSON.stringify(data.body) })
+    let prompt
+    try {
+      prompt = req.body?.prompt
+    } catch {
+      return res.status(400).json({ error: 'Invalid request body' })
     }
-    res.status(200).json(data.body)
-  } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : 'Request failed' })
+    if (typeof prompt !== 'string' || prompt.length < 1 || prompt.length > MAX_PROMPT_LENGTH) {
+      return res.status(400).json({ error: `Prompt must be 1-${MAX_PROMPT_LENGTH} characters` })
+    }
+
+    try {
+      const rows = await sql`
+        SELECT base_url, model, api_key_encrypted
+        FROM user_ai_settings
+        WHERE user_id = ${user.userId}
+      `
+      if (rows.length === 0) {
+        return res.status(409).json({ error: 'AI provider is not configured', code: 'AI_NOT_CONFIGURED' })
+      }
+
+      let apiKey
+      try {
+        apiKey = decryptApiKey(rows[0].api_key_encrypted, user.userId)
+      } catch (err) {
+        if (err instanceof KeyConfigError) throw err
+        return res.status(409).json({ error: 'Saved API key cannot be read', code: 'AI_KEY_UNREADABLE' })
+      }
+
+      const answer = await callProvider({
+        baseUrl: rows[0].base_url,
+        model: rows[0].model,
+        apiKey,
+        prompt,
+      })
+      return res.status(200).json({ answer })
+    } catch (err) {
+      if (err instanceof ProviderError) {
+        const status = err.code === 'AI_PROVIDER_RATE_LIMIT' ? 429 : 502
+        return res.status(status).json({ error: err.message, code: err.code })
+      }
+      console.error('chat request failed:', err instanceof KeyConfigError ? err.message : err?.name)
+      return res.status(500).json({ error: 'AI request failed' })
+    }
   }
 }
+
+export default createHandler({ sql, decryptApiKey, callProvider })

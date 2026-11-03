@@ -1323,6 +1323,39 @@ td {
   color: var(--color-text-muted);
   line-height: 1.4;
 }
+.ais-chat-hint a {
+  color: var(--color-primary-dark);
+  font-weight: 500;
+}
+
+/* AI error notice, shared by the sidebar and the quiz */
+.ai-error {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  padding: 8px 10px;
+  margin: 8px 0;
+  border: 1px solid var(--color-border-wrong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-wrong);
+  color: var(--color-text-wrong-on);
+}
+.ai-error-text a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.ai-error-dismiss {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
 
 /* ── Notes Timeline ── */
 .nt-summary {
@@ -2167,6 +2200,7 @@ td {
 }
 .settings-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 16px;
 }
@@ -2185,7 +2219,7 @@ td {
   color: white;
   border-color: var(--color-primary);
 }
-.settings-btn-primary:hover {
+.settings-btn-primary:hover:not(:disabled) {
   background: var(--color-primary-dark);
   border-color: var(--color-primary-dark);
 }
@@ -2194,10 +2228,38 @@ td {
   color: var(--color-danger);
   border-color: var(--color-danger);
 }
-.settings-btn-danger:hover {
+.settings-btn-danger:hover:not(:disabled) {
   background: #FEF2F2;
 }
+.settings-field .settings-input {
+  width: 100%;
+}
+.settings-input:disabled,
+.settings-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.settings-loading {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+.settings-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border: 1px solid var(--color-border-wrong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-wrong);
+  color: var(--color-text-wrong-on);
+}
 .settings-status {
+  overflow-wrap: anywhere;
   display: flex;
   align-items: center;
   gap: 8px;

@@ -1,5 +1,9 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
-import { callAiAPI } from '../services/aiConfig'
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react'
+import { useAuth } from './AuthContext'
+import { callAiAPI, type AiError } from '../services/aiConfig'
+import { getAiSettings } from '../services/api'
+
+export type AiStatus = 'loading' | 'configured' | 'unconfigured' | 'error'
 
 export interface Conversation {
   id: string
@@ -12,12 +16,16 @@ interface AiChatContextType {
   sidebarOpen: boolean
   conversations: Conversation[]
   chatLoading: boolean
+  aiStatus: AiStatus
+  aiError: AiError | null
+  refreshAiStatus: () => Promise<void>
+  dismissAiError: () => void
   toggleSidebar: () => void
   openSidebar: () => void
   closeSidebar: () => void
   addConversation: (q: string, a: string) => void
   clearConversations: () => void
-  askAI: (question: string) => Promise<void>
+  askAI: (question: string) => Promise<boolean>
 }
 
 const AiChatContext = createContext<AiChatContextType | null>(null)
@@ -37,6 +45,29 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [conversations, setConversations] = useState<Conversation[]>(loadConversations)
   const [chatLoading, setChatLoading] = useState(false)
+  const [aiStatus, setAiStatus] = useState<AiStatus>('loading')
+  const [aiError, setAiError] = useState<AiError | null>(null)
+  const { token } = useAuth()
+  const statusRequest = useRef(0)
+
+  const refreshAiStatus = useCallback(async () => {
+    const request = ++statusRequest.current
+    try {
+      const settings = await getAiSettings()
+      if (request === statusRequest.current) setAiStatus(settings.configured ? 'configured' : 'unconfigured')
+    } catch {
+      if (request === statusRequest.current) setAiStatus('error')
+    }
+  }, [])
+
+  const dismissAiError = useCallback(() => setAiError(null), [])
+
+  useEffect(() => {
+    statusRequest.current++
+    setAiStatus('loading')
+    setAiError(null)
+    if (token) refreshAiStatus()
+  }, [token, refreshAiStatus])
 
   const persist = useCallback((convs: Conversation[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(convs))
@@ -119,17 +150,21 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
 
   const askAI = useCallback(async (questionText: string) => {
     setChatLoading(true)
+    setAiError(null)
     const prompt = `You are an AWS CLF-C02 exam tutor. Answer the following question clearly and concisely, with specific AWS services and concepts.
 
 ${questionText}`
-    const answer = await callAiAPI(prompt)
-    if (answer) addConversation(questionText, answer)
+    const result = await callAiAPI(prompt)
+    if (result.ok) addConversation(questionText, result.answer)
+    else setAiError({ code: result.code, message: result.message })
     setChatLoading(false)
+    return result.ok
   }, [addConversation])
 
   return (
     <AiChatContext.Provider value={{
-      sidebarOpen, conversations, chatLoading,
+      sidebarOpen, conversations, chatLoading, aiStatus, aiError,
+      refreshAiStatus, dismissAiError,
       toggleSidebar, openSidebar, closeSidebar,
       addConversation, clearConversations, askAI,
     }}>

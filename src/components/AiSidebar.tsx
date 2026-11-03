@@ -1,9 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useAiChat } from '../context/AiChat'
-import { getAiConfig } from '../services/aiConfig'
+import AiErrorNotice from './AiErrorNotice'
+
+const MAX_QUESTION_LENGTH = 19000
 
 export default function AiSidebar() {
-  const { sidebarOpen, conversations, chatLoading, toggleSidebar, closeSidebar, clearConversations, askAI } = useAiChat()
+  const {
+    sidebarOpen, conversations, chatLoading, aiStatus, aiError,
+    toggleSidebar, closeSidebar, clearConversations, askAI, dismissAiError,
+  } = useAiChat()
   const [input, setInput] = useState('')
   const bodyRef = useRef<HTMLDivElement>(null)
 
@@ -17,7 +23,9 @@ export default function AiSidebar() {
     const text = input.trim()
     if (!text || chatLoading) return
     setInput('')
-    askAI(text)
+    askAI(text).then(ok => {
+      if (!ok) setInput(current => current || text)
+    })
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -26,8 +34,6 @@ export default function AiSidebar() {
       handleSend()
     }
   }
-
-  const hasKey = !!getAiConfig().apiKey
 
   return (
     <>
@@ -82,11 +88,13 @@ export default function AiSidebar() {
         </div>
 
         <div className="ais-footer">
+          {aiError && <AiErrorNotice error={aiError} onDismiss={dismissAiError} onNavigate={closeSidebar} />}
           <div className="ais-chat-input-row">
             <input
               className="ais-chat-input"
               type="text"
-              placeholder={hasKey ? 'Ask anything about AWS...' : 'Set API key first...'}
+              placeholder={aiStatus === 'unconfigured' ? 'Set up AI in Settings first...' : 'Ask anything about AWS...'}
+              maxLength={MAX_QUESTION_LENGTH}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -100,8 +108,13 @@ export default function AiSidebar() {
               Send
             </button>
           </div>
-          {!hasKey && (
-            <p className="ais-chat-hint">No API key set — click "Explain with AI" on any question to set one.</p>
+          {aiStatus === 'unconfigured' && (
+            <p className="ais-chat-hint">
+              No AI provider set up yet. <Link to="/settings" onClick={closeSidebar}>Add one in Settings</Link>.
+            </p>
+          )}
+          {aiStatus === 'error' && (
+            <p className="ais-chat-hint">Could not check your AI setup. You can still try sending a question.</p>
           )}
         </div>
       </aside>

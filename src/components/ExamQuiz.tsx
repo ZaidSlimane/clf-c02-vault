@@ -5,7 +5,8 @@ import { sections, domains as domainsData } from '../data/sections'
 import { useAiChat } from '../context/AiChat'
 import { useAuth } from '../context/AuthContext'
 import { fetchProgress, saveFullProgress } from '../services/api'
-import { callAiAPI, getAiConfig } from '../services/aiConfig'
+import { callAiAPI, type AiError } from '../services/aiConfig'
+import AiErrorNotice from './AiErrorNotice'
 
 interface Question {
   url: string
@@ -88,6 +89,8 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
   const [pending, setPending] = useState<string[]>([])
   const navigate = useNavigate()
   const [aiLoading, setAiLoading] = useState(false)
+  const [aiError, setAiError] = useState<AiError | null>(null)
+  const aiQuestionIndex = useRef(currentIndex)
   const syncRef = useRef<ReturnType<typeof setTimeout>>()
   const initRef = useRef(false)
 
@@ -148,6 +151,8 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     setShowAnswer(!!saved)
     setNoteText(progress.notes[currentIndex] || '')
     setNoteTag(progress.tags[currentIndex] || '')
+    setAiError(null)
+    aiQuestionIndex.current = currentIndex
   }, [currentIndex])
 
   const correctAnswers = q ? getCorrectAnswers(q, choiceCount) : []
@@ -264,6 +269,7 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
 
   const askAI = async () => {
     setAiLoading(true)
+    setAiError(null)
     const prompt = `You are an AWS CLF-C02 exam tutor. Explain the following question and why the correct answer is right and the others are wrong.
 
 Question: ${q.question}
@@ -275,10 +281,12 @@ Correct Answer(s): ${correctAnswers.join(', ')}
 
 Provide a clear, concise explanation suitable for someone studying for the AWS Cloud Practitioner exam. Be specific about AWS services and concepts.`
 
-    const answer = await callAiAPI(prompt, msg => addConversation(q.question, msg))
-    if (answer) {
-      addConversation(q.question, answer)
+    const result = await callAiAPI(prompt)
+    if (result.ok) {
+      addConversation(q.question, result.answer)
       openSidebar()
+    } else if (aiQuestionIndex.current === currentIndex) {
+      setAiError({ code: result.code, message: result.message })
     }
     setAiLoading(false)
   }
@@ -492,6 +500,7 @@ Provide a clear, concise explanation suitable for someone studying for the AWS C
                   >
                     Configure AI
                   </button>
+                  {aiError && <AiErrorNotice error={aiError} onDismiss={() => setAiError(null)} />}
                 </div>
               </div>
             )}
