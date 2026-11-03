@@ -2644,3 +2644,16 @@ body { font-variant-numeric: tabular-nums; }
 .note-list a.active .answer-bubble { border-color: var(--color-primary); background: var(--color-primary); color: var(--color-on-accent); }
 .note-pager { display: flex; justify-content: space-between; gap: 8px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-border); }
 @media (max-width: 1050px) { .note-list { grid-column: 1 / -1; } }
+
+/* Overview notes: searchable, fixed-height pages instead of an endless list */
+.nt-search { width: 100%; height: 36px; margin-bottom: 8px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-surface); color: var(--color-text); font-size: 14px; }
+.nt-list { list-style: none; }
+.nt-row { display: grid; gap: 4px; padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text); text-decoration: none; }
+.nt-list li:last-child .nt-row { border-bottom: 0; }
+.nt-row:hover { color: var(--color-primary-dark); text-decoration: none; }
+.nt-row-note { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.nt-row-meta { color: var(--color-text-muted); font-size: 12px; }
+.nt-pager { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; color: var(--color-text-muted); font-size: 12px; }
+.nt-pager button { height: 32px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: 8px; background: transparent; color: var(--color-text); font-size: 12px; cursor: pointer; transition: background-color 160ms var(--ease-out); }
+.nt-pager button:hover:not(:disabled) { background: var(--color-raised); }
+.nt-pager button:disabled { color: var(--color-text-muted); cursor: default; }
