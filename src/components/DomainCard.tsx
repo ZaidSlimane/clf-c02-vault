@@ -7,8 +7,8 @@ interface Props {
 
 export default function DomainCard({ domain }: Props) {
   const statusLabel =
-    domain.status === 'in-progress' ? 'In Progress' :
-    domain.status === 'complete' ? 'Complete' : 'Not Started'
+    domain.status === 'in-progress' ? 'In progress' :
+    domain.status === 'complete' ? 'Complete' : 'Not started'
 
   const statusClass =
     domain.status === 'in-progress' ? 'badge-in-progress' :
@@ -16,10 +16,9 @@ export default function DomainCard({ domain }: Props) {
 
   return (
     <div className="card domain-card">
-      <div className="domain-card-accent" style={{ background: domain.color }} />
-      <div style={{ paddingLeft: 8 }}>
+      <div>
         <div className="domain-card-header">
-          <div className="domain-card-title">Domain {domain.id} — {domain.title}</div>
+          <div className="domain-card-title"><span className="answer-bubble" aria-hidden="true">{domain.id}</span> {domain.title}</div>
           <span className={`badge ${statusClass}`}>{statusLabel}</span>
         </div>
 
@@ -33,7 +32,7 @@ export default function DomainCard({ domain }: Props) {
             <span className="domain-card-value">{domain.mastery}%</span>
           </div>
           <div className="progress-bar">
-            <div className="progress-bar-fill" style={{ width: `${domain.mastery}%`, background: domain.color }} />
+            <div className="progress-bar-fill" style={{ width: `${domain.mastery}%` }} />
           </div>
           <div className="domain-card-row">
             <span className="domain-card-label">Next topic</span>
@@ -52,7 +51,7 @@ export default function DomainCard({ domain }: Props) {
         </div>
 
         <div className="domain-card-link">
-          <Link to={`/domain/${domain.id}`}>Open note &rarr;</Link>
+          <Link to={`/domain/${domain.id}`}>Open note</Link>
         </div>
       </div>
     </div>

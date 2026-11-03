@@ -2,7 +2,7 @@ import { practiceExams } from '../data/domains'
 
 export default function PracticeExams() {
   if (practiceExams.length === 0) {
-    return <div className="empty-state">No practice exams taken yet. Take a mock exam to track your progress here.</div>
+    return <div className="empty-state">No practice exams yet</div>
   }
 
   return (
@@ -12,9 +12,9 @@ export default function PracticeExams() {
           <tr>
             <th>Date</th>
             <th>Score</th>
-            <th>Weak Areas</th>
+            <th>Weak areas</th>
             <th>Mistakes</th>
-            <th>Retry Plan</th>
+            <th>Retry plan</th>
           </tr>
         </thead>
         <tbody>

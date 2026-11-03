@@ -82,13 +82,12 @@ export default function QuizProgressCard() {
   return (
     <div>
       <div className="section-header">
-        <span className="section-icon">📋</span>
-        <h2>Exam Simulation (CLF-C02)</h2>
+        <h2>Exam simulation</h2>
       </div>
       <div className="quiz-progress-row">
         <Link to="/exam" className="quiz-progress-card quiz-progress-continue">
           <span className="quiz-progress-card-value">
-            {hasStarted ? 'Continue →' : 'Start Quiz'}
+            {hasStarted ? 'Continue' : 'Start quiz'}
           </span>
           <span className="quiz-progress-card-label">{TOTAL} questions</span>
         </Link>
