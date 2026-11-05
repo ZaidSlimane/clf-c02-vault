@@ -50,6 +50,7 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   const [aiError, setAiError] = useState<AiError | null>(null)
   const { token, user } = useAuth()
   const statusRequest = useRef(0)
+  const chatRequest = useRef(0)
 
   const refreshAiStatus = useCallback(async () => {
     const request = ++statusRequest.current
@@ -82,6 +83,8 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
 
   // The provider outlives sign-out, so each user's conversations are loaded here.
   useEffect(() => {
+    chatRequest.current++
+    setChatLoading(false)
     setSidebarOpen(false)
     setConversations(user ? loadConversations() : [])
     const token = authToken()
@@ -155,6 +158,10 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const askAI = useCallback(async (questionText: string) => {
+    const request = ++chatRequest.current
+    const finishLoading = () => {
+      if (request === chatRequest.current) setChatLoading(false)
+    }
     setChatLoading(true)
     setAiError(null)
     const prompt = `You are an AWS CLF-C02 exam tutor. Answer the following question clearly and concisely, with specific AWS services and concepts.
@@ -163,12 +170,12 @@ ${questionText}`
     const owner = currentUserId()
     const result = await callAiAPI(prompt)
     if (currentUserId() !== owner) {
-      setChatLoading(false)
+      finishLoading()
       return false
     }
     if (result.ok) addConversation(questionText, result.answer)
     else setAiError({ code: result.code, message: result.message })
-    setChatLoading(false)
+    finishLoading()
     return result.ok
   }, [addConversation])
 
