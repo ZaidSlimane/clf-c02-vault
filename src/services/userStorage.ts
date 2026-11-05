@@ -74,6 +74,13 @@ export function removeUserItem(base: string): void {
   } catch {}
 }
 
+/** Closes adoption for good. A fresh sign-in calls this too: unscoped data never belongs to that account. */
+export function sealLegacyKeys(): void {
+  try {
+    localStorage.setItem(MIGRATION_MARKER, '1')
+  } catch {}
+}
+
 /**
  * Gives unscoped data to the user signed in on the first load after the upgrade.
  * The marker is set even when nobody is signed in: unscoped data has no known owner,
@@ -97,13 +104,16 @@ export function migrateLegacyKeys(): void {
       } catch {}
     }
   }
-  try {
-    localStorage.setItem(MIGRATION_MARKER, '1')
-  } catch {}
+  sealLegacyKeys()
 }
 
 /** Whether a `storage` event means this tab is rendering a different account from the stored one. */
 export function sessionChangedForTab(eventKey: string | null, renderedUserId: number | null): boolean {
   if (eventKey !== USER_KEY && eventKey !== null) return false
   return currentUserId() !== renderedUserId
+}
+
+/** Whether a page restored from the back/forward cache, which misses `storage` events, shows a stale account. */
+export function restoredWithStaleSession(persisted: boolean, renderedUserId: number | null): boolean {
+  return persisted && currentUserId() !== renderedUserId
 }

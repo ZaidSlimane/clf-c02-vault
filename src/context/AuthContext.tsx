@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import { readSession, sessionChangedForTab, TOKEN_KEY, USER_KEY } from '../services/userStorage'
+import { readSession, restoredWithStaleSession, sealLegacyKeys, sessionChangedForTab, TOKEN_KEY, USER_KEY } from '../services/userStorage'
 
 interface User { id: number; email: string }
 
@@ -20,6 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(initialSession?.token ?? null)
 
   const saveSession = (t: string, u: User) => {
+    sealLegacyKeys()
     localStorage.setItem(TOKEN_KEY, t)
     localStorage.setItem(USER_KEY, JSON.stringify(u))
     setToken(t)
@@ -38,8 +39,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const onStorage = (event: StorageEvent) => {
       if (sessionChangedForTab(event.key, user?.id ?? null)) window.location.reload()
     }
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (restoredWithStaleSession(event.persisted, user?.id ?? null)) window.location.reload()
+    }
     window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
+    window.addEventListener('pageshow', onPageShow)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener('pageshow', onPageShow)
+    }
   }, [user?.id])
 
   const login = useCallback(async (email: string, password: string) => {

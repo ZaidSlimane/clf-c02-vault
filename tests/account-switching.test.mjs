@@ -6,7 +6,9 @@ import {
   readSession,
   readUserItem,
   removeUserItem,
+  restoredWithStaleSession,
   scopedKey,
+  sealLegacyKeys,
   sessionChangedForTab,
   TOKEN_KEY,
   USER_KEY,
@@ -18,6 +20,18 @@ const PROGRESS = 'clf-c02-exam-progress'
 const PENDING = 'clf-c02-study-sessions'
 const ACTIVE = 'clf-c02-active-session'
 const MARKER = 'clf-c02-storage-scoped'
+const LEGACY_KEYS = [
+  'clf-c02-exam-progress',
+  'clf-c02-tracker-progress',
+  'clf-c02-tracker-logs',
+  'clf-c02-ai-chat',
+  'clf-c02-checked-topics',
+  'clf-c02-exam-date',
+  'clf-c02-study-sessions',
+  'clf-c02-active-session',
+  'clf-c02-custom-quiz-source',
+  'clf-c02-custom-quiz-progress',
+]
 
 const A = { token: 'token-a', user: { id: 1, email: 'a@example.com' } }
 const B = { token: 'token-b', user: { id: 2, email: 'b@example.com' } }
@@ -130,6 +144,16 @@ test('migration adopts legacy keys for the signed-in user', () => {
   assert.equal(localStorage.getItem(PROGRESS), null)
 })
 
+test('migration adopts every per-user legacy key', () => {
+  for (const key of LEGACY_KEYS) localStorage.setItem(key, `legacy ${key}`)
+  signIn(A)
+  migrateLegacyKeys()
+  for (const key of LEGACY_KEYS) {
+    assert.equal(readUserItem(key), `legacy ${key}`, key)
+    assert.equal(localStorage.getItem(key), null, key)
+  }
+})
+
 test('migration does not overwrite scoped data', () => {
   localStorage.setItem(PROGRESS, 'legacy')
   signIn(A)
@@ -176,6 +200,20 @@ test('migration still sets the marker when a copy fails', () => {
   assert.equal(localStorage.getItem(PROGRESS), 'legacy')
 })
 
+test('a failed marker write while signed out still adopts nothing after a fresh sign-in', () => {
+  localStorage.setItem(PROGRESS, 'legacy')
+  const setItem = localStorage.setItem
+  localStorage.setItem = () => { throw new Error('quota') }
+  migrateLegacyKeys()
+  assert.equal(localStorage.getItem(MARKER), null)
+  localStorage.setItem = setItem
+  sealLegacyKeys()
+  signIn(B)
+  migrateLegacyKeys()
+  assert.equal(readUserItem(PROGRESS), null)
+  assert.equal(localStorage.getItem(PROGRESS), 'legacy')
+})
+
 test('sessionChangedForTab detects an account change', () => {
   signIn(B)
   assert.equal(sessionChangedForTab(USER_KEY, A.user.id), true)
@@ -190,6 +228,22 @@ test('sessionChangedForTab ignores the same user and unrelated keys', () => {
   assert.equal(sessionChangedForTab(null, A.user.id), false)
   assert.equal(sessionChangedForTab(PROGRESS, B.user.id), false)
   assert.equal(sessionChangedForTab(TOKEN_KEY, B.user.id), false)
+})
+
+test('restoredWithStaleSession detects a restored page showing another account', () => {
+  signIn(B)
+  assert.equal(restoredWithStaleSession(true, A.user.id), true)
+  assert.equal(restoredWithStaleSession(true, null), true)
+  signOut()
+  assert.equal(restoredWithStaleSession(true, A.user.id), true)
+})
+
+test('restoredWithStaleSession ignores normal loads and the same account', () => {
+  signIn(A)
+  assert.equal(restoredWithStaleSession(false, B.user.id), false)
+  assert.equal(restoredWithStaleSession(true, A.user.id), false)
+  signOut()
+  assert.equal(restoredWithStaleSession(true, null), false)
 })
 
 test("A's pending and active sessions are not sent with B's token", async () => {
