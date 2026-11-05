@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -10,6 +10,14 @@ export default function SignInPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const emailInput = useRef<HTMLInputElement>(null)
+  const focusEmailOnForm = useRef(false)
+
+  useEffect(() => {
+    if (user || !focusEmailOnForm.current) return
+    focusEmailOnForm.current = false
+    emailInput.current?.focus()
+  }, [user])
 
   if (user) {
     // A successful submit navigates by itself, so the panel must not flash first.
@@ -28,7 +36,7 @@ export default function SignInPage() {
           </button>
 
           <div className="auth-footer">
-            <button type="button" className="auth-toggle" onClick={logout}>
+            <button type="button" className="auth-toggle" onClick={() => { focusEmailOnForm.current = true; logout() }}>
               Sign out and use another account
             </button>
           </div>
@@ -70,6 +78,7 @@ export default function SignInPage() {
           <label className="auth-label">
             Email
             <input
+              ref={emailInput}
               type="email"
               className="auth-input"
               value={email}
