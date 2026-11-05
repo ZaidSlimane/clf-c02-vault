@@ -61,6 +61,7 @@ export default function TrackerPage() {
   const logsReady = useRef(false)
   const lectureSyncTimer = useRef<ReturnType<typeof setTimeout>>()
   const logSyncTimer = useRef<ReturnType<typeof setTimeout>>()
+  const pendingLectureUpload = useRef<{ token: string; lectures: LectureProgress } | null>(null)
 
   useEffect(() => {
     logEndRef.current?.scrollIntoView()
@@ -125,8 +126,11 @@ export default function TrackerPage() {
 
   useEffect(() => {
     writeUserItem(STORAGE_KEY, JSON.stringify(lectures))
+    pendingLectureUpload.current = null
     if (!token || !lecturesReady.current) return
+    pendingLectureUpload.current = { token, lectures }
     lectureSyncTimer.current = setTimeout(async () => {
+      pendingLectureUpload.current = null
       setSyncing(true)
       try {
         await fetch('/api/tracker', {
@@ -139,6 +143,18 @@ export default function TrackerPage() {
     }, 2000)
     return () => clearTimeout(lectureSyncTimer.current)
   }, [lectures, token])
+
+  // Without this, leaving before the timer fires drops an uncheck and the server's value restores the check.
+  useEffect(() => () => {
+    const upload = pendingLectureUpload.current
+    if (!upload || !lecturesReady.current) return
+    pendingLectureUpload.current = null
+    fetch('/api/tracker', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${upload.token}` },
+      body: JSON.stringify(upload.lectures),
+    }).catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (!token) return
