@@ -99,7 +99,9 @@ export default function ExamQuiz({ initialFilter }: { initialFilter?: string | n
     writeUserItem(STORAGE_KEY, JSON.stringify(progress))
     if (token && initRef.current) {
       clearTimeout(syncRef.current)
+      const owner = currentUserId()
       syncRef.current = setTimeout(() => {
+        if (currentUserId() !== owner) return
         saveFullProgress({
           answers: Object.fromEntries(
             Object.entries(progress.answers).map(([k, v]) => [k, v])
