@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function SignInPage() {
   const { user, login, register, logout } = useAuth()
   const navigate = useNavigate()
-  const [isLogin, setIsLogin] = useState(true)
+  const [searchParams] = useSearchParams()
+  const [isLogin, setIsLogin] = useState(searchParams.get('mode') !== 'signup')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [username, setUsername] = useState('')
@@ -29,9 +30,9 @@ export default function SignInPage() {
     return (
       <div className="auth-page">
         <div className="auth-card">
+          <span className="wordmark">CLF Vault</span>
           <div className="auth-header">
-            <h1>☁️</h1>
-            <h2>Already signed in</h2>
+            <h1>Already signed in</h1>
             <p style={{ overflowWrap: 'anywhere' }}>Signed in as {user.email}</p>
           </div>
 
@@ -74,10 +75,10 @@ export default function SignInPage() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <Link to="/welcome" className="wordmark">CLF Vault</Link>
         <div className="auth-header">
-          <h1>☁️</h1>
-          <h2>{isLogin ? 'Sign In' : 'Create Account'}</h2>
-          <p>CLF-C02 Study Dashboard</p>
+          <h1>{isLogin ? 'Sign in' : 'Create your account'}</h1>
+          <p className="exam-meta">AWS Cloud Practitioner · CLF-C02</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -85,6 +86,7 @@ export default function SignInPage() {
 
           {!isLogin && (
             <>
+              <div className="auth-row">
               <label className="auth-label">
                 First name
                 <input
@@ -108,6 +110,7 @@ export default function SignInPage() {
                   autoComplete="family-name"
                 />
               </label>
+              </div>
 
               <label className="auth-label">
                 Username
@@ -155,7 +158,7 @@ export default function SignInPage() {
 
           {!isLogin && (
             <>
-              <p id="password-rules" style={{ margin: 0, fontSize: 13 }}>
+              <p id="password-rules" className="auth-hint">
                 At least 12 characters with upper and lower case letters, a number and a symbol.
               </p>
 
@@ -174,7 +177,7 @@ export default function SignInPage() {
           )}
 
           <button type="submit" className="auth-btn" disabled={submitting}>
-            {submitting ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}
+            {submitting ? 'Please wait' : isLogin ? 'Sign in' : 'Create account'}
           </button>
         </form>
 

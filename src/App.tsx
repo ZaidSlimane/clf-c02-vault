@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import DomainPage from './pages/DomainPage'
 import ExamPage from './pages/ExamPage'
+import LandingPage from './pages/LandingPage'
 import SignInPage from './pages/SignInPage'
 import TrackerPage from './pages/TrackerPage'
 import SettingsPage from './pages/SettingsPage'
@@ -11,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 export default function App() {
   return (
     <Routes>
+      <Route path="/welcome" element={<LandingPage />} />
       <Route path="/signin" element={<SignInPage />} />
       <Route element={<Layout />}>
         <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
