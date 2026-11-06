@@ -1,4 +1,5 @@
 import { Link, Navigate } from 'react-router-dom'
+import ParticleField from '../components/ParticleField'
 import { useAuth } from '../context/AuthContext'
 
 // Weights are the published CLF-C02 exam weightings; readiness is sample data.
@@ -21,6 +22,8 @@ export default function LandingPage() {
   if (user) return <Navigate to="/" replace />
 
   return (
+    <>
+    <ParticleField />
     <div className="landing">
       <header className="landing-nav">
         <Link to="/welcome" className="wordmark">CLF Vault</Link>
@@ -76,5 +79,6 @@ export default function LandingPage() {
 
       <footer className="landing-footer exam-meta">CLF Vault · CLF-C02 study system</footer>
     </div>
+    </>
   )
 }
