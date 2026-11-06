@@ -1,19 +1,48 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function SignInPage() {
-  const { user, login, register } = useAuth()
+  const { user, login, register, logout } = useAuth()
   const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const emailInput = useRef<HTMLInputElement>(null)
+  const focusEmailOnForm = useRef(false)
+
+  useEffect(() => {
+    if (user || !focusEmailOnForm.current) return
+    focusEmailOnForm.current = false
+    emailInput.current?.focus()
+  }, [user])
 
   if (user) {
-    navigate('/', { replace: true })
-    return null
+    // A successful submit navigates by itself, so the panel must not flash first.
+    if (submitting) return null
+    return (
+      <div className="auth-page">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1>☁️</h1>
+            <h2>Already signed in</h2>
+            <p style={{ overflowWrap: 'anywhere' }}>Signed in as {user.email}</p>
+          </div>
+
+          <button type="button" className="auth-btn" style={{ width: '100%' }} onClick={() => navigate('/', { replace: true })}>
+            Continue to dashboard
+          </button>
+
+          <div className="auth-footer">
+            <button type="button" className="auth-toggle" onClick={() => { focusEmailOnForm.current = true; logout() }}>
+              Sign out and use another account
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -49,6 +78,7 @@ export default function SignInPage() {
           <label className="auth-label">
             Email
             <input
+              ref={emailInput}
               type="email"
               className="auth-input"
               value={email}

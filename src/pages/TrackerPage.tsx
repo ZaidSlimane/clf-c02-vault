@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { courseDomains, getTotalLectures } from '../data/courseData'
+import { readUserItem, writeUserItem } from '../services/userStorage'
 
 type LectureProgress = Record<string, boolean>
 
@@ -9,7 +10,7 @@ const LOG_STORAGE_KEY = 'clf-c02-tracker-logs'
 
 function loadLocal(): LectureProgress {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY)
+    const saved = readUserItem(STORAGE_KEY)
     return saved ? JSON.parse(saved) : {}
   } catch {
     return {}
@@ -32,12 +33,18 @@ type LogEntry = { id: number; time: string; text: string; kind: 'check' | 'unche
 
 function loadLogs(): LogEntry[] {
   try {
-    const saved = localStorage.getItem(LOG_STORAGE_KEY)
+    const saved = readUserItem(LOG_STORAGE_KEY)
     return saved ? JSON.parse(saved) : []
   } catch { return [] }
 }
 
-let logSeq = loadLogs().reduce((max, e) => Math.max(max, e.id), 0)
+let logSeq = 0
+
+function loadLogsAndSeq(): LogEntry[] {
+  const logs = loadLogs()
+  logSeq = logs.reduce((max, e) => Math.max(max, e.id), logSeq)
+  return logs
+}
 
 export default function TrackerPage() {
   const { token } = useAuth()
@@ -47,38 +54,48 @@ export default function TrackerPage() {
   const [syncing, setSyncing] = useState(false)
   const [search, setSearch] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
-  const [log, setLog] = useState<LogEntry[]>(loadLogs)
+  const [log, setLog] = useState<LogEntry[]>(loadLogsAndSeq)
   const logEndRef = useRef<HTMLDivElement>(null)
   const [logSyncing, setLogSyncing] = useState(false)
+  const lecturesReady = useRef(false)
+  const logsReady = useRef(false)
+  const lectureSyncTimer = useRef<ReturnType<typeof setTimeout>>()
+  const logSyncTimer = useRef<ReturnType<typeof setTimeout>>()
+  const pendingLectureUpload = useRef<{ token: string; lectures: LectureProgress } | null>(null)
 
   useEffect(() => {
     logEndRef.current?.scrollIntoView()
   }, [log.length])
 
   useEffect(() => {
-    localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(log))
-    if (token) {
-      clearTimeout((window as any).__logSync)
-      ;(window as any).__logSync = setTimeout(async () => {
-        setLogSyncing(true)
-        try {
-          await fetch('/api/tracker-logs', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-            body: JSON.stringify(log),
-          })
-        } catch {}
-        setLogSyncing(false)
-      }, 3000)
-    }
+    writeUserItem(LOG_STORAGE_KEY, JSON.stringify(log))
+    if (!token || !logsReady.current) return
+    logSyncTimer.current = setTimeout(async () => {
+      setLogSyncing(true)
+      try {
+        await fetch('/api/tracker-logs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(log),
+        })
+      } catch {}
+      setLogSyncing(false)
+    }, 3000)
+    return () => clearTimeout(logSyncTimer.current)
   }, [log, token])
 
   useEffect(() => {
     if (!token) return
+    let cancelled = false
     fetch('/api/tracker-logs', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.ok ? r.json() : null)
       .then(data => {
-        if (data && Array.isArray(data) && data.length > 0) {
+        if (cancelled || !Array.isArray(data)) return
+        logsReady.current = true
+        if (data.length === 0) {
+          // A new array re-runs the upload effect, so local entries still reach an empty server list.
+          setLog(prev => prev.length > 0 ? [...prev] : prev)
+        } else {
           setLog(prev => {
             const localIds = new Set(prev.map(e => e.id))
             const merged = [...prev]
@@ -94,6 +111,7 @@ export default function TrackerPage() {
         }
       })
       .catch(() => {})
+    return () => { cancelled = true }
   }, [token])
 
   function pushLog(text: string, kind: 'check' | 'uncheck') {
@@ -107,35 +125,51 @@ export default function TrackerPage() {
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(lectures))
-    if (token) {
-      clearTimeout((window as any).__trackerSync)
-      ;(window as any).__trackerSync = setTimeout(async () => {
-        setSyncing(true)
-        try {
-          await fetch('/api/tracker', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-            body: JSON.stringify(lectures),
-          })
-        } catch {}
-        setSyncing(false)
-      }, 2000)
-    }
+    writeUserItem(STORAGE_KEY, JSON.stringify(lectures))
+    pendingLectureUpload.current = null
+    if (!token || !lecturesReady.current) return
+    pendingLectureUpload.current = { token, lectures }
+    lectureSyncTimer.current = setTimeout(async () => {
+      pendingLectureUpload.current = null
+      setSyncing(true)
+      try {
+        await fetch('/api/tracker', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(lectures),
+        })
+      } catch {}
+      setSyncing(false)
+    }, 2000)
+    return () => clearTimeout(lectureSyncTimer.current)
   }, [lectures, token])
+
+  // Without this, leaving before the timer fires drops an uncheck and the server's value restores the check.
+  useEffect(() => () => {
+    const upload = pendingLectureUpload.current
+    if (!upload || !lecturesReady.current) return
+    pendingLectureUpload.current = null
+    fetch('/api/tracker', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${upload.token}` },
+      body: JSON.stringify(upload.lectures),
+    }).catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (!token) return
+    let cancelled = false
     fetch('/api/tracker', { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.ok ? r.json() : null)
       .then(data => {
-        if (data) {
-          const merged = { ...loadLocal(), ...data }
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
-          setLectures(merged)
-        }
+        if (cancelled || !data) return
+        lecturesReady.current = true
+        const merged = { ...loadLocal(), ...data }
+        writeUserItem(STORAGE_KEY, JSON.stringify(merged))
+        setLectures(merged)
       })
       .catch(() => {})
+    return () => { cancelled = true }
   }, [token])
 
   useEffect(() => {

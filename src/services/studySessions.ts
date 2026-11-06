@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { headers } from './api'
+import { headers } from './api.ts'
+import { currentUserId, readUserItem, removeUserItem, writeUserItem } from './userStorage.ts'
 
 const PENDING_KEY = 'clf-c02-study-sessions'
 const ACTIVE_KEY = 'clf-c02-active-session'
@@ -12,10 +13,11 @@ export interface StudySession {
 }
 
 let savedSessions: StudySession[] = []
+let savedOwner: number | null = null
 
 function readPending(): StudySession[] {
   try {
-    const saved = JSON.parse(localStorage.getItem(PENDING_KEY) || '[]')
+    const saved = JSON.parse(readUserItem(PENDING_KEY) || '[]')
     return Array.isArray(saved) ? saved : []
   } catch {
     return []
@@ -23,48 +25,53 @@ function readPending(): StudySession[] {
 }
 
 function writePending(sessions: StudySession[]) {
-  try {
-    localStorage.setItem(PENDING_KEY, JSON.stringify(sessions))
-  } catch {}
+  writeUserItem(PENDING_KEY, JSON.stringify(sessions))
 }
 
 function readActive(): number | null {
-  try {
-    return Number(localStorage.getItem(ACTIVE_KEY)) || null
-  } catch {
-    return null
-  }
+  return Number(readUserItem(ACTIVE_KEY)) || null
 }
 
 function notify() {
   window.dispatchEvent(new Event(CHANGE_EVENT))
 }
 
-function allSessions(): StudySession[] {
-  const known = new Set(savedSessions.map((s) => s.startedAt))
-  return [...savedSessions, ...readPending().filter((s) => !known.has(s.startedAt))]
+/** Exported for tests. */
+export function allSessions(): StudySession[] {
+  const saved = savedOwner === currentUserId() ? savedSessions : []
+  const known = new Set(saved.map((s) => s.startedAt))
+  return [...saved, ...readPending().filter((s) => !known.has(s.startedAt))]
 }
 
-/** Uploads finished sessions, keeping any that fail for the next attempt, then reloads from the server. */
-async function syncSessions(): Promise<void> {
-  if (!localStorage.getItem('clf-c02-auth-token')) return
+/**
+ * Uploads finished sessions, keeping any that fail for the next attempt, then reloads from the server.
+ * Stops as soon as the signed-in user changes, so one user's sessions never go out with another's token.
+ */
+export async function syncSessions(): Promise<void> {
+  const owner = currentUserId()
+  if (owner === null) return
   for (const session of readPending()) {
+    if (currentUserId() !== owner) return
     try {
       const res = await fetch('/api/study-sessions', { method: 'POST', headers: headers(), body: JSON.stringify(session) })
+      if (currentUserId() !== owner) return
       if (res.ok || res.status === 400) writePending(readPending().filter((s) => s.startedAt !== session.startedAt))
     } catch {}
   }
+  if (currentUserId() !== owner) return
   try {
     const res = await fetch('/api/study-sessions', { headers: headers() })
-    if (res.ok) savedSessions = await res.json()
+    if (!res.ok) throw new Error('Failed to fetch study sessions')
+    const rows = await res.json()
+    if (currentUserId() !== owner) return
+    savedSessions = rows
+    savedOwner = owner
   } catch {}
   notify()
 }
 
 export function startSession(): void {
-  try {
-    localStorage.setItem(ACTIVE_KEY, String(Date.now()))
-  } catch {}
+  writeUserItem(ACTIVE_KEY, String(Date.now()))
   notify()
 }
 
@@ -74,9 +81,7 @@ export function stopSession(): void {
     const elapsed = Math.round((Date.now() - startedAt) / 60000)
     const minutes = Math.min(Math.max(elapsed, 1), MAX_SESSION_MINUTES)
     writePending([...readPending(), { startedAt, minutes }])
-    try {
-      localStorage.removeItem(ACTIVE_KEY)
-    } catch {}
+    removeUserItem(ACTIVE_KEY)
   }
   notify()
   syncSessions()

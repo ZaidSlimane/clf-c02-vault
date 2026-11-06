@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { sections } from '../data/sections'
+import { readUserItem } from '../services/userStorage'
 
 const STORAGE_KEY = 'clf-c02-exam-progress'
 
@@ -13,7 +14,7 @@ interface Progress {
 
 function loadProgress(): Progress {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY)
+    const saved = readUserItem(STORAGE_KEY)
     return saved ? JSON.parse(saved) : { notes: {}, tags: {}, noteTimestamps: {}, answers: {} }
   } catch {
     return { notes: {}, tags: {}, noteTimestamps: {}, answers: {} }

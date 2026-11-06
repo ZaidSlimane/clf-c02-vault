@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, ty
 import { useAuth } from './AuthContext'
 import { callAiAPI, type AiError } from '../services/aiConfig'
 import { getAiSettings } from '../services/api'
+import { currentUserId, readUserItem, removeUserItem, TOKEN_KEY, writeUserItem } from '../services/userStorage'
 
 export type AiStatus = 'loading' | 'configured' | 'unconfigured' | 'error'
 
@@ -34,7 +35,7 @@ const STORAGE_KEY = 'clf-c02-ai-chat'
 
 function loadConversations(): Conversation[] {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY)
+    const saved = readUserItem(STORAGE_KEY)
     return saved ? JSON.parse(saved) : []
   } catch {
     return []
@@ -47,8 +48,9 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   const [chatLoading, setChatLoading] = useState(false)
   const [aiStatus, setAiStatus] = useState<AiStatus>('loading')
   const [aiError, setAiError] = useState<AiError | null>(null)
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const statusRequest = useRef(0)
+  const chatRequest = useRef(0)
 
   const refreshAiStatus = useCallback(async () => {
     const request = ++statusRequest.current
@@ -70,24 +72,30 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
   }, [token, refreshAiStatus])
 
   const persist = useCallback((convs: Conversation[]) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(convs))
+    writeUserItem(STORAGE_KEY, JSON.stringify(convs))
   }, [])
 
   const toggleSidebar = useCallback(() => setSidebarOpen(prev => !prev), [])
   const openSidebar = useCallback(() => setSidebarOpen(true), [])
   const closeSidebar = useCallback(() => setSidebarOpen(false), [])
 
-  const authToken = () => localStorage.getItem('clf-c02-auth-token')
+  const authToken = () => localStorage.getItem(TOKEN_KEY)
 
+  // The provider outlives sign-out, so each user's conversations are loaded here.
   useEffect(() => {
+    chatRequest.current++
+    setChatLoading(false)
+    setSidebarOpen(false)
+    setConversations(user ? loadConversations() : [])
     const token = authToken()
-    if (!token) return
+    if (!user || !token) return
+    let cancelled = false
     fetch('/api/conversations', {
       headers: { 'Authorization': `Bearer ${token}` },
     })
       .then(r => r.ok ? r.json() : null)
       .then(serverConvs => {
-        if (!serverConvs || !Array.isArray(serverConvs)) return
+        if (cancelled || !serverConvs || !Array.isArray(serverConvs)) return
         const local = loadConversations()
         const server = serverConvs.map((c: { id: number; question_text: string; answer: string; created_at: string }) => ({
           id: c.id.toString(),
@@ -97,11 +105,12 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
         }))
         const merged = [...new Map([...local, ...server].map(c => [c.id, c])).values()]
           .sort((a, b) => a.timestamp - b.timestamp)
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+        writeUserItem(STORAGE_KEY, JSON.stringify(merged))
         setConversations(merged)
       })
       .catch(() => {})
-  }, [])
+    return () => { cancelled = true }
+  }, [user?.id])
 
   const addConversation = useCallback((questionText: string, answer: string) => {
     const token = authToken()
@@ -145,19 +154,28 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
         .catch(() => {})
     }
     setConversations([])
-    localStorage.removeItem(STORAGE_KEY)
+    removeUserItem(STORAGE_KEY)
   }, [])
 
   const askAI = useCallback(async (questionText: string) => {
+    const request = ++chatRequest.current
+    const finishLoading = () => {
+      if (request === chatRequest.current) setChatLoading(false)
+    }
     setChatLoading(true)
     setAiError(null)
     const prompt = `You are an AWS CLF-C02 exam tutor. Answer the following question clearly and concisely, with specific AWS services and concepts.
 
 ${questionText}`
+    const owner = currentUserId()
     const result = await callAiAPI(prompt)
+    if (currentUserId() !== owner) {
+      finishLoading()
+      return false
+    }
     if (result.ok) addConversation(questionText, result.answer)
     else setAiError({ code: result.code, message: result.message })
-    setChatLoading(false)
+    finishLoading()
     return result.ok
   }, [addConversation])
 

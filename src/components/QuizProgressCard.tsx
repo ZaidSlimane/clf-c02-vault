@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import questionsData from '../../CLF-C02 questions.json'
+import { readUserItem } from '../services/userStorage'
 
 interface Question {
   question: string
@@ -38,7 +39,7 @@ interface Progress {
 
 function loadProgress(): Progress {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY)
+    const saved = readUserItem(STORAGE_KEY)
     if (!saved) return { answers: {}, flags: {}, notes: {}, tags: {} }
     const parsed = JSON.parse(saved)
     const progress: Progress = { answers: {}, flags: {}, notes: {}, tags: {} }

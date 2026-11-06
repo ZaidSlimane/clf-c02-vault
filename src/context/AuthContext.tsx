@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import { readSession, restoredWithStaleSession, sealLegacyKeys, sessionChangedForTab, TOKEN_KEY, USER_KEY } from '../services/userStorage'
 
 interface User { id: number; email: string }
 
@@ -13,15 +14,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const TOKEN_KEY = 'clf-c02-auth-token'
-const USER_KEY = 'clf-c02-auth-user'
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY))
-  const [loading, setLoading] = useState(true)
+  const [initialSession] = useState(readSession)
+  const [user, setUser] = useState<User | null>(initialSession?.user ?? null)
+  const [token, setToken] = useState<string | null>(initialSession?.token ?? null)
 
   const saveSession = (t: string, u: User) => {
+    sealLegacyKeys()
     localStorage.setItem(TOKEN_KEY, t)
     localStorage.setItem(USER_KEY, JSON.stringify(u))
     setToken(t)
@@ -35,15 +34,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
+  // A reload drops everything this tab holds in memory for the previous account.
   useEffect(() => {
-    const savedToken = localStorage.getItem(TOKEN_KEY)
-    const savedUser = localStorage.getItem(USER_KEY)
-    if (savedToken && savedUser) {
-      setToken(savedToken)
-      setUser(JSON.parse(savedUser))
+    const onStorage = (event: StorageEvent) => {
+      if (sessionChangedForTab(event.key, user?.id ?? null)) window.location.reload()
     }
-    setLoading(false)
-  }, [])
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (restoredWithStaleSession(event.persisted, user?.id ?? null)) window.location.reload()
+    }
+    window.addEventListener('storage', onStorage)
+    window.addEventListener('pageshow', onPageShow)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener('pageshow', onPageShow)
+    }
+  }, [user?.id])
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await fetch('/api/auth/login', {
@@ -72,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading: false, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   )
