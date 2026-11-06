@@ -33,7 +33,7 @@ const LEGACY_KEYS = [
   'clf-c02-custom-quiz-progress',
 ]
 
-const A = { token: 'token-a', user: { id: 1, email: 'a@example.com' } }
+const A = { token: 'token-a', user: { id: 1, email: 'a@example.com', username: 'a', firstName: 'A', lastName: 'One' } }
 const B = { token: 'token-b', user: { id: 2, email: 'b@example.com' } }
 
 function fakeStorage() {

@@ -21,6 +21,9 @@ const LEGACY_KEYS = [
 export interface SessionUser {
   id: number
   email: string
+  username: string | null
+  firstName: string | null
+  lastName: string | null
 }
 
 export interface StoredSession {
@@ -38,7 +41,16 @@ export function readSession(): StoredSession | null {
     const token = localStorage.getItem(TOKEN_KEY)
     const user = JSON.parse(localStorage.getItem(USER_KEY) || 'null')
     if (!token || typeof user?.id !== 'number' || typeof user.email !== 'string') return null
-    return { token, user: { id: user.id, email: user.email } }
+    return {
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username ?? null,
+        firstName: user.firstName ?? null,
+        lastName: user.lastName ?? null,
+      },
+    }
   } catch {
     return null
   }
