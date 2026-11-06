@@ -26,10 +26,13 @@ export function mockRes() {
 export function fakeUsersSql(rows = []) {
   const sql = async (strings, ...values) => {
     const text = strings.join('?')
-    if (text.includes('SELECT')) return rows.filter((row) => row.email === values[0])
+    if (text.includes('SELECT')) {
+      const [emailKey, usernameKey] = values
+      return rows.filter((row) => row.email.toLowerCase() === emailKey || row.username?.toLowerCase() === usernameKey)
+    }
     if (text.includes('INSERT')) {
-      const [email, password_hash] = values
-      const row = { id: rows.length + 1, email, password_hash, created_at: new Date() }
+      const [email, username, first_name, last_name, password_hash] = values
+      const row = { id: rows.length + 1, email, username, first_name, last_name, password_hash, created_at: new Date() }
       rows.push(row)
       return [row]
     }

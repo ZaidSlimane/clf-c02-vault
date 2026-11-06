@@ -70,8 +70,8 @@ export default function Layout() {
                 </div>
               )}
               <button className="user-menu-trigger" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Account menu">
-                <span className="user-menu-avatar">{user.email[0].toUpperCase()}</span>
-                <span className="user-menu-name">{user.email.split('@')[0]}</span>
+                <span className="user-menu-avatar">{(user.username ?? user.email)[0].toUpperCase()}</span>
+                <span className="user-menu-name">{user.username ?? user.email.split('@')[0]}</span>
                 <span className="user-menu-arrow">{menuOpen ? '▼' : '▲'}</span>
               </button>
             </div>

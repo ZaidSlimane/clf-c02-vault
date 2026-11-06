@@ -1,14 +1,20 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import { readSession, restoredWithStaleSession, sealLegacyKeys, sessionChangedForTab, TOKEN_KEY, USER_KEY } from '../services/userStorage'
+import { readSession, restoredWithStaleSession, sealLegacyKeys, sessionChangedForTab, TOKEN_KEY, USER_KEY, type SessionUser as User } from '../services/userStorage'
 
-interface User { id: number; email: string }
+export interface Registration {
+  firstName: string
+  lastName: string
+  username: string
+  email: string
+  password: string
+}
 
 interface AuthContextType {
   user: User | null
   token: string | null
   loading: boolean
-  login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string) => Promise<void>
+  login: (identifier: string, password: string) => Promise<void>
+  register: (details: Registration) => Promise<void>
   logout: () => void
 }
 
@@ -50,22 +56,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user?.id])
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (identifier: string, password: string) => {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ identifier, password }),
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Login failed')
     saveSession(data.token, data.user)
   }, [])
 
-  const register = useCallback(async (email: string, password: string) => {
+  const register = useCallback(async (details: Registration) => {
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(details),
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Registration failed')

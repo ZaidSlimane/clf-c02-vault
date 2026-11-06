@@ -6,8 +6,12 @@ export default function SignInPage() {
   const { user, login, register, logout } = useAuth()
   const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [repeatPassword, setRepeatPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const emailInput = useRef<HTMLInputElement>(null)
@@ -48,12 +52,16 @@ export default function SignInPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
+    if (!isLogin && password !== repeatPassword) {
+      setError('Passwords do not match')
+      return
+    }
     setSubmitting(true)
     try {
       if (isLogin) {
         await login(email, password)
       } else {
-        await register(email, password)
+        await register({ firstName, lastName, username, email, password })
       }
       navigate('/', { replace: true })
     } catch (err) {
@@ -75,16 +83,59 @@ export default function SignInPage() {
         <form onSubmit={handleSubmit} className="auth-form">
           {error && <div className="auth-error">{error}</div>}
 
+          {!isLogin && (
+            <>
+              <label className="auth-label">
+                First name
+                <input
+                  className="auth-input"
+                  value={firstName}
+                  onChange={e => setFirstName(e.target.value)}
+                  required
+                  maxLength={50}
+                  autoComplete="given-name"
+                />
+              </label>
+
+              <label className="auth-label">
+                Last name
+                <input
+                  className="auth-input"
+                  value={lastName}
+                  onChange={e => setLastName(e.target.value)}
+                  required
+                  maxLength={50}
+                  autoComplete="family-name"
+                />
+              </label>
+
+              <label className="auth-label">
+                Username
+                <input
+                  className="auth-input"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                  required
+                  minLength={3}
+                  maxLength={30}
+                  pattern="[a-zA-Z0-9_]+"
+                  title="Letters, numbers and underscores"
+                  autoComplete="username"
+                />
+              </label>
+            </>
+          )}
+
           <label className="auth-label">
-            Email
+            {isLogin ? 'Username or email' : 'Email'}
             <input
               ref={emailInput}
-              type="email"
+              type={isLogin ? 'text' : 'email'}
               className="auth-input"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              autoComplete="email"
+              autoComplete={isLogin ? 'username' : 'email'}
             />
           </label>
 
@@ -96,10 +147,31 @@ export default function SignInPage() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              minLength={6}
+              minLength={isLogin ? undefined : 12}
+              aria-describedby={isLogin ? undefined : 'password-rules'}
               autoComplete={isLogin ? 'current-password' : 'new-password'}
             />
           </label>
+
+          {!isLogin && (
+            <>
+              <p id="password-rules" style={{ margin: 0, fontSize: 13 }}>
+                At least 12 characters with upper and lower case letters, a number and a symbol.
+              </p>
+
+              <label className="auth-label">
+                Repeat password
+                <input
+                  type="password"
+                  className="auth-input"
+                  value={repeatPassword}
+                  onChange={e => setRepeatPassword(e.target.value)}
+                  required
+                  autoComplete="new-password"
+                />
+              </label>
+            </>
+          )}
 
           <button type="submit" className="auth-btn" disabled={submitting}>
             {submitting ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}

@@ -42,6 +42,8 @@ psql "$DATABASE_URL" -f db/init.sql
 
 Or paste the file into the Neon SQL editor.
 
+**Upgrading to username sign up:** run `db/init.sql` before deploying. It adds the `username`, `first_name` and `last_name` columns; existing accounts leave them empty and keep signing in by email.
+
 **Upgrading an existing deployment:** run `db/init.sql` on the deployed database and set `AI_KEY_ENCRYPTION_SECRET` in Vercel before deploying this release.
 
 ## Local Development
